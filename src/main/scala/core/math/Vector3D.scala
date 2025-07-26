@@ -5,7 +5,7 @@ import core.metrics.{AngleUnit, DistanceUnit}
 
 
 final case class Vector3D(x: Double, y: Double, z: Double) {
-  def magnitude: Double = Math.sqrt(Math.pow(x, 2) * Math.pow(y, 2) * Math.pow(z, 2))
+  def magnitude: Double = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2))
 
   def distanceTo[T <: DistanceUnit](second: Vector3D)(factory: Double => T = DistanceUnit.Meter.apply): T = {
     val distanceInMeters = Math.sqrt(
@@ -33,7 +33,7 @@ final case class Vector3D(x: Double, y: Double, z: Double) {
 object Vector3D {
   val Zero: Vector3D = Vector3D(0, 0, 0)
 
-  def fromArray(arr: Array[DistanceUnit]): Vector3D = {
+  def fromArray[T <: DistanceUnit](arr: Array[T]): Vector3D = {
     if arr.length != 3 then throw new IllegalArgumentException(s"Vector array expected to have 3 elements (x,y,z) distances but found ${arr.length} elements.")
 
     Vector3D(arr(0), arr(1), arr(2))

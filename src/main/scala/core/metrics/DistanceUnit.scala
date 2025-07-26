@@ -18,13 +18,27 @@ sealed trait DistanceUnit {
 
   // Symbol for display (e.g., "m", "km").
   def symbol: String
-  
+
   override def toString: String = s"$value $symbol"
+}
+
+sealed trait DistanceUnitCompanion[T <: DistanceUnit] {
+  def fromMeter(meters: Double): T
 }
 
 /** Companion object for DistanceUnit containing implementations of different distance units
  * and utility methods for distance calculations */
 object DistanceUnit {
+  private val AU_TO_METERS = 1.495978707e11
+
+  /** Creates a specific distance unit from meters
+   *
+   * @param meters      the distance in meters
+   * @param unitFactory the factory function to create the desired unit
+   * @tparam T the type of distance unit to create
+   * @return distance in the specified unit */
+  def fromMeters[T <: DistanceUnit](meters: Double, unitFactory: Double => T): T = unitFactory(meters)
+
   /** Represents distance in meters
    *
    * @param value the distance value in meters */
@@ -42,7 +56,7 @@ object DistanceUnit {
   case class Kilometer(value: Double) extends DistanceUnit {
     override def toMeter: Double = value * 1000.0
 
-    override def fromMeter(meters: Double): Kilometer = Kilometer(meters / 1000.0)
+    override def fromMeter(meters: Double): Kilometer = Kilometer.fromMeter(meters)
 
     override def symbol: String = "km"
   }
@@ -51,40 +65,44 @@ object DistanceUnit {
    *
    * @param value the distance value in astronomical units */
   case class AstronomicalUnit(value: Double) extends DistanceUnit {
-    private val AU_TO_METERS = 1.495978707e11
-
     override def toMeter: Double = value * AU_TO_METERS
 
-    override def fromMeter(meters: Double): AstronomicalUnit = AstronomicalUnit(meters / AU_TO_METERS)
+    override def fromMeter(meters: Double): AstronomicalUnit = AstronomicalUnit.fromMeter(meters)
 
     override def symbol: String = "AU"
   }
+
+  object Kilometer extends DistanceUnitCompanion[Kilometer] {
+    def fromMeter(meters: Double): Kilometer = Kilometer(meters / 1000.0)
+
+    def apply(value: Double): Kilometer = new Kilometer(value)
+  }
+
 
   /** Provides binary operations for DistanceUnit
    *
    * @param self the DistanceUnit instance on which operations are performed */
   implicit class BinOp(self: DistanceUnit) {
-    def +(second: DistanceUnit) : DistanceUnit =
+    def +(second: DistanceUnit): DistanceUnit =
       self.fromMeter(self.toMeter + second.toMeter)
 
-    def -(second: DistanceUnit) : DistanceUnit =
+    def -(second: DistanceUnit): DistanceUnit =
       self.fromMeter(self.toMeter - second.toMeter)
 
     def ~(second: DistanceUnit, epsilon: Double = 1e-10): Boolean =
       Math.abs(self.toMeter - second.toMeter) < epsilon
-      
+
     def *(second: DistanceUnit): DistanceUnit =
       self.fromMeter(self.toMeter * second.toMeter)
-    
+
     def /(second: DistanceUnit): DistanceUnit =
       self.fromMeter(self.toMeter / second.toMeter)
   }
 
-  /** Creates a specific distance unit from meters
-   *
-   * @param meters      the distance in meters
-   * @param unitFactory the factory function to create the desired unit
-   * @tparam T the type of distance unit to create
-   * @return distance in the specified unit */
-  def fromMeters[T <: DistanceUnit](meters: Double, unitFactory: Double => T): T = unitFactory(meters)
+  object AstronomicalUnit extends DistanceUnitCompanion[AstronomicalUnit] {
+    def fromMeter(meters: Double): AstronomicalUnit = AstronomicalUnit(meters / AU_TO_METERS)
+
+    def apply(value: Double): AstronomicalUnit = new AstronomicalUnit(value)
+  }
+
 }
