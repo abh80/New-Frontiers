@@ -6,12 +6,12 @@ import org.scalatest.funsuite.AnyFunSuite
 import scala.util.Random
 
 class TimeFormatSpec extends AnyFunSuite {
-  test("time offset addition") {
+  test("time format addition") {
     checkResult(TimeFormat(24L, 940L) + TimeFormat(36L, 7400L), 60L, 8340L)
     checkResult(TimeFormat(24L, 940L) + TimeFormat(-20L, -1000L), 3L, 999999999999999940L)
   }
 
-  test("time offset subtraction") {
+  test("time format subtraction") {
     checkResult(TimeFormat(1234L, 7028L) - TimeFormat(781L, 1043L), 453L, 5985L)
     checkResult(TimeFormat(1L, 0L) - TimeFormat(2L, 1L), -2L, 999999999999999999L)
   }
@@ -26,7 +26,7 @@ class TimeFormatSpec extends AnyFunSuite {
     assertResult("86400.000000000000000000")(TimeFormat.DAY.toString)
   }
 
-  test("time offset constants") {
+  test("time format constants") {
     checkResult(TimeFormat.MICROSECOND, 0L, 1_000_000_000_000L)
     checkResult(TimeFormat.MILLISECOND, 0L, 1_000_000_000_000_000L)
     checkResult(TimeFormat.SECOND, 1L, 0L)
@@ -35,7 +35,7 @@ class TimeFormatSpec extends AnyFunSuite {
     checkResult(TimeFormat.DAY, 86400L, 0L)
   }
 
-  test("time offset multiplication") {
+  test("time format multiplication") {
     assertThrows[IllegalArgumentException](TimeFormat(1L, 1L) * -1) // scalar cannot be negative
 
     checkResult(TimeFormat(1L, 7L) * 0L, 0L, 0L)
@@ -50,7 +50,7 @@ class TimeFormatSpec extends AnyFunSuite {
 
   }
 
-  test("time offset division") {
+  test("time format division") {
     assertThrows[IllegalArgumentException](TimeFormat(1L, 1L) / 0L)
 
     checkResult(TimeFormat(1234L, 123456789012345678L) / 1L, 1234L, 123456789012345678L)
@@ -61,7 +61,7 @@ class TimeFormatSpec extends AnyFunSuite {
     checkResult(TimeFormat(1L, 0L) / 1000000000, 0L, 1000000000L)
   }
 
-  test("time offset random division") {
+  test("time format random division") {
     val rand = Random()
 
     for (i <- 0 until 1_000_000) {
@@ -72,7 +72,7 @@ class TimeFormatSpec extends AnyFunSuite {
     }
   }
 
-  test("time offset negation") {
+  test("time format negation") {
     for (s <- -999L until 1000L by 10) {
       for (a <- -999L until 1000L by 10) {
         val t = TimeFormat(s, a)
@@ -81,7 +81,7 @@ class TimeFormatSpec extends AnyFunSuite {
     }
   }
 
-  test("time offset equals") {
+  test("time format equals") {
     val offsets = Array(TimeFormat(200L, 300L), TimeFormat(70L, 1L), TimeFormat(0L, 0L), TimeFormat(-25L, 1L), TimeFormat.DAY, TimeFormat.HOUR, TimeFormat.MICROSECOND)
     for (i <- offsets.indices) {
       for (j <- offsets.indices) {
@@ -91,7 +91,7 @@ class TimeFormatSpec extends AnyFunSuite {
     }
   }
 
-  test("time offset check multiples") {
+  test("time format check multiples") {
     for (i <- 1 to 100) do
       checkMultiple(i, TimeFormat.Zero, TimeFormat.Zero)
 
@@ -115,9 +115,25 @@ class TimeFormatSpec extends AnyFunSuite {
     assertResult(attoSeconds)(t.getAttoSeconds)
   }
 
-  test("out of range") {
+  test("time format out of range") {
     assertThrows[IllegalArgumentException](TimeFormat(0L, 1e25.toLong))
     assertThrows[IllegalArgumentException](TimeFormat(0L, -1e25.toLong))
     assertThrows[IllegalArgumentException](TimeFormat(0L, 1e19.toLong))
+  }
+  
+  test("time format from time unit") {
+    import TimeUnit._
+    import TimeFormat.fromTimeUnit
+
+    checkResult(fromTimeUnit(10, DAYS), 864_000L, 0L)
+    checkResult(fromTimeUnit(100, HOURS), 360_000L, 0L)
+    checkResult(fromTimeUnit(2, MINUTES), 120L, 0L)
+    checkResult(fromTimeUnit(5, SECONDS), 5L, 0L)
+    checkResult(fromTimeUnit(8, MILLISECONDS), 0L, 800_000_000_000_000_0L)
+    checkResult(fromTimeUnit(2, MICROSECONDS), 0L, 2e12.toLong)
+    checkResult(fromTimeUnit(7, NANOSECONDS), 0L, 7e9.toLong)
+    checkResult(fromTimeUnit(25, PICOSECONDS), 0L, 25e6.toLong)
+    checkResult(fromTimeUnit(37, FEMTOSECONDS), 0L, 37e3.toLong)
+    checkResult(fromTimeUnit(100, ATTOSECONDS), 0L, 100L)
   }
 }

@@ -25,6 +25,8 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
   def negate(): TimeFormat =
     TimeFormat(-seconds, -attoseconds)
 
+  def isZero: Boolean = seconds == 0L && attoseconds == 0L
+
   private def init(): Unit =
     val qAtto = attoseconds / ATTOSECONDS_PER_SECOND
     val rAtto = attoseconds - qAtto * ATTOSECONDS_PER_SECOND
@@ -35,8 +37,6 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
       this.seconds = seconds + qAtto
       this.attoseconds = rAtto
     }
-
-  def isZero: Boolean = seconds == 0L && attoseconds == 0L
 }
 
 object TimeFormat {
@@ -61,6 +61,17 @@ object TimeFormat {
     def -(second: TimeFormat): TimeFormat =
       new TimeFormat(self.seconds - second.seconds, self.attoseconds - second.attoseconds)
 
+    def *(scalar: Long): TimeFormat = {
+      require(scalar >= 0, "Multiplication by scalar cannot be negative")
+
+      if scalar == 0 then return new TimeFormat(0L, 0L)
+      if scalar == 1 then return self
+
+      val (seconds, atto, scalarBig, attosecondsPerSecondBig) = toBigInts(scalar)
+      val resultBig = seconds.multiply(attosecondsPerSecondBig).add(atto).multiply(scalarBig)
+      calculateResult(resultBig, attosecondsPerSecondBig)
+    }
+
     @throws[IllegalArgumentException]
     @throws[ArithmeticException]
     private def toBigInts(scalar: Long) = {
@@ -78,17 +89,6 @@ object TimeFormat {
       new TimeFormat(resSeconds.longValueExact(), resAttoseconds.longValueExact())
     }
 
-    def *(scalar: Long): TimeFormat = {
-      require(scalar >= 0, "Multiplication by scalar cannot be negative")
-
-      if scalar == 0 then return new TimeFormat(0L, 0L)
-      if scalar == 1 then return self
-
-      val (seconds, atto, scalarBig, attosecondsPerSecondBig) = toBigInts(scalar)
-      val resultBig = seconds.multiply(attosecondsPerSecondBig).add(atto).multiply(scalarBig)
-      calculateResult(resultBig, attosecondsPerSecondBig)
-    }
-
     def /(scalar: Long): TimeFormat = {
       require(scalar > 0, "Division by scalar which must be strictly positive")
 
@@ -99,6 +99,20 @@ object TimeFormat {
       calculateResult(resultBig, attosecondsPerSecondBig)
     }
   }
+
+  def fromTimeUnit(value: Long, unit: TimeUnit): TimeFormat =
+    unit match {
+      case TimeUnit.DAYS => DAY * value
+      case TimeUnit.HOURS => HOUR * value
+      case TimeUnit.MINUTES => MINUTE * value
+      case TimeUnit.SECONDS => SECOND * value
+      case TimeUnit.MILLISECONDS => MILLISECOND * value
+      case TimeUnit.MICROSECONDS => MICROSECOND * value
+      case TimeUnit.NANOSECONDS => NANOSECOND * value
+      case TimeUnit.PICOSECONDS => PICOSECOND * value
+      case TimeUnit.FEMTOSECONDS => FEMTOSECOND * value
+      case TimeUnit.ATTOSECONDS => ATTOSECOND * value
+    }
 
   private def formatAttoSecond(s: Long) = String.format("%018d", s)
 }
