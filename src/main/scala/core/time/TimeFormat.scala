@@ -7,7 +7,7 @@ private val MICROS_PER_SECOND: Long = 1_000_000
 private val ATTOSECOND_SPLIT = 1_000_000_000L
 
 @throws[IllegalArgumentException]
-class TimeOffset(private var seconds: Long, private var attoseconds: Long) extends Comparable[TimeOffset] with Serializable {
+class TimeFormat(private var seconds: Long, private var attoseconds: Long) extends Comparable[TimeFormat] with Serializable {
 
   require(attoseconds >= -ATTOSECONDS_PER_SECOND && attoseconds <= ATTOSECONDS_PER_SECOND,
     s"Attoseconds must be in range (-${ATTOSECONDS_PER_SECOND}, $ATTOSECONDS_PER_SECOND) but found $attoseconds")
@@ -18,12 +18,12 @@ class TimeOffset(private var seconds: Long, private var attoseconds: Long) exten
 
   def getAttoSeconds: Long = attoseconds
 
-  override def compareTo(o: TimeOffset): Int = if seconds == o.seconds then seconds.compare(o.seconds) else attoseconds.compare(o.attoseconds)
+  override def compareTo(o: TimeFormat): Int = if seconds == o.seconds then seconds.compare(o.seconds) else attoseconds.compare(o.attoseconds)
 
-  override def toString: String = seconds.toString + "." + TimeOffset.formatAttoSecond(attoseconds)
+  override def toString: String = seconds.toString + "." + TimeFormat.formatAttoSecond(attoseconds)
 
-  def negate(): TimeOffset =
-    TimeOffset(-seconds, -attoseconds)
+  def negate(): TimeFormat =
+    TimeFormat(-seconds, -attoseconds)
 
   private def init(): Unit =
     val qAtto = attoseconds / ATTOSECONDS_PER_SECOND
@@ -35,31 +35,31 @@ class TimeOffset(private var seconds: Long, private var attoseconds: Long) exten
       this.seconds = seconds + qAtto
       this.attoseconds = rAtto
     }
-    
-  def isZero: Boolean = seconds == 0L && attoseconds == 0L  
+
+  def isZero: Boolean = seconds == 0L && attoseconds == 0L
 }
 
-object TimeOffset {
+object TimeFormat {
 
-  val Zero = new TimeOffset(0L, 0L)
-  val ATTOSECOND = new TimeOffset(0L, 1L)
-  val FEMTOSECOND = new TimeOffset(0L, 1_000L)
-  val PICOSECOND = new TimeOffset(0L, 1_000_000L)
-  val NANOSECOND = new TimeOffset(0L, 1_000_000_000L)
-  val MICROSECOND = new TimeOffset(0L, 1_000_000_000_000L)
-  val MILLISECOND = new TimeOffset(0L, 1_000_000_000_000_000L)
-  val SECOND = new TimeOffset(1L, 0L)
-  val MINUTE = new TimeOffset(60L, 0L)
-  val HOUR = new TimeOffset(3_600L, 0L)
-  val DAY = new TimeOffset(86_400L, 0L)
+  val Zero = new TimeFormat(0L, 0L)
+  val ATTOSECOND = new TimeFormat(0L, 1L)
+  val FEMTOSECOND = new TimeFormat(0L, 1_000L)
+  val PICOSECOND = new TimeFormat(0L, 1_000_000L)
+  val NANOSECOND = new TimeFormat(0L, 1_000_000_000L)
+  val MICROSECOND = new TimeFormat(0L, 1_000_000_000_000L)
+  val MILLISECOND = new TimeFormat(0L, 1_000_000_000_000_000L)
+  val SECOND = new TimeFormat(1L, 0L)
+  val MINUTE = new TimeFormat(60L, 0L)
+  val HOUR = new TimeFormat(3_600L, 0L)
+  val DAY = new TimeFormat(86_400L, 0L)
 
 
-  implicit class BinOp(self: TimeOffset) {
-    def +(second: TimeOffset): TimeOffset =
-      new TimeOffset(self.seconds + second.seconds, self.attoseconds + second.attoseconds)
+  implicit class BinOp(self: TimeFormat) {
+    def +(second: TimeFormat): TimeFormat =
+      new TimeFormat(self.seconds + second.seconds, self.attoseconds + second.attoseconds)
 
-    def -(second: TimeOffset): TimeOffset =
-      new TimeOffset(self.seconds - second.seconds, self.attoseconds - second.attoseconds)
+    def -(second: TimeFormat): TimeFormat =
+      new TimeFormat(self.seconds - second.seconds, self.attoseconds - second.attoseconds)
 
     @throws[IllegalArgumentException]
     @throws[ArithmeticException]
@@ -75,13 +75,13 @@ object TimeOffset {
     private def calculateResult(resultBig: java.math.BigInteger, attosecondsPerSecondBig: java.math.BigInteger) = {
       val resSeconds = resultBig.divide(attosecondsPerSecondBig)
       val resAttoseconds = resultBig.remainder(attosecondsPerSecondBig)
-      new TimeOffset(resSeconds.longValueExact(), resAttoseconds.longValueExact())
+      new TimeFormat(resSeconds.longValueExact(), resAttoseconds.longValueExact())
     }
 
-    def *(scalar: Long): TimeOffset = {
+    def *(scalar: Long): TimeFormat = {
       require(scalar >= 0, "Multiplication by scalar cannot be negative")
 
-      if scalar == 0 then return new TimeOffset(0L, 0L)
+      if scalar == 0 then return new TimeFormat(0L, 0L)
       if scalar == 1 then return self
 
       val (seconds, atto, scalarBig, attosecondsPerSecondBig) = toBigInts(scalar)
@@ -89,7 +89,7 @@ object TimeOffset {
       calculateResult(resultBig, attosecondsPerSecondBig)
     }
 
-    def /(scalar: Long): TimeOffset = {
+    def /(scalar: Long): TimeFormat = {
       require(scalar > 0, "Division by scalar which must be strictly positive")
 
       if scalar == 1 then return self
