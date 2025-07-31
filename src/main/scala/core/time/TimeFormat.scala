@@ -6,6 +6,32 @@ private val MILLIS_PER_SECOND: Long = 1_000
 private val MICROS_PER_SECOND: Long = 1_000_000
 private val ATTOSECOND_SPLIT = 1_000_000_000L
 
+/**
+ * Represents a time format with second and attosecond precision.
+ *
+ * This class allows representing time values with a high degree of precision,
+ * using seconds and attoseconds (10&#94;-18 seconds) as the units.
+ * It provides functionalities for basic arithmetic operations,
+ * comparisons, and conversions to and from other time units.
+ *
+ *
+ * @param seconds     The number of seconds. Can be positive, negative, or zero.
+ * @param attoseconds The number of attoseconds. Can be positive, negative, or zero.
+ *                    Must be in the range (-10&#94;18, 10&#94;18).
+ * @throws IllegalArgumentException if attoseconds is outside the allowed range.
+ *
+ * Example usage:
+ * {{{
+ *   val time1 = new TimeFormat(1, 500000000000000000L) // 1.5 seconds
+ *   val time2 = new TimeFormat(0, 750000000000000000L) // 0.75 seconds
+ *
+ *   val sum = time1 + time2 // 2.25 seconds
+ *   val difference = time1 - time2 // 0.75 seconds
+ *
+ *   println(s"Sum: $sum")
+ *   println(s"Difference: $difference")
+ * }}}
+ */
 @throws[IllegalArgumentException]
 class TimeFormat(private var seconds: Long, private var attoseconds: Long) extends Comparable[TimeFormat] with Serializable {
 
@@ -14,18 +40,54 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
 
   init()
 
-  def getSeconds: Long = seconds
-
-  def getAttoSeconds: Long = attoseconds
-
+  /** Compares this TimeFormat instance with another TimeFormat instance.
+   *
+   * @param o The TimeFormat instance to compare with
+   * @return An integer value:
+   *         - Negative if this instance is less than the other
+   *         - Zero if they are equal
+   *         - Positive if this instance is greater than the other
+   */
   override def compareTo(o: TimeFormat): Int = if seconds == o.seconds then seconds.compare(o.seconds) else attoseconds.compare(o.attoseconds)
 
+  /** Returns a string representation of the time format in the form "seconds.attoseconds"
+   * where attoseconds is padded with leading zeros to 18 digits.
+   *
+   * @return A string representation of the time value
+   */
   override def toString: String = seconds.toString + "." + TimeFormat.formatAttoSecond(attoseconds)
 
+  /** Creates a new TimeFormat instance with the negated values of seconds and attoseconds.
+   *
+   * @return A new TimeFormat instance with negated values
+   */
   def negate(): TimeFormat =
     TimeFormat(-seconds, -attoseconds)
 
+  /** Checks if this TimeFormat represents zero time (both seconds and attoseconds are 0).
+   *
+   * @return true if the time value is zero, false otherwise
+   */
   def isZero: Boolean = seconds == 0L && attoseconds == 0L
+
+  /** Copy constructor that creates a new TimeFormat instance from an existing one.
+   *
+   * @param tf The TimeFormat instance to copy
+   */
+  def this(tf: TimeFormat) =
+    this(tf.getSeconds, tf.getAttoSeconds)
+
+  /** Gets the seconds component of the time value.
+   *
+   * @return The number of seconds
+   */
+  def getSeconds: Long = seconds
+
+  /** Gets the attoseconds component of the time value.
+   *
+   * @return The number of attoseconds
+   */
+  def getAttoSeconds: Long = attoseconds
 
   private def init(): Unit =
     val qAtto = attoseconds / ATTOSECONDS_PER_SECOND
@@ -55,12 +117,28 @@ object TimeFormat {
 
 
   implicit class BinOp(self: TimeFormat) {
+    /** Adds two TimeFormat instances.
+     *
+     * @param second The TimeFormat instance to add
+     * @return A new TimeFormat instance representing the sum
+     */
     def +(second: TimeFormat): TimeFormat =
       new TimeFormat(self.seconds + second.seconds, self.attoseconds + second.attoseconds)
 
+    /** Subtracts one TimeFormat instance from another.
+     *
+     * @param second The TimeFormat instance to subtract
+     * @return A new TimeFormat instance representing the difference
+     */
     def -(second: TimeFormat): TimeFormat =
       new TimeFormat(self.seconds - second.seconds, self.attoseconds - second.attoseconds)
 
+    /** Multiplies the time value by a scalar.
+     *
+     * @param scalar The non-negative scalar value to multiply by
+     * @return A new TimeFormat instance representing the product
+     * @throws IllegalArgumentException if scalar is negative
+     */
     def *(scalar: Long): TimeFormat = {
       require(scalar >= 0, "Multiplication by scalar cannot be negative")
 
@@ -69,6 +147,22 @@ object TimeFormat {
 
       val (seconds, atto, scalarBig, attosecondsPerSecondBig) = toBigInts(scalar)
       val resultBig = seconds.multiply(attosecondsPerSecondBig).add(atto).multiply(scalarBig)
+      calculateResult(resultBig, attosecondsPerSecondBig)
+    }
+
+    /** Divides the time value by a scalar.
+     *
+     * @param scalar The positive scalar value to divide by
+     * @return A new TimeFormat instance representing the quotient
+     * @throws IllegalArgumentException if scalar is not positive
+     */
+    def /(scalar: Long): TimeFormat = {
+      require(scalar > 0, "Division by scalar which must be strictly positive")
+
+      if scalar == 1 then return self
+
+      val (seconds, atto, scalarBig, attosecondsPerSecondBig) = toBigInts(scalar)
+      val resultBig = seconds.multiply(attosecondsPerSecondBig).add(atto).divide(scalarBig)
       calculateResult(resultBig, attosecondsPerSecondBig)
     }
 
@@ -88,18 +182,14 @@ object TimeFormat {
       val resAttoseconds = resultBig.remainder(attosecondsPerSecondBig)
       new TimeFormat(resSeconds.longValueExact(), resAttoseconds.longValueExact())
     }
-
-    def /(scalar: Long): TimeFormat = {
-      require(scalar > 0, "Division by scalar which must be strictly positive")
-
-      if scalar == 1 then return self
-
-      val (seconds, atto, scalarBig, attosecondsPerSecondBig) = toBigInts(scalar)
-      val resultBig = seconds.multiply(attosecondsPerSecondBig).add(atto).divide(scalarBig)
-      calculateResult(resultBig, attosecondsPerSecondBig)
-    }
   }
 
+  /** Converts a time value from a specific TimeUnit to TimeFormat.
+   *
+   * @param value The time value to convert
+   * @param unit The TimeUnit of the input value
+   * @return A new TimeFormat instance representing the converted time
+   */
   def fromTimeUnit(value: Long, unit: TimeUnit): TimeFormat =
     unit match {
       case TimeUnit.DAYS => DAY * value
@@ -114,5 +204,10 @@ object TimeFormat {
       case TimeUnit.ATTOSECONDS => ATTOSECOND * value
     }
 
+  /** Formats attoseconds as a string with leading zeros to 18 digits.
+   *
+   * @param s The attoseconds value to format
+   * @return A string representation of attoseconds padded to 18 digits
+   */
   private def formatAttoSecond(s: Long) = String.format("%018d", s)
 }
