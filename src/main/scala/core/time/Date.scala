@@ -27,7 +27,7 @@ private val JULIAN_YEAR_START_J2000 = -730122
  * @note This class is immutable and thread-safe
  * @note it's recommended to initialize this class from the `Date` companion object
  */
-class Date private extends Comparable[Date] {
+class Date private extends Comparable[Date] with Serializable {
   // Day of the month, in ISO standards, 1 till 31
   private var day: Int = -1
 
