@@ -121,10 +121,10 @@ class TimeFormatSpec extends AnyFunSuite {
     assertThrows[IllegalArgumentException](TimeFormat(0L, -1e25.toLong))
     assertThrows[IllegalArgumentException](TimeFormat(0L, 1e19.toLong))
   }
-  
+
   test("time format from time unit") {
-    import TimeUnit._
     import TimeFormat.fromTimeUnit
+    import TimeUnit.*
 
     checkResult(fromTimeUnit(10, DAYS), 864_000L, 0L)
     checkResult(fromTimeUnit(100, HOURS), 360_000L, 0L)
@@ -140,7 +140,7 @@ class TimeFormatSpec extends AnyFunSuite {
 
   test("time format from double with positive second") {
     import TimeFormat.fromDouble
-    import breeze.numerics._
+    import breeze.numerics.*
 
     val d = 123.4567890123456789
     val t = fromDouble(d)
@@ -158,5 +158,53 @@ class TimeFormatSpec extends AnyFunSuite {
     // adjusted for double precision loss
     checkResult(t, -124L, 543210987654319424L)
     assert(abs(d - t.toDouble) <= 1.0e-16)
+  }
+
+  private def checkRoundingResult(precision: Int, actual: TimeFormat, expected: TimeFormat): Unit = {
+    assertResult(expected)(actual.getRoundedFormat(precision))
+  }
+
+  test("time format rounded format positive") {
+    checkRoundingResult(0, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 0L))
+    checkRoundingResult(1, TimeFormat(9L, 123456789012345678L), TimeFormat(9L, 1L))
+    checkRoundingResult(2, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 12L))
+    checkRoundingResult(3, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 123L))
+    checkRoundingResult(4, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 1235L))
+    checkRoundingResult(5, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 12346L))
+    checkRoundingResult(6, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 123457L))
+    checkRoundingResult(7, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 1234568L))
+    checkRoundingResult(8, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 12345679L))
+    checkRoundingResult(9, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 123456789L))
+    checkRoundingResult(10, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 1234567890L))
+    checkRoundingResult(11, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 12345678901L))
+    checkRoundingResult(12, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 123456789012L))
+    checkRoundingResult(13, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 1234567890123L))
+    checkRoundingResult(14, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 12345678901235L))
+    checkRoundingResult(15, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 123456789012346L))
+    checkRoundingResult(16, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 1234567890123457L))
+    checkRoundingResult(17, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 12345678901234568L))
+    checkRoundingResult(18, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 123456789012345678L))
+  }
+
+  test("time format rounded format negetive") {
+    checkRoundingResult(0, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 0L).negate())
+    checkRoundingResult(1, TimeFormat(9L, 123456789012345678L).negate(), TimeFormat(9L, 1L).negate())
+    checkRoundingResult(2, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 12L).negate())
+    checkRoundingResult(3, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 123L).negate())
+    checkRoundingResult(4, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 1235L).negate())
+    checkRoundingResult(5, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 12346L).negate())
+    checkRoundingResult(6, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 123457L).negate())
+    checkRoundingResult(7, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 1234568L).negate())
+    checkRoundingResult(8, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 12345679L).negate())
+    checkRoundingResult(9, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 123456789L).negate())
+    checkRoundingResult(10, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 1234567890L).negate())
+    checkRoundingResult(11, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 12345678901L).negate())
+    checkRoundingResult(12, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 123456789012L).negate())
+    checkRoundingResult(13, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 1234567890123L).negate())
+    checkRoundingResult(14, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 12345678901235L).negate())
+    checkRoundingResult(15, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 123456789012346L).negate())
+    checkRoundingResult(16, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 1234567890123457L).negate())
+    checkRoundingResult(17, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 12345678901234568L).negate())
+    checkRoundingResult(18, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 123456789012345678L).negate())
   }
 }

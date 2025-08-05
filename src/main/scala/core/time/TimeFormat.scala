@@ -1,7 +1,10 @@
 package org.abh80.nf
 package core.time
 
-import breeze.numerics._
+import breeze.numerics.*
+
+import scala.math.BigDecimal.RoundingMode
+import scala.util.hashing.MurmurHash3
 
 private val ATTOSECONDS_PER_SECOND: Long = 1_000_000_000_000_000_000L // 10^18
 private val MILLIS_PER_SECOND: Long = 1_000
@@ -53,6 +56,7 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
 
   /**
    * Converts current time format to double, "seconds[.]attoseconds"
+   *
    * @return a double value
    */
   def toDouble: Double = seconds + (attoseconds.toDouble / ATTOSECONDS_PER_SECOND)
@@ -83,6 +87,33 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
    */
   def this(tf: TimeFormat) =
     this(tf.getSeconds, tf.getAttoSeconds)
+
+  def getRoundedFormat(precision: Int): TimeFormat = {
+    if (attoseconds < 0) return TimeFormat.Zero
+
+    // Compute the value as a BigDecimal in seconds
+    val value = BigDecimal(seconds) + BigDecimal(attoseconds) / BigDecimal("1e18")
+    // Round the value to the desired precision (number of decimal places)
+    val roundedValue = value.setScale(precision, RoundingMode.HALF_UP)
+
+    // Extract whole seconds part
+    val secondsRounded: Long = roundedValue.setScale(0, RoundingMode.DOWN).toLong
+
+    // Extract fractional part, then scale to attoseconds at the desired precision
+    val scaleFactor = BigDecimal(10).pow(precision)
+    val attosecBig = (roundedValue - BigDecimal(secondsRounded)) * scaleFactor
+    val attosecondsRounded: Long = attosecBig.setScale(0, RoundingMode.HALF_UP).toLong
+
+    TimeFormat(secondsRounded, attosecondsRounded)
+  }
+
+  override def hashCode(): Int = MurmurHash3.productHash((seconds, attoseconds))
+
+  override def equals(obj: Any): Boolean =
+    obj match {
+      case s: TimeFormat => s.getSeconds == seconds && s.getAttoSeconds == attoseconds
+      case _ => false
+    }
 
   /** Gets the seconds component of the time value.
    *
@@ -157,22 +188,6 @@ object TimeFormat {
       calculateResult(resultBig, attosecondsPerSecondBig)
     }
 
-    /** Divides the time value by a scalar.
-     *
-     * @param scalar The positive scalar value to divide by
-     * @return A new TimeFormat instance representing the quotient
-     * @throws IllegalArgumentException if scalar is not positive
-     */
-    def /(scalar: Long): TimeFormat = {
-      require(scalar > 0, "Division by scalar which must be strictly positive")
-
-      if scalar == 1 then return self
-
-      val (seconds, atto, scalarBig, attosecondsPerSecondBig) = toBigInts(scalar)
-      val resultBig = seconds.multiply(attosecondsPerSecondBig).add(atto).divide(scalarBig)
-      calculateResult(resultBig, attosecondsPerSecondBig)
-    }
-
     @throws[IllegalArgumentException]
     @throws[ArithmeticException]
     private def toBigInts(scalar: Long) = {
@@ -188,6 +203,22 @@ object TimeFormat {
       val resSeconds = resultBig.divide(attosecondsPerSecondBig)
       val resAttoseconds = resultBig.remainder(attosecondsPerSecondBig)
       new TimeFormat(resSeconds.longValueExact(), resAttoseconds.longValueExact())
+    }
+
+    /** Divides the time value by a scalar.
+     *
+     * @param scalar The positive scalar value to divide by
+     * @return A new TimeFormat instance representing the quotient
+     * @throws IllegalArgumentException if scalar is not positive
+     */
+    def /(scalar: Long): TimeFormat = {
+      require(scalar > 0, "Division by scalar which must be strictly positive")
+
+      if scalar == 1 then return self
+
+      val (seconds, atto, scalarBig, attosecondsPerSecondBig) = toBigInts(scalar)
+      val resultBig = seconds.multiply(attosecondsPerSecondBig).add(atto).divide(scalarBig)
+      calculateResult(resultBig, attosecondsPerSecondBig)
     }
   }
 
@@ -211,13 +242,6 @@ object TimeFormat {
       case TimeUnit.ATTOSECONDS => ATTOSECOND * value
     }
 
-  /** Formats attoseconds as a string with leading zeros to 18 digits.
-   *
-   * @param s The attoseconds value to format
-   * @return A string representation of attoseconds padded to 18 digits
-   */
-  private def formatAttoSecond(s: Long) = String.format("%018d", s)
-
   @throws[IllegalArgumentException]
   def fromDouble(seconds: Double): TimeFormat = {
     require(Double.NaN != seconds, "Input should not be a type of NaN")
@@ -232,4 +256,11 @@ object TimeFormat {
 
     TimeFormat(longSeconds, attoSeconds)
   }
+
+  /** Formats attoseconds as a string with leading zeros to 18 digits.
+   *
+   * @param s The attoseconds value to format
+   * @return A string representation of attoseconds padded to 18 digits
+   */
+  private def formatAttoSecond(s: Long) = String.format("%018d", s)
 }
