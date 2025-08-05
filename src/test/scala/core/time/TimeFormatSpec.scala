@@ -1,6 +1,7 @@
 package org.abh80.nf
 package core.time
 
+import breeze.numerics.abs
 import org.scalatest.funsuite.AnyFunSuite
 
 import scala.util.Random
@@ -135,5 +136,27 @@ class TimeFormatSpec extends AnyFunSuite {
     checkResult(fromTimeUnit(25, PICOSECONDS), 0L, 25e6.toLong)
     checkResult(fromTimeUnit(37, FEMTOSECONDS), 0L, 37e3.toLong)
     checkResult(fromTimeUnit(100, ATTOSECONDS), 0L, 100L)
+  }
+
+  test("time format from double with positive second") {
+    import TimeFormat.fromDouble
+    import breeze.numerics._
+
+    val d = 123.4567890123456789
+    val t = fromDouble(d)
+
+    // adjusted for double precision loss
+    checkResult(t, 123L, 456789012345680576L)
+    assert(abs(d - t.toDouble) <= 1.0e-16)
+  }
+
+  test("time format from double with negative second") {
+    import TimeFormat.fromDouble
+    val d = -123.4567890123456789
+    val t = fromDouble(d)
+
+    // adjusted for double precision loss
+    checkResult(t, -124L, 543210987654319424L)
+    assert(abs(d - t.toDouble) <= 1.0e-16)
   }
 }

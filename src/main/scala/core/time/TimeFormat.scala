@@ -1,6 +1,8 @@
 package org.abh80.nf
 package core.time
 
+import breeze.numerics._
+
 private val ATTOSECONDS_PER_SECOND: Long = 1_000_000_000_000_000_000L // 10^18
 private val MILLIS_PER_SECOND: Long = 1_000
 private val MICROS_PER_SECOND: Long = 1_000_000
@@ -14,13 +16,12 @@ private val ATTOSECOND_SPLIT = 1_000_000_000L
  * It provides functionalities for basic arithmetic operations,
  * comparisons, and conversions to and from other time units.
  *
- *
  * @param seconds     The number of seconds. Can be positive, negative, or zero.
  * @param attoseconds The number of attoseconds. Can be positive, negative, or zero.
  *                    Must be in the range (-10&#94;18, 10&#94;18).
  * @throws IllegalArgumentException if attoseconds is outside the allowed range.
  *
- * Example usage:
+ *                                  Example usage:
  * {{{
  *   val time1 = new TimeFormat(1, 500000000000000000L) // 1.5 seconds
  *   val time2 = new TimeFormat(0, 750000000000000000L) // 0.75 seconds
@@ -49,6 +50,12 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
    *         - Positive if this instance is greater than the other
    */
   override def compareTo(o: TimeFormat): Int = if seconds == o.seconds then seconds.compare(o.seconds) else attoseconds.compare(o.attoseconds)
+
+  /**
+   * Converts current time format to double, "seconds[.]attoseconds"
+   * @return a double value
+   */
+  def toDouble: Double = seconds + (attoseconds.toDouble / ATTOSECONDS_PER_SECOND)
 
   /** Returns a string representation of the time format in the form "seconds.attoseconds"
    * where attoseconds is padded with leading zeros to 18 digits.
@@ -187,7 +194,7 @@ object TimeFormat {
   /** Converts a time value from a specific TimeUnit to TimeFormat.
    *
    * @param value The time value to convert
-   * @param unit The TimeUnit of the input value
+   * @param unit  The TimeUnit of the input value
    * @return A new TimeFormat instance representing the converted time
    */
   def fromTimeUnit(value: Long, unit: TimeUnit): TimeFormat =
@@ -210,4 +217,19 @@ object TimeFormat {
    * @return A string representation of attoseconds padded to 18 digits
    */
   private def formatAttoSecond(s: Long) = String.format("%018d", s)
+
+  @throws[IllegalArgumentException]
+  def fromDouble(seconds: Double): TimeFormat = {
+    require(Double.NaN != seconds, "Input should not be a type of NaN")
+    require(Double.MaxValue >= seconds && Double.MinValue <= seconds, "Input seconds is not in range of Double")
+
+    val roundSeconds = floor(seconds)
+    val frac = seconds - roundSeconds
+
+
+    val longSeconds = roundSeconds.toLong
+    val attoSeconds = round(frac * ATTOSECONDS_PER_SECOND)
+
+    TimeFormat(longSeconds, attoSeconds)
+  }
 }
