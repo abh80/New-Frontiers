@@ -52,7 +52,7 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
    *         - Zero if they are equal
    *         - Positive if this instance is greater than the other
    */
-  override def compareTo(o: TimeFormat): Int = if seconds == o.seconds then seconds.compare(o.seconds) else attoseconds.compare(o.attoseconds)
+  override def compareTo(o: TimeFormat): Int = if seconds != o.seconds then seconds.compare(o.seconds) else attoseconds.compare(o.attoseconds)
 
   /**
    * Converts current time format to double, "seconds[.]attoseconds"

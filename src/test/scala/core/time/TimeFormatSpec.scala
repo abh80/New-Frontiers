@@ -3,10 +3,11 @@ package core.time
 
 import breeze.numerics.abs
 import org.scalatest.funsuite.AnyFunSuite
-
+import matchers.AlmostEqualsMatcher._
 import scala.util.Random
+import org.scalatest.matchers.should.Matchers
 
-class TimeFormatSpec extends AnyFunSuite {
+class TimeFormatSpec extends AnyFunSuite with Matchers {
   test("time format addition") {
     checkResult(TimeFormat(24L, 940L) + TimeFormat(36L, 7400L), 60L, 8340L)
     checkResult(TimeFormat(24L, 940L) + TimeFormat(-20L, -1000L), 3L, 999999999999999940L)
@@ -140,14 +141,13 @@ class TimeFormatSpec extends AnyFunSuite {
 
   test("time format from double with positive second") {
     import TimeFormat.fromDouble
-    import breeze.numerics.*
 
     val d = 123.4567890123456789
     val t = fromDouble(d)
 
     // adjusted for double precision loss
     checkResult(t, 123L, 456789012345680576L)
-    assert(abs(d - t.toDouble) <= 1.0e-16)
+    d should be(almostEquals(t.toDouble))
   }
 
   test("time format from double with negative second") {
@@ -157,7 +157,7 @@ class TimeFormatSpec extends AnyFunSuite {
 
     // adjusted for double precision loss
     checkResult(t, -124L, 543210987654319424L)
-    assert(abs(d - t.toDouble) <= 1.0e-16)
+    d should be(almostEquals(t.toDouble))
   }
 
   private def checkRoundingResult(precision: Int, actual: TimeFormat, expected: TimeFormat): Unit = {
