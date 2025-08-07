@@ -135,6 +135,7 @@ class TimeSpec extends AnyFunSuite with Matchers {
   test("ISO8601 string") {
     Time(10, 25, 43.12345).toISO8601String(1) shouldEqual "10:25:43.1"
     Time(10, 25, 43.1256).toISO8601String(2) shouldEqual "10:25:43.13"
+    Time(10, 25, 43.99).toISO8601String(0) shouldEqual "10:25:44"
   }
 
   private def createTime(hour: Int, minute: Int, seconds: Int, attoSeconds: Long = 0L, utcOffset: Int = 0): Time = {
