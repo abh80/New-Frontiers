@@ -343,6 +343,27 @@ class Date private extends Comparable[Date] with Serializable {
  */
 object Date {
 
+  /** The J2000.0 epoch, which is the fundamental epoch for the ICRF reference frame.
+   * Defined as January 1, 2000, at 12:00 TT (Terrestrial Time).
+   */
+  val J2000_0: Date = Date(2000, 1, 1)
+  /** The Julian epoch, which marks the beginning of the Julian calendar.
+   * Defined as January 1, 4713 BCE at 12:00 UT.
+   */
+  val JULIAN: Date = Date(-4713, 1, 1)
+  /** The Unix epoch, used as the starting point for Unix timestamps.
+   * Defined as January 1, 1970, at 00:00:00 UTC.
+   */
+  val UNIX: Date = Date(1970, 1, 1)
+  /** The CXCSEC epoch, used by the Chandra X-ray Observatory.
+   * Defined as January 1, 1998, at 00:00:00 TT.
+   */
+  val CXCSEC: Date = Date(1998, 1, 1)
+  /** The GPS epoch, used by the Global Positioning System.
+   * Defined as January 6, 1980, at 00:00:00 UTC.
+   */
+  val GPS: Date = Date(1980, 1, 6)
+
   /**
    * Constructs a `Date` instance from a J2000 day offset.
    *
@@ -398,25 +419,7 @@ object Date {
    * }}}
    */
   def apply(year: Int, days: Int): Date =
-    Date(EpochStoreFactory.J2000_0, Date(year - 1, 12, 31).getJ2000Day + days)
-
-  /**
-   * Constructs a `Date` instance from an epoch `Date` and a J2000 day offset.
-   *
-   * This method creates a new `Date` object relative to a specified epoch `Date`
-   * by adding a J2000 day offset to the epoch's J2000 day number.
-   *
-   * @param epoch       The base `Date` to use as the epoch.
-   * @param j2000Offset The number of days to offset from the epoch.
-   * @return A new `Date` instance representing the date at the specified offset from the epoch.
-   * @example
-   * {{{
-   *   val epoch: Date = Date(2020, 1, 1)
-   *   val futureDate: Date = Date(epoch, 100) // 100 days after January 1, 2020
-   * }}}
-   */
-  def apply(epoch: Date, j2000Offset: Int): Date =
-    new Date(epoch.getJ2000Day + j2000Offset)
+    Date(J2000_0, Date(year - 1, 12, 31).getJ2000Day + days)
 
   /**
    * Constructs a `Date` instance from year, month, and day components.
@@ -436,4 +439,22 @@ object Date {
    */
   def apply(year: Int, month: Int, day: Int): Date =
     new Date(year, month, day)
+
+  /**
+   * Constructs a `Date` instance from an epoch `Date` and a J2000 day offset.
+   *
+   * This method creates a new `Date` object relative to a specified epoch `Date`
+   * by adding a J2000 day offset to the epoch's J2000 day number.
+   *
+   * @param epoch       The base `Date` to use as the epoch.
+   * @param j2000Offset The number of days to offset from the epoch.
+   * @return A new `Date` instance representing the date at the specified offset from the epoch.
+   * @example
+   * {{{
+   *   val epoch: Date = Date(2020, 1, 1)
+   *   val futureDate: Date = Date(epoch, 100) // 100 days after January 1, 2020
+   * }}}
+   */
+  def apply(epoch: Date, j2000Offset: Int): Date =
+    new Date(epoch.getJ2000Day + j2000Offset)
 }
