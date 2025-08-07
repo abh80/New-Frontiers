@@ -47,27 +47,17 @@ class Date private extends Comparable[Date] with Serializable {
    * @return Week number (1-53)
    */
   def getWeek: Int =
-    /* 4th of January always lie on the first week of any year
-       Sure: https://en.wikipedia.org/wiki/ISO_week_date
-     */
-    val jan4 = new Date(year, 1, 4)
-    val jan4DayOfWeek = jan4.getDayOfWeek
+    val week1Monday = getWeek1MondayOfYear(year)
+    var daysSinceWeek1Monday = getJ2000Day - week1Monday
 
-    val week1Monday = jan4.getJ2000Day - jan4DayOfWeek + 1
-    val daysSinceWeek1Monday = getJ2000Day - week1Monday
+    if daysSinceWeek1Monday < 0 then {
+      daysSinceWeek1Monday += week1Monday - getWeek1MondayOfYear(year - 1)
+    } else if daysSinceWeek1Monday > 363 then
+      val weekLengthOfYear = getWeek1MondayOfYear(year + 1) - week1Monday
 
-    val weekNum = math.floor(daysSinceWeek1Monday / 7.0).toInt + 1
+      if daysSinceWeek1Monday >= weekLengthOfYear then daysSinceWeek1Monday -= weekLengthOfYear
 
-    if weekNum <= 0 then {
-      // Date belongs to the last week(s) of previous year
-      val dec31LastYear = new Date(year - 1, 12, 31)
-      dec31LastYear.getWeek
-    } else if weekNum >= 52 then {
-      // Check if this date belongs to week 1 of next year
-      val dec31ThisYear = new Date(year, 12, 31)
-      if getJ2000Day > dec31ThisYear.getJ2000Day - dec31ThisYear.getDayOfWeek + 1 then 1 // first week of next year
-      else weekNum
-    } else weekNum
+    1 + daysSinceWeek1Monday / 7
 
   /** Constructs a Date from year, month, and day components.
    *
@@ -113,8 +103,6 @@ class Date private extends Comparable[Date] with Serializable {
     yf
   }
 
-  private def getMonthFactory(yearFactory: YearFactory, year: Int): MonthFactory = if yearFactory.isLeap(year) then LeapYearFactory else NonLeapYearFactory
-
   /** Returns the Julian Day Number for this date.
    *
    * The Julian Day Number is a continuous count of days since the beginning
@@ -124,6 +112,24 @@ class Date private extends Comparable[Date] with Serializable {
    */
   def getJulianDay: Int =
     JULIAN_DAY_AT_J2000 + getJ2000Day
+
+  /** Returns the J2000 day number for this date.
+   *
+   * The J2000 day number is the number of days since January 1, 2000.
+   * Negative values indicate dates before J2000.
+   *
+   * @return J2000 day number
+   */
+  def getJ2000Day: Int =
+    var yf: YearFactory = GeorgianYear
+    if year <= 1582 then
+      if year < 1 then yf = ProlepticJulianYear
+      else if year < 1582 || month < 10 || month <= 10 && day <= 4 then yf = JulianYear
+
+    val mf = getMonthFactory(yf, year)
+    yf.getLastJ2000DayOfYear(year - 1) + mf.getDay(day, month)
+
+  private def getMonthFactory(yearFactory: YearFactory, year: Int): MonthFactory = if yearFactory.isLeap(year) then LeapYearFactory else NonLeapYearFactory
 
   /** Returns the month number (1-12).
    *
@@ -166,22 +172,6 @@ class Date private extends Comparable[Date] with Serializable {
   def getDayOfYear: Int =
     getJ2000Day - Date(year - 1, 12, 31).getJ2000Day
 
-  /** Returns the J2000 day number for this date.
-   *
-   * The J2000 day number is the number of days since January 1, 2000.
-   * Negative values indicate dates before J2000.
-   *
-   * @return J2000 day number
-   */
-  def getJ2000Day: Int =
-    var yf: YearFactory = GeorgianYear
-    if year <= 1582 then
-      if year < 1 then yf = ProlepticJulianYear
-      else if year < 1582 || month < 10 || month <= 10 && day <= 4 then yf = JulianYear
-
-    val mf = getMonthFactory(yf, year)
-    yf.getLastJ2000DayOfYear(year - 1) + mf.getDay(day, month)
-
   /** Returns the year component.
    *
    * @return Year (negative values indicate BCE)
@@ -209,6 +199,16 @@ class Date private extends Comparable[Date] with Serializable {
     case other: Date => this.year == other.year && this.month == other.month && this.day == other.day
     case _ => false
   }
+
+  /** 4th of January always lie on the first week of any year
+   * Source: https://en.wikipedia.org/wiki/ISO_week_date
+   */
+  private def getWeek1MondayOfYear(year: Int): Int =
+
+    val jan4 = new Date(year, 1, 4)
+    val jan4DayOfWeek = jan4.getDayOfWeek
+
+    jan4.getJ2000Day - jan4DayOfWeek + 1
 
   private sealed trait YearFactory {
     def getYear(j2000Day: Int): Int

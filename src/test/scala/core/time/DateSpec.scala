@@ -1,8 +1,9 @@
 package org.abh80.nf
 package core.time
 
-import org.scalatest.funsuite.AnyFunSuite
 import util.DateUtil.Month
+
+import org.scalatest.funsuite.AnyFunSuite
 
 class DateSpec extends AnyFunSuite {
   test("reference days") {
@@ -47,7 +48,7 @@ class DateSpec extends AnyFunSuite {
   test("day of year") {
     assertResult(1)(Date(2000, 1, 1).getDayOfYear)
     assertResult(365)(Date(1999, 12, 31).getDayOfYear)
-    assertResult(366)(Date(2000, 12 , 31).getDayOfYear)
+    assertResult(366)(Date(2000, 12, 31).getDayOfYear)
     assertResult(60)(Date(2004, 2, 29).getDayOfYear)
     assertResult(60)(Date(2001, 3, 1).getDayOfYear)
     assertResult(61)(Date(2008, 3, 1).getDayOfYear)
@@ -125,4 +126,33 @@ class DateSpec extends AnyFunSuite {
     assertResult("2004.02.29")(Date(2004, 2, 29).toString(ASIAN.apply))
     assertResult("10/15/1582")(Date(1582, 10, 15).toString(ANSI_INCITS_30_1997.apply))
   }
+
+  test("get week") {
+    assertResult(52)(Date(1995, 1, 1).getWeek)
+    assertResult(52)(Date(1996, 12, 29).getWeek)
+    assertResult(1)(Date(1996, 12, 30).getWeek)
+  }
+
+  test("ISO-8601 week-number edge cases") {
+    assertResult(1)(Date(2015, 1, 1).getWeek)
+    assertResult(53)(Date(2010, 1, 3).getWeek)
+    assertResult(53)(Date(2009, 12, 31).getWeek)
+
+    // --- 3. Years that actually have week 53 (leap-week years) ---
+    assertResult(53)(Date(2009, 12, 31).getWeek) // 2009 has week 53.
+    assertResult(53)(Date(2015, 12, 28).getWeek) // Monday of ISO week 53 in 2015.
+    assertResult(53)(Date(2020, 12, 31).getWeek) // Leap year with week 53.
+
+    // --- 4. First Monday of the year must be week 1, even if it is 31 Dec of previous year ---
+    assertResult(1)(Date(2007, 1, 1).getWeek) // Monday; 2007-01-01 is week 1 by definition.
+
+    // --- 5. Middle-of-year sanity check (should not be week 1/52/53) ---
+    assertResult(27)(Date(2024, 7, 3).getWeek) // Mid-year random date.
+
+    // --- 6. Minimum/maximum representable dates (if your Date class supports them) ---
+    // Adjust years if implementation limits differ.
+    assertResult(52)(Date(1900, 12, 30).getWeek) // Day before 1900-12-31 Monday (ISO week 1 of 1901).
+    assertResult(1)(Date(1901, 1, 1).getWeek) // Verify rollover at lower bound.
+  }
+
 }
