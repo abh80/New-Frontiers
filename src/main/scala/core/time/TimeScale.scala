@@ -6,9 +6,17 @@ trait TimeScale {
 
   val minuteDuration: Int = 60
 
-  def timePastTAI(date: Date): TimeFormat
+  def timePastTAI(time: AbsoluteTime): TimeFormat
 
-  def timeToTAI(date: Date): TimeFormat
+  def timeToTAI(date: Date, time: Time): TimeFormat =
+    val ref = new AbsoluteTime(date, time, TAIScale())
+    var offset = TimeFormat.Zero
+
+    for (i <- 1 until 5) {
+      offset = timePastTAI(ref ++ offset).negate()
+    }
+    
+    offset
 
   def getLastLeapSecond: TimeFormat = TimeFormat.Zero
 

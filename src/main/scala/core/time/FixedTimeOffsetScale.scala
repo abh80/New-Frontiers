@@ -14,12 +14,12 @@ class FixedTimeOffsetScale(override protected val name: String, val offset: Time
    *
    * @return The fixed offset, representing the time past TAI.
    */
-  override def timePastTAI(date: Date): TimeFormat = offset
+  override def timePastTAI(date: AbsoluteTime): TimeFormat = offset
 
   /**
    * Gets the time to TAI from this time scale.
    *
    * @return The negation of the fixed offset, representing the time to TAI.
    */
-  override def timeToTAI(date: Date): TimeFormat = offset.negate()
+  override def timeToTAI(date: Date, time: Time): TimeFormat = offset.negate()
 }

@@ -27,7 +27,7 @@ class DateSpec extends AnyFunSuite {
     )
 
     for (i <- referenceDays) {
-      val day = Date(EpochStoreFactory.J2000_0, i._4)
+      val day = Date(Date.J2000_0, i._4)
       assertResult(i._1)(day.getYear)
       assertResult(i._2)(day.getMonth)
       assertResult(i._3)(day.getDay)

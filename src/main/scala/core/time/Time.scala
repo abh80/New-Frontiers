@@ -6,7 +6,7 @@ import breeze.numerics.abs
 import scala.util.hashing.MurmurHash3
 
 private val SECONDS_IN_HOUR = 3600
-val SECONDS_IN_MINUTE = 60
+private val SECONDS_IN_MINUTE = 60
 
 /**
  * A robust time implementation with Hour, Minutes, Seconds of a day. Seconds are in precision up to attoseconds.
@@ -131,6 +131,9 @@ class Time private extends Comparable[Time] with Serializable {
 
   /** Get the seconds of the minute */
   def getSeconds: Double = seconds.toDouble
+  
+  /** Get the seconds of the minute as time format */
+  def getSecondsAsTimeFormat: TimeFormat = seconds
 
   /** Get the utc offset in minutes */
   def getUtcOffset: Int = utcOffset
