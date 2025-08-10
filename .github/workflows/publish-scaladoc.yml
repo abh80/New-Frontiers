@@ -1,44 +1,62 @@
-name: Publish ScalaDoc to GitHub Pages
+name: CI & Publish Docs
 
 on:
   push:
-    branches:
-      - master  # or your default branch
-
-permissions:
-  contents: write  # needed to push to gh-pages
+    branches: [ master ]      # adjust if your default branch is 'master'
+  workflow_dispatch:        # manual trigger from the Actions tab
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK
+      - name: Setup JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17  # or your Scala-compatible version
+          java-version: 11
+          cache: sbt              # speeds up successive runs
 
-      - name: Cache sbt
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.ivy2/cache
-            ~/.sbt
-            ~/.coursier
-          key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt-
+      - name: Setup sbt launcher
+        uses: sbt/setup-sbt@v1
 
-      - name: Build ScalaDoc
+      # -----------------------------------------------------------------
+      # 1. Compile & test the code (your original "+test" instruction)
+      # -----------------------------------------------------------------
+      - name: Build and Test
+        run: sbt +test
+
+      # -----------------------------------------------------------------
+      # 2. Produce Scaladoc
+      #    A plain 'doc' task is enough; no extra plugins required.
+      # -----------------------------------------------------------------
+      - name: Generate Scaladoc
         run: sbt doc
 
-      - name: Deploy to GitHub Pages
+      # -----------------------------------------------------------------
+      # 3. Stash the HTML in a predictable folder so the next step can
+      #    publish it.  We copy instead of moving because we still want
+      #    the original build folders intact in case you need them later.
+      # -----------------------------------------------------------------
+      - name: Collect generated site
+        shell: bash
+        run: |
+          DOC_DIR=$(echo target/scala-*/api)   # expands to the one folder
+          mkdir -p site
+          cp -R "$DOC_DIR"/. site
+          echo "Documentation copied from $DOC_DIR to ./site"
+
+      # -----------------------------------------------------------------
+      # 4. Push everything under ./site to the orphan branch gh-pages.
+      #    GitHub Pages must already be enabled for that branch in the
+      #    repo settings:  Settings ▸ Pages ▸ Branch = gh-pages / root
+      # -----------------------------------------------------------------
+      - name: Publish to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: target/scala-*/api
-          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # provided automatically
+          publish_dir: ./site
+          force_orphan: true                         # keep history small
