@@ -39,8 +39,8 @@ private val ATTOSECOND_SPLIT = 1_000_000_000L
 @throws[IllegalArgumentException]
 class TimeFormat(private var seconds: Long, private var attoseconds: Long) extends Comparable[TimeFormat] with Serializable {
 
-  require(attoseconds >= -ATTOSECONDS_PER_SECOND && attoseconds <= ATTOSECONDS_PER_SECOND,
-    s"Attoseconds must be in range (-${ATTOSECONDS_PER_SECOND}, $ATTOSECONDS_PER_SECOND) but found $attoseconds")
+  require(attoseconds >= Long.MinValue && attoseconds <= Long.MaxValue,
+    s"Attoseconds must be in range (${Long.MinValue}, ${Long.MaxValue}) but found $attoseconds")
 
   init()
 
@@ -247,14 +247,13 @@ object TimeFormat {
     require(Double.NaN != seconds, "Input should not be a type of NaN")
     require(Double.MaxValue >= seconds && Double.MinValue <= seconds, "Input seconds is not in range of Double")
 
-    val roundSeconds = floor(seconds)
+    val roundSeconds = rint(seconds)
     val frac = seconds - roundSeconds
 
 
-    val longSeconds = roundSeconds.toLong
-    val attoSeconds = round(frac * ATTOSECONDS_PER_SECOND)
-
-    TimeFormat(longSeconds, attoSeconds)
+    if frac < 0 then
+      TimeFormat(roundSeconds.toLong - 1L, round(frac * ATTOSECONDS_PER_SECOND) + ATTOSECONDS_PER_SECOND)
+    else TimeFormat(roundSeconds.toLong, round(frac * ATTOSECONDS_PER_SECOND))
   }
 
   /** Formats attoseconds as a string with leading zeros to 18 digits.
