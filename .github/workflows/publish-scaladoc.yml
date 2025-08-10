@@ -4,6 +4,10 @@ on:
   push:
     branches: [ master ]      # adjust if your default branch is 'master'
   workflow_dispatch:        # manual trigger from the Actions tab
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build:
