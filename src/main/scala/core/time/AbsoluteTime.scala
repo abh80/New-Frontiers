@@ -3,6 +3,7 @@ package core.time
 
 import core.time.EpochFactory.J2000_0
 import util.DateUtil.Month
+import java.time.Instant
 
 /**
  * Represents an absolute point in time based on a given time format and timescale.
@@ -101,6 +102,8 @@ class AbsoluteTime(tf: TimeFormat)
   def this(year: Int, month: Int, day: Int, scale: TimeScale) =
     this(Date(year, month, day), scale)
 
+  // TODO: add instant constructor after UTC
+
   def durationFrom(time: AbsoluteTime): TimeFormat = this - time
 
   def getTimeObject(scale: TimeScale): Time =
@@ -128,5 +131,8 @@ object AbsoluteTime {
   implicit class BinOp(self: AbsoluteTime) {
     def ++(other: TimeFormat): AbsoluteTime =
       AbsoluteTime(self + other)
+
+    def ++(shiftBy: Long) : AbsoluteTime =
+      AbsoluteTime(self + TimeFormat.fromDouble(shiftBy.toDouble))
   }
 }
