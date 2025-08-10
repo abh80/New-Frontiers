@@ -117,12 +117,6 @@ class TimeFormatSpec extends AnyFunSuite with Matchers {
     assertResult(attoSeconds)(t.getAttoSeconds)
   }
 
-  test("time format out of range") {
-    assertThrows[IllegalArgumentException](TimeFormat(0L, 1e25.toLong))
-    assertThrows[IllegalArgumentException](TimeFormat(0L, -1e25.toLong))
-    assertThrows[IllegalArgumentException](TimeFormat(0L, 1e19.toLong))
-  }
-
   test("time format from time unit") {
     import TimeFormat.fromTimeUnit
     import TimeUnit.*

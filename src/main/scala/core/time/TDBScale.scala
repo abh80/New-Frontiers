@@ -2,7 +2,7 @@ package org.abh80.nf
 package core.time
 
 import breeze.numerics.*
-import org.abh80.nf.core.metrics.AngleUnit
+import core.metrics.AngleUnit
 
 private val G0 = AngleUnit.Degree(357.53).toRadians
 private val G1 = AngleUnit.Degree(0.9856003).toRadians
@@ -10,11 +10,20 @@ private val G1 = AngleUnit.Degree(0.9856003).toRadians
 private val F1 = 0.001658
 private val F2 = 0.000028
 
-
 // credits: https://gssc.esa.int/navipedia/index.php/Transformations_between_Time_Systems#TAI_-_TDT,_TCG,_TT
+
+/**
+ *
+ * @param tt The Terrestrial Time Scale
+ * @param j2000Epoch The j2000 standard epoch
+ * @note Do not instantiate this class for most cases. See [[TimeScaleFactory]]
+ * @see [[TimeScale]]
+ */
 class TDBScale(val tt: TimeScale, j2000Epoch: AbsoluteTime = EpochFactory.J2000_0) extends TimeScale {
+  /** @inheritdoc */
   override protected val name: String = "TDB"
 
+  /** @inheritdoc */
   override def timePastTAI(date: AbsoluteTime): TimeFormat =
     val jdtt = date.durationFrom(j2000Epoch).toDouble / 86400.0
 
