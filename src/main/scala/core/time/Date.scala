@@ -3,6 +3,7 @@ package core.time
 
 import util.DateUtil.{ISO8601, Month, StringDateFormat}
 
+import java.time.Instant
 import scala.util.hashing.MurmurHash3
 
 private val JULIAN_DAY_AT_J2000 = 2451545
@@ -78,6 +79,7 @@ class Date private extends Comparable[Date] with Serializable {
     if check.year != year || month != check.month || year != check.year then throw new IllegalArgumentException("The provided year/month/day sequence does not exist")
   }
 
+
   /** Constructs a Date from J2000 day offset.
    *
    * @param j2000DayOffset Number of days since January 1, 2000
@@ -103,6 +105,12 @@ class Date private extends Comparable[Date] with Serializable {
     yf
   }
 
+  /**
+   * Constructs a Date from java Instant
+   */
+  def this(instant: Instant) =
+    this(((instant.getEpochSecond + instant.getNano / 1e9) / 86400).toInt - 10957)
+
   /** Returns the Julian Day Number for this date.
    *
    * The Julian Day Number is a continuous count of days since the beginning
@@ -112,24 +120,6 @@ class Date private extends Comparable[Date] with Serializable {
    */
   def getJulianDay: Int =
     JULIAN_DAY_AT_J2000 + getJ2000Day
-
-  /** Returns the J2000 day number for this date.
-   *
-   * The J2000 day number is the number of days since January 1, 2000.
-   * Negative values indicate dates before J2000.
-   *
-   * @return J2000 day number
-   */
-  def getJ2000Day: Int =
-    var yf: YearFactory = GeorgianYear
-    if year <= 1582 then
-      if year < 1 then yf = ProlepticJulianYear
-      else if year < 1582 || month < 10 || month <= 10 && day <= 4 then yf = JulianYear
-
-    val mf = getMonthFactory(yf, year)
-    yf.getLastJ2000DayOfYear(year - 1) + mf.getDay(day, month)
-
-  private def getMonthFactory(yearFactory: YearFactory, year: Int): MonthFactory = if yearFactory.isLeap(year) then LeapYearFactory else NonLeapYearFactory
 
   /** Returns the month number (1-12).
    *
@@ -171,6 +161,24 @@ class Date private extends Comparable[Date] with Serializable {
    */
   def getDayOfYear: Int =
     getJ2000Day - Date(year - 1, 12, 31).getJ2000Day
+
+  /** Returns the J2000 day number for this date.
+   *
+   * The J2000 day number is the number of days since January 1, 2000.
+   * Negative values indicate dates before J2000.
+   *
+   * @return J2000 day number
+   */
+  def getJ2000Day: Int =
+    var yf: YearFactory = GeorgianYear
+    if year <= 1582 then
+      if year < 1 then yf = ProlepticJulianYear
+      else if year < 1582 || month < 10 || month <= 10 && day <= 4 then yf = JulianYear
+
+    val mf = getMonthFactory(yf, year)
+    yf.getLastJ2000DayOfYear(year - 1) + mf.getDay(day, month)
+
+  private def getMonthFactory(yearFactory: YearFactory, year: Int): MonthFactory = if yearFactory.isLeap(year) then LeapYearFactory else NonLeapYearFactory
 
   /** Returns the year component.
    *
@@ -457,4 +465,12 @@ object Date {
    */
   def apply(epoch: Date, j2000Offset: Int): Date =
     new Date(epoch.getJ2000Day + j2000Offset)
+
+  /**
+   * Constructs a new `Date` instance from `Instant.now`
+   *
+   * This method creates a new `Date` object from the current instant of the time
+    * @return a `Date` instance representing the current Date
+   */
+  def now(): Date = new Date(Instant.now())
 }

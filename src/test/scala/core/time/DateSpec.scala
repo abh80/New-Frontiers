@@ -5,6 +5,8 @@ import util.DateUtil.Month
 
 import org.scalatest.funsuite.AnyFunSuite
 
+import java.time.Instant
+
 class DateSpec extends AnyFunSuite {
   test("reference days") {
     val referenceDays: Array[(Int, Int, Int, Int)] = Array(
@@ -155,4 +157,17 @@ class DateSpec extends AnyFunSuite {
     assertResult(1)(Date(1901, 1, 1).getWeek) // Verify rollover at lower bound.
   }
 
+  test("construct Date from Instant") {
+    val instant = Instant.parse("2000-01-01T00:00:00Z")
+    val date = new Date(instant)
+    assertResult(2000)(date.getYear)
+    assertResult(1)(date.getMonth)
+    assertResult(1)(date.getDay)
+
+    val instantBeforeJ2000 = Instant.parse("1999-12-31T23:59:59Z")
+    val dateBeforeJ2000 = new Date(instantBeforeJ2000)
+    assertResult(1999)(dateBeforeJ2000.getYear)
+    assertResult(12)(dateBeforeJ2000.getMonth)
+    assertResult(31)(dateBeforeJ2000.getDay)
+  }
 }
