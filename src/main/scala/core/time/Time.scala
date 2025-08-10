@@ -3,6 +3,7 @@ package core.time
 
 import breeze.numerics.abs
 
+import java.time.{Instant, ZoneOffset, ZonedDateTime}
 import scala.util.hashing.MurmurHash3
 
 private val SECONDS_IN_HOUR = 3600
@@ -89,6 +90,25 @@ class Time private extends Comparable[Time] with Serializable {
     this(hour, minute, TimeFormat.fromDouble(seconds))
 
   /**
+   * Build a time object from an `Instant`.
+   *
+   * @param instant the `Instant` to convert to a `Time` object
+   * @throws IllegalArgumentException if the conversion fails
+   *
+   *                                  This constructor assumes the UTC time zone and extracts the hour, minute, 
+   *                                  and second components from the provided `Instant`. The UTC offset is set to 0.
+   */
+  @throws[IllegalArgumentException]
+  def this(instant: Instant) = {
+    this()
+    val zonedDateTime: ZonedDateTime = instant.atZone(ZoneOffset.UTC)
+    this.hour = zonedDateTime.getHour
+    this.minute = zonedDateTime.getMinute
+    this.seconds = TimeFormat.fromDouble(zonedDateTime.getSecond + zonedDateTime.getNano / 1e9)
+    this.utcOffset = 0 // UTC offset is 0 for UTC
+  }
+
+  /**
    * Build a time object from seconds in a day.
    *
    * @param seconds the seconds parsed in TimeFormat
@@ -131,7 +151,7 @@ class Time private extends Comparable[Time] with Serializable {
 
   /** Get the seconds of the minute */
   def getSeconds: Double = seconds.toDouble
-  
+
   /** Get the seconds of the minute as time format */
   def getSecondsAsTimeFormat: TimeFormat = seconds
 
@@ -141,14 +161,14 @@ class Time private extends Comparable[Time] with Serializable {
   /** Compare with another Time Object */
   override def compareTo(o: Time): Int = getSecondsInUTCDay.compareTo(o.getSecondsInUTCDay)
 
+  /** Get the seconds of the day but adjusted with utc offset */
+  def getSecondsInUTCDay: Double = getSecondsInDayObject(utcOffset).toDouble
+
   /** Get the seconds of the day */
   def getSecondsInDay: Double = getSecondsInDayObject().toDouble
 
   /** Returns the seconds in a day as TimeFormat */
   private def getSecondsInDayObject(offset: Int = 0) = TimeFormat(hour * SECONDS_IN_HOUR + (minute - offset) * SECONDS_IN_MINUTE, 0L).+(seconds)
-
-  /** Get the seconds of the day but adjusted with utc offset */
-  def getSecondsInUTCDay: Double = getSecondsInDayObject(utcOffset).toDouble
 
   /** Check equality */
   override def equals(obj: Any): Boolean = obj match {
@@ -189,4 +209,9 @@ class Time private extends Comparable[Time] with Serializable {
     while (last > 11 && str.charAt(last) == '0') last = last - 1
 
     str.substring(0, last + 1)
+}
+
+object Time {
+  /** Get the current instant as a `Time` object */
+  def now: Time = new Time(Instant.now())
 }

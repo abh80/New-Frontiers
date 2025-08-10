@@ -4,6 +4,8 @@ package core.time
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 
+import java.time.Instant
+
 class TimeSpec extends AnyFunSuite with Matchers {
   test("hour less than 0 throws IllegalArgumentException") {
     assertThrows[IllegalArgumentException] {
@@ -138,6 +140,36 @@ class TimeSpec extends AnyFunSuite with Matchers {
     Time(10, 25, 43.99).toISO8601String(0) shouldEqual "10:25:44"
   }
 
+  test("construct Time from Instant") {
+    val instant = Instant.parse("2000-01-01T12:34:56.789Z")
+    val time = new Time(instant)
+
+    assertResult(12)(time.getHour)
+    assertResult(34)(time.getMinute)
+    assertResult(56.789)(time.getSeconds)
+    assertResult(0)(time.getUtcOffset) // UTC offset should be 0
+  }
+
+  test("construct Time from Instant at midnight") {
+    val instant = Instant.parse("2000-01-01T00:00:00Z")
+    val time = new Time(instant)
+
+    assertResult(0)(time.getHour)
+    assertResult(0)(time.getMinute)
+    assertResult(0.0)(time.getSeconds)
+    assertResult(0)(time.getUtcOffset)
+  }
+
+  test("construct Time from Instant with nanoseconds") {
+    val instant = Instant.parse("2000-01-01T23:59:59.123456789Z")
+    val time = new Time(instant)
+
+    assertResult(23)(time.getHour)
+    assertResult(59)(time.getMinute)
+    assertResult(59.123456789)(time.getSeconds)
+    assertResult(0)(time.getUtcOffset)
+  }
+  
   private def createTime(hour: Int, minute: Int, seconds: Int, attoSeconds: Long = 0L, utcOffset: Int = 0): Time = {
     Time(hour, minute, TimeFormat(seconds, attoSeconds), utcOffset)
   }
