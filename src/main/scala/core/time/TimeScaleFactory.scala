@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicReference
 object TimeScaleFactory {
   private val TTRef = AtomicReference[TTScale]()
   private val TDBRef = AtomicReference[TDBScale]()
+  private val TAIRef = AtomicReference[TAIScale]()
 
   def getTT: TimeScale = {
     var ref = TTRef.get()
@@ -27,6 +28,17 @@ object TimeScaleFactory {
       ref = TDBRef.get()
     }
     
+    ref
+  }
+
+  def getTAI: TimeScale = {
+    var ref = TAIRef.get()
+
+    if ref == null then {
+      TAIRef.set(TAIScale())
+      ref = TAIRef.get()
+    }
+
     ref
   }
 }
