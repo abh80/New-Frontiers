@@ -8,7 +8,7 @@ import scala.util.hashing.MurmurHash3
 
 private val JULIAN_DAY_AT_J2000 = 2451545
 private val JULIAN_YEAR_START_J2000 = -730122
-private val JD_TO_MJD_FACTOR = 51544
+private val J2000_TO_MJD_FACTOR = 51544
 
 
 /** A robust date implementation that handles dates in different calendar systems.
@@ -201,7 +201,7 @@ class Date private extends Comparable[Date] with Serializable {
   override def compareTo(o: Date): Int = getJ2000Day.compareTo(o.getJ2000Day)
 
   /** Get the modified julian day */
-  def getMJD: Int = JD_TO_MJD_FACTOR + getJ2000Day
+  def getMJD: Int = J2000_TO_MJD_FACTOR + getJ2000Day
 
   @SuppressWarnings(Array("NonValueFieldInHashCode"))
   override def hashCode(): Int =
@@ -375,6 +375,9 @@ object Date {
    * Defined as January 6, 1980, at 00:00:00 UTC.
    */
   val GPS: Date = Date(1980, 1, 6)
+
+  /** The modified julian date, which started at midnight on November 17, 1858 (Gregorian calendar).*/
+  val MJD: Date = Date(1858, 11, 17)
 
   /**
    * Constructs a `Date` instance from a J2000 day offset.

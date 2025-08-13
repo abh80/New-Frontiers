@@ -170,4 +170,10 @@ class DateSpec extends AnyFunSuite {
     assertResult(12)(dateBeforeJ2000.getMonth)
     assertResult(31)(dateBeforeJ2000.getDay)
   }
+
+  test("mjd") {
+    assertResult(0)(Date.MJD.getMJD)
+    assertResult(37665)(Date(1962, 1,  1).getMJD)
+    assertResult(35)(Date(Date.MJD, 35).getMJD)
+  }
 }
