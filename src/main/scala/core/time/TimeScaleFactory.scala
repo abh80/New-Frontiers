@@ -8,6 +8,7 @@ object TimeScaleFactory {
   private val TTRef = AtomicReference[TTScale]()
   private val TDBRef = AtomicReference[TDBScale]()
   private val TAIRef = AtomicReference[TAIScale]()
+  private val UTCRef = AtomicReference[UTCScale]()
 
   def getTT: TimeScale = {
     var ref = TTRef.get()
@@ -39,6 +40,17 @@ object TimeScaleFactory {
       ref = TAIRef.get()
     }
 
+    ref
+  }
+  
+  def getUTC: TimeScale = {
+    var ref = UTCRef.get()
+    
+    if ref == null then {
+      UTCRef.set(UTCScale(getTAI))
+      ref = UTCRef.get()
+    }
+    
     ref
   }
 }
