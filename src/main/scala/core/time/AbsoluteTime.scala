@@ -136,6 +136,6 @@ object AbsoluteTime {
       AbsoluteTime(self + TimeFormat.fromDouble(shiftBy.toDouble))
   }
 
-  def toMJDDate(mjd: Int, timeScale: TimeScale, seconds: TimeFormat = TimeFormat.Zero): AbsoluteTime =
+  def fromMJDDate(mjd: Int, timeScale: TimeScale, seconds: TimeFormat = TimeFormat.Zero): AbsoluteTime =
     new AbsoluteTime(Date(Date.MJD, mjd), Time(seconds), timeScale)
 }

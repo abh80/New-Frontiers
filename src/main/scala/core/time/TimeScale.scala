@@ -19,7 +19,7 @@ trait TimeScale {
    * Default is 60 seconds for most time scales.
    * May differ for specialized astronomical time scales.
    */
-  val minuteDuration: Int = 60
+  def minuteDuration(time: AbsoluteTime): Int = 60
 
   /**
    * Calculates the difference between this time scale and TAI at the given time.
@@ -44,8 +44,9 @@ trait TimeScale {
     var offset = TimeFormat.Zero
 
     // Iteratively refine the conversion
-    for (i <- 1 until 5) {
+    for (i <- 1 until 8) {
       offset = timePastTAI(ref ++ offset).negate()
+
     }
     
     offset

@@ -8,6 +8,12 @@ import org.scalatest.matchers.should.Matchers
 
 class UTCScaleSpec extends AnyFunSuite with Matchers {
   private final val UTC = TimeScaleFactory.getUTC
+
+  test("toString") {
+    // to hit test coverage
+    UTC.getName shouldBe "UTC"
+  }
+
   test("offsets") {
     checkOffset(1961, 1, 2, -(1.422818 + 1 * 0.001296))
     checkOffset(1961, 8, 2, -(1.372818 + 213 * 0.001296)); // MJD 37300 + 213
@@ -23,11 +29,26 @@ class UTCScaleSpec extends AnyFunSuite with Matchers {
     checkOffset(1966, 1, 2, -(4.313170 + 1 * 0.002592)); // MJD 39126 +   1
     checkOffset(1968, 2, 2, -(4.213170 + 762 * 0.002592)); // MJD 39126 + 762
 
-    checkOffset(1972, 3, 5, -10);
-    checkOffset(1972, 7, 14, -11);
-    checkOffset(1979, 12, 31, -18);
-    checkOffset(1980, 1, 22, -19);
-    checkOffset(2006, 7, 7, -33);
+    checkOffset(1972, 3, 5, -10)
+    checkOffset(1972, 7, 14, -11)
+    checkOffset(1979, 12, 31, -18)
+    checkOffset(1980, 1, 22, -19)
+    checkOffset(2006, 7, 7, -33)
+    checkOffset(2025, 1, 12, -37)
+  }
+
+  test("not a leap second year") {
+    val t1 = AbsoluteTime(Date(2015, 12, 31), Time(23, 59, 59), UTC)
+    val t2 = AbsoluteTime(Date(2016, 1, 1), Time(0, 0, 1), UTC)
+
+    t2.durationFrom(t1).toDouble shouldBe 2.0
+  }
+
+  test("a leap second year") {
+    val t1 = AbsoluteTime(Date(2005, 12, 31), Time(23, 59, 59), UTC)
+    val t2 = AbsoluteTime(Date(2006, 1, 1), Time(0, 0, 1), UTC)
+
+    t2.durationFrom(t1).toDouble shouldBe 3.0
   }
 
   private def checkOffset(year: Int, month: Int, day: Int, offset: Double): Unit =
