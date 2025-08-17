@@ -201,4 +201,10 @@ class TimeFormatSpec extends AnyFunSuite with Matchers {
     checkRoundingResult(17, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 12345678901234568L).negate())
     checkRoundingResult(18, TimeFormat(70L, 123456789012345678L).negate(), TimeFormat(70L, 123456789012345678L).negate())
   }
+
+  test("small negative fromDouble") {
+    val t1 = TimeFormat.fromDouble(-1.0e-17)
+    assertResult(-1L)(t1.getSeconds)
+    assertResult(999999999999999990L)(t1.getAttoSeconds)
+  }
 }
