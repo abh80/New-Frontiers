@@ -4,6 +4,7 @@ package core.time
 import breeze.numerics.*
 
 import scala.math.BigDecimal.RoundingMode
+import scala.math.Ordered.orderingToOrdered
 import scala.util.hashing.MurmurHash3
 
 private val ATTOSECONDS_PER_SECOND: Long = 1_000_000_000_000_000_000L // 10^18

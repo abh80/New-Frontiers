@@ -51,6 +51,12 @@ class UTCScaleSpec extends AnyFunSuite with Matchers {
     t2.durationFrom(t1).toDouble shouldBe 3.0
   }
 
+  test("during a leap second") {
+    val t = AbsoluteTime(Date(1983, 6, 30), Time(23, 59, 60.004), UTC)
+    System.out.println(t)
+    assert(UTC.isInsideLeapSecond(t))
+  }
+
   private def checkOffset(year: Int, month: Int, day: Int, offset: Double): Unit =
     val time = new AbsoluteTime(year, month, day, UTC)
     offset should be(almostEquals(UTC.timePastTAI(time).toDouble))

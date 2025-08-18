@@ -106,25 +106,25 @@ class AbsoluteTime(tf: TimeFormat)
 
   def durationFrom(time: AbsoluteTime): TimeFormat = this - time
 
-  def getTimeObject(scale: TimeScale): Time =
+  override def toString: String =
+    toString(TimeScaleFactory.getUTC) ++ "Z"
+
+  def toString(scale: TimeScale): String =
+    val (d, t) = getDateTime(scale)
+
+    d.toString ++ "T" ++ t.toISO8601String()
+
+  def getDateTime(scale: TimeScale): (Date, Time) =
     val timeOffset = this + scale.timePastTAI(this)
-    val j2000_shifted = timeOffset.getSeconds + 42000L
+    val j2000_shifted = timeOffset.getSeconds + 43200L
 
-    var sod = j2000_shifted % 86400L
-    if sod < 0L then sod += 86400L
+    var time = j2000_shifted % 86400L
+    if time < 0L then time += 86400L
 
-    Time(sod)
+    val date = ((j2000_shifted - time) / 86400L).toInt
 
-  def getDateObject(scale: TimeScale): Date =
-    val timeOffset = this + scale.timePastTAI(this)
-    val j2000_shifted = timeOffset.getSeconds + 42000L
-
-    val date = (j2000_shifted - getTimeObject(scale).getSecondsInDay / 86400L).toInt
-
-    Date(Date.J2000_0, date)
-
-  def getTimeObject(utcOffset: Int): Time =
-    ???
+    val leap = if scale.isInsideLeapSecond(this) then scale.getLeap(this) else TimeFormat.Zero
+    (Date(Date.J2000_0, date), Time(TimeFormat(time, timeOffset.getAttoSeconds), leap, scale.minuteDuration(this)))
 }
 
 object AbsoluteTime {
@@ -132,7 +132,7 @@ object AbsoluteTime {
     def ++(other: TimeFormat): AbsoluteTime =
       AbsoluteTime(self + other)
 
-    def ++(shiftBy: Long) : AbsoluteTime =
+    def ++(shiftBy: Long): AbsoluteTime =
       AbsoluteTime(self + TimeFormat.fromDouble(shiftBy.toDouble))
   }
 

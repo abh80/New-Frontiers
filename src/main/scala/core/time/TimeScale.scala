@@ -77,4 +77,12 @@ trait TimeScale {
    * @return true if the time is inside a leap second, false otherwise
    */
   def isInsideLeapSecond(time: AbsoluteTime): Boolean = false
+
+  /**
+   * Retrieves the leap second adjustment for the given absolute time.
+   *
+   * @param time The absolute time for which to determine the leap second adjustment.
+   * @return The leap second adjustment as a TimeFormat instance.
+   */
+  def getLeap(time: AbsoluteTime): TimeFormat = TimeFormat.Zero
 }

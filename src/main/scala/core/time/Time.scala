@@ -143,6 +143,28 @@ class Time private extends Comparable[Time] with Serializable {
   def this(seconds: Double) =
     this(TimeFormat.fromDouble(seconds))
 
+  def this(seconds: TimeFormat, leap: TimeFormat, minuteDuration: Int) = {
+    this()
+    require(seconds.compareTo(TimeFormat.Zero) >= 0 && seconds.compareTo(TimeFormat.DAY) < 0)
+
+    val remainingSeconds = minuteDuration - 60
+    require(leap.getSeconds * remainingSeconds >= 0)
+    require(abs(leap.getSeconds) <= abs(remainingSeconds))
+
+    var roundedSeconds = seconds.getSeconds.toInt
+    hour = roundedSeconds / SECONDS_IN_HOUR
+    roundedSeconds -= hour * SECONDS_IN_HOUR
+    minute = roundedSeconds / SECONDS_IN_MINUTE
+    roundedSeconds -= minute * SECONDS_IN_MINUTE
+
+    val secondsInMinute = TimeFormat(roundedSeconds, seconds.getAttoSeconds) + leap
+
+    require(secondsInMinute.compareTo(TimeFormat.Zero) >= 0)
+
+    if secondsInMinute.getSeconds < minuteDuration then this.seconds = secondsInMinute
+    else this.seconds = TimeFormat(minuteDuration - 1, 999_999_999_999_999_999L)
+  }
+
   /** Get the hour of the day */
   def getHour: Int = hour
 
