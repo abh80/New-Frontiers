@@ -112,7 +112,7 @@ class AbsoluteTime(tf: TimeFormat)
   def toString(scale: TimeScale): String =
     val (d, t) = getDateTime(scale)
 
-    d.toString ++ "T" ++ t.toISO8601String()
+    d.toString ++ "T" ++ t.toISO8601StringTrimmed()
 
   def getDateTime(scale: TimeScale): (Date, Time) =
     val timeOffset = this + scale.timePastTAI(this)
@@ -133,7 +133,10 @@ object AbsoluteTime {
       AbsoluteTime(self + other)
 
     def ++(shiftBy: Long): AbsoluteTime =
-      AbsoluteTime(self + TimeFormat.fromDouble(shiftBy.toDouble))
+      ++(shiftBy.toDouble)
+
+    def ++(shiftBy: Double): AbsoluteTime =
+      AbsoluteTime(self + TimeFormat.fromDouble(shiftBy))
   }
 
   def fromMJDDate(mjd: Int, timeScale: TimeScale, seconds: TimeFormat = TimeFormat.Zero): AbsoluteTime =
