@@ -214,6 +214,9 @@ class Time private extends Comparable[Time] with Serializable {
       f"$hour%02d:$minute%02d:${rounded.getSeconds}%02d"
     }
   }
+  
+  def toISO8601StringTrimmed(secondsPrecision: Int = 18) : String =
+    trimTrailingZerosFromISOString(toISO8601String(secondsPrecision))
 
   /** Get the current UTC offset in ISO8601 standard */
   def getUTCOffsetString: String = {
