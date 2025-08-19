@@ -12,6 +12,7 @@ class TTScaleTest extends AnyFunSuite with Matchers {
     val expectedOffset = TimeFormat.fromTimeUnit(32L, TimeUnit.SECONDS) + TimeFormat.fromTimeUnit(184L, TimeUnit.MILLISECONDS)
 
     ttScale.timePastTAI(absoluteTime) shouldEqual expectedOffset
+    ttScale.timePastTAI(absoluteTime) shouldEqual(TDTScale().timePastTAI(absoluteTime))
   }
 
   test("TTScale should return correct timeToTAI") {
