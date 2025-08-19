@@ -7,7 +7,7 @@ package core.time
  * calculations and various time reference systems. These epochs serve as reference
  * points for different time scales and coordinate systems.
  *
- * Reference: https://spsweb.fltops.jpl.nasa.gov/portaldataops/mpg/MPG_Docs/MPG%20Book/Release/Chapter2-TimeScales.pdf
+ * @see [[https://spsweb.fltops.jpl.nasa.gov/portaldataops/mpg/MPG_Docs/MPG%20Book/Release/Chapter2-TimeScales.pdf]]
  */
 object EpochFactory {
   /** The J2000.0 epoch, which is the fundamental epoch for the ICRF reference frame.
@@ -17,7 +17,7 @@ object EpochFactory {
 
   /** The J1900 epoch, Defined as January 1, 1900, at 12:00 TT. A century before [[EpochFactory.J2000_0]].
    * This is useful to implement leap seconds for [[UTCScale]], since leap seconds started the year ago 2000.
-   * See: https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/FORTRAN/spicelib/j1900.html */
+   * @see [[https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/FORTRAN/spicelib/j1900.html]] */
   val J1900: AbsoluteTime = AbsoluteTime(Date(1900, 1, 1), Time(12, 0, TimeFormat.Zero), TimeScaleFactory.getTT)
 
   /** The Julian epoch, which marks the beginning of the Julian calendar.
