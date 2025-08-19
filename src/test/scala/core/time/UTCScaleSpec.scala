@@ -52,9 +52,58 @@ class UTCScaleSpec extends AnyFunSuite with Matchers {
   }
 
   test("during a leap second") {
-    val t = AbsoluteTime(Date(1983, 6, 30), Time(23, 59, 60.004), UTC)
-    System.out.println(t)
-    assert(UTC.isInsideLeapSecond(t))
+    var t = AbsoluteTime(Date(2008, 12, 31), Time(23, 59, 59), UTC)
+    assertResult("2008-12-31T23:59:59.000Z")(t.toString)
+    assertResult("2008-12-31T23:58:59.000Z")(t.++(-60).toString)
+    assertResult(false)(UTC.isInsideLeapSecond(t))
+    assertResult(61)(UTC.minuteDuration(t))
+    assertResult(60)(UTC.minuteDuration(t.++(-60)))
+
+    t = t ++ 0.263
+    assertResult("2008-12-31T23:59:59.263Z")(t.toString)
+    assertResult(false)(UTC.isInsideLeapSecond(t))
+    assertResult(61)(UTC.minuteDuration(t))
+
+    t = t ++ 0.263
+    assertResult("2008-12-31T23:59:59.526Z")(t.toString)
+    assertResult(false)(UTC.isInsideLeapSecond(t))
+    assertResult(61)(UTC.minuteDuration(t))
+
+    t = t ++ 0.263
+    assertResult("2008-12-31T23:59:59.789Z")(t.toString)
+    assertResult(false)(UTC.isInsideLeapSecond(t))
+    assertResult(61)(UTC.minuteDuration(t))
+
+    t = t ++ 0.263
+    assertResult("2008-12-31T23:59:60.052Z")(t.toString)
+    assertResult(true)(UTC.isInsideLeapSecond(t))
+    assertResult(61)(UTC.minuteDuration(t))
+
+    t = t ++ 0.263
+    assertResult("2008-12-31T23:59:60.315Z")(t.toString)
+    assertResult(true)(UTC.isInsideLeapSecond(t))
+    assertResult(61)(UTC.minuteDuration(t))
+
+    t = t ++ 0.263
+    assertResult("2008-12-31T23:59:60.578Z")(t.toString)
+    assertResult(true)(UTC.isInsideLeapSecond(t))
+    assertResult(61)(UTC.minuteDuration(t))
+
+    t = t ++ 0.263
+    assertResult("2008-12-31T23:59:60.841Z")(t.toString)
+    assertResult(true)(UTC.isInsideLeapSecond(t))
+    assertResult(61)(UTC.minuteDuration(t))
+
+    t = t ++ 0.263
+    assertResult("2009-01-01T00:00:00.104Z")(t.toString)
+    assertResult(false)(UTC.isInsideLeapSecond(t))
+    assertResult(60)(UTC.minuteDuration(t))
+  }
+
+  test("before leap second offset") {
+    val t = AbsoluteTime(1950, 1, 1, UTC)
+    assertResult(0.0)(UTC.timePastTAI(t).toDouble)
+    assertResult(false)(UTC.isInsideLeapSecond(t))
   }
 
   private def checkOffset(year: Int, month: Int, day: Int, offset: Double): Unit =
