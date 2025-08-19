@@ -362,7 +362,7 @@ object Date {
   /** The Julian epoch, which marks the beginning of the Julian calendar.
    * Defined as January 1, 4713, BCE at 12:00 UT.
    */
-  val JULIAN: Date = Date(-4713, 1, 1)
+  val JULIAN: Date = Date(-4712, 1, 1)
   /** The Unix epoch, used as the starting point for Unix timestamps.
    * Defined as January 1, 1970, at 00:00:00 UTC.
    */
