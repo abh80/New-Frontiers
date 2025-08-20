@@ -378,11 +378,15 @@ object Date {
    */
   val GPS: Date = Date(1980, 1, 6)
 
-  /** The modified julian date, which started at midnight on November 17, 1858 (Gregorian calendar).*/
+  /** The modified julian date, which started at midnight on November 17, 1858 (Gregorian calendar). */
   val MJD: Date = Date(1858, 11, 17)
 
-  /** The GLONASS epoch date, which started at midnight on January 1, 1996 */
+  /** The GLONASS epoch date, which started on January 1, 1996 */
   val GLONASS: Date = Date(1996, 1, 1)
+
+  /** NavIC system time start epoch is 00:00 UT on Sunday, August 22nd 1999 (midnight between August 21st and 22nd). 
+   * The first week number rollover event occurred on April 06, 2019. The system time is currently in the second epoch. */
+  val NAVIC: Date = Date(1999, 8, 22)
 
   /**
    * Constructs a `Date` instance from a J2000 day offset.

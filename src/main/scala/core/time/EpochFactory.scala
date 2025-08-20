@@ -39,7 +39,11 @@ object EpochFactory {
   val GPS: AbsoluteTime = AbsoluteTime(Date.GPS, Time.MIDNIGHT, TimeScaleFactory.getUTC)
 
   /** The GLONASS epoch, used by the Russian Global Navigation Satellite System.
-   * Defined as January 1, 1996, at 00:00:00 UTC.
+   * Defined as January 1, 1996, at 00:00:00+03:00 UTC. However, this timescale follows an atomic scale after the UTC, this is why we add a 29-second
+   * offset for 1996 and then count as so in atomic timescale.
    */
-  val GLONASS: AbsoluteTime = AbsoluteTime(Date.GLONASS, Time.MIDNIGHT, TimeScaleFactory.getUTC)
+  val GLONASS: AbsoluteTime = AbsoluteTime(Date.GLONASS, Time(0, 0,29.0, 180), TimeScaleFactory.getTAI)
+
+  /** The NA */
+  val NAVIC: AbsoluteTime = AbsoluteTime(Date.NAVIC, Time.MIDNIGHT, TimeScaleFactory.getIRNSS)
 }

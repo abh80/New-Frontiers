@@ -190,7 +190,7 @@ class Time private extends Comparable[Time] with Serializable {
   def getSecondsInDay: Double = getSecondsInDayObject().toDouble
 
   /** Returns the seconds in a day as TimeFormat */
-  private def getSecondsInDayObject(offset: Int = 0) = TimeFormat(hour * SECONDS_IN_HOUR + (minute - offset) * SECONDS_IN_MINUTE, 0L).+(seconds)
+  def getSecondsInDayObject(offset: Int = 0) = TimeFormat(hour * SECONDS_IN_HOUR + (minute - offset) * SECONDS_IN_MINUTE, 0L).+(seconds)
 
   /** Check equality */
   override def equals(obj: Any): Boolean = obj match {
