@@ -19,6 +19,7 @@ object TimeScaleFactory {
   private val TDTRef = AtomicReference[TDTScale]()
   private val GLONASSRef = AtomicReference[GLONASSScale]()
   private val IRNSSRef = AtomicReference[IRNSSScale]()
+  private val GPSRef = AtomicReference[GPSScale]()
 
   /**
    * Returns a singleton instance of the Terrestrial Time (TT) scale.
@@ -132,8 +133,6 @@ object TimeScaleFactory {
   /**
    * Returns a singleton instance of the IRNSS time scale.
    *
-   * This scale is initialized based on the Coordinated Universal Time (UTC) scale.
-   *
    * @return A `TimeScale` representing the IRNSS time.
    * @see [[IRNSSScale]]
    */
@@ -145,6 +144,23 @@ object TimeScaleFactory {
       ref = IRNSSRef.get()
     }
 
+    ref
+  }
+
+  /**
+   * Returns a singleton instance of the GPS time scale.
+   *
+   * @return A `TimeScale` representing the GPS time.
+   * @see [[GPSScale]]
+   */
+  def getGPS: TimeScale = {
+    var ref = GPSRef.get()
+
+    if ref == null then {
+      GPSRef.set(GPSScale())
+      ref = GPSRef.get()
+    }
+    
     ref
   }
 }
