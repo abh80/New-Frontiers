@@ -239,4 +239,10 @@ class Time private extends Comparable[Time] with Serializable {
 object Time {
   /** Get the current instant as a `Time` object */
   def now: Time = new Time(Instant.now())
+  
+  /** 00:00:00 as Time */
+  val MIDNIGHT = Time(0 , 0 , TimeFormat.Zero)
+  
+  /** 12:00:00 as Time */
+  val AFTERNOON = Time(12, 0, TimeFormat.Zero)
 }
