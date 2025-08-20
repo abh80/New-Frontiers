@@ -3,6 +3,8 @@ package core.time
 
 import util.DateUtil.{ISO8601, Month, StringDateFormat}
 
+import org.abh80.nf.core.Constants
+
 import java.time.Instant
 import scala.util.hashing.MurmurHash3
 
@@ -110,7 +112,7 @@ class Date private extends Comparable[Date] with Serializable {
    * Constructs a Date from java Instant
    */
   def this(instant: Instant) =
-    this(((instant.getEpochSecond + instant.getNano / 1e9) / 86400).toInt - 10957)
+    this(((instant.getEpochSecond + instant.getNano / 1e9) / Constants.SECONDS_IN_A_JULIAN_DAY).toInt - 10957)
 
   /** Returns the Julian Day Number for this date.
    *

@@ -1,10 +1,12 @@
 package org.abh80.nf
 package core.time
 
+import org.abh80.nf.core.Constants
+
 import scala.annotation.switch
 
 private val NANOS_IN_SECONDS = 1_000_000_000
-private val SECONDS_IN_DAY = 86400
+private val SECONDS_IN_DAY = Constants.SECONDS_IN_A_JULIAN_DAY
 
 // credits: https://hpiers.obspm.fr/eoppc/bul/bulc/UTC-TAI.history
 

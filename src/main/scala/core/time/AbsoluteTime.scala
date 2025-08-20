@@ -3,6 +3,9 @@ package core.time
 
 import core.time.EpochFactory.J2000_0
 import util.DateUtil.Month
+
+import org.abh80.nf.core.Constants
+
 import java.time.Instant
 
 /**
@@ -224,10 +227,10 @@ class AbsoluteTime(tf: TimeFormat)
     val timeOffset = this + scale.timePastTAI(this)
     val j2000_shifted = timeOffset.getSeconds + 43200L
 
-    var time = j2000_shifted % 86400L
-    if time < 0L then time += 86400L
+    var time = j2000_shifted % Constants.SECONDS_IN_A_JULIAN_DAY
+    if time < 0L then time += Constants.SECONDS_IN_A_JULIAN_DAY
 
-    val date = ((j2000_shifted - time) / 86400L).toInt
+    val date = ((j2000_shifted - time) / Constants.SECONDS_IN_A_JULIAN_DAY).toInt
 
     val leap =
       if scale.isInsideLeapSecond(this) then scale.getLeap(this)
