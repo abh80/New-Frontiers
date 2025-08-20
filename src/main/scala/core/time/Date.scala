@@ -381,6 +381,9 @@ object Date {
   /** The modified julian date, which started at midnight on November 17, 1858 (Gregorian calendar).*/
   val MJD: Date = Date(1858, 11, 17)
 
+  /** The GLONASS epoch date, which started at midnight on January 1, 1996 */
+  val GLONASS: Date = Date(1996, 1, 1)
+
   /**
    * Constructs a `Date` instance from a J2000 day offset.
    *
