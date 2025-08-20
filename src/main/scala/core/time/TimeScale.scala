@@ -85,4 +85,6 @@ trait TimeScale {
    * @return The leap second adjustment as a TimeFormat instance.
    */
   def getLeap(time: AbsoluteTime): TimeFormat = TimeFormat.Zero
+
+  override def toString: String = name
 }
