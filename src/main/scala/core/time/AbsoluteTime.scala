@@ -5,6 +5,7 @@ import core.time.EpochFactory.J2000_0
 import util.DateUtil.Month
 
 import org.abh80.nf.core.Constants
+import org.abh80.nf.util.TimeShiftable
 
 import java.time.Instant
 
@@ -30,7 +31,8 @@ import java.time.Instant
 class AbsoluteTime(tf: TimeFormat)
   extends TimeFormat(tf)
     with Comparable[TimeFormat]
-    with Serializable {
+    with Serializable
+    with TimeShiftable[AbsoluteTime] {
 
   /**
    * Default constructor.
@@ -259,35 +261,20 @@ class AbsoluteTime(tf: TimeFormat)
   def offsetBetween(scale1: TimeScale, scale2: TimeScale): TimeFormat =
     scale1.timePastTAI(this) - scale2.timePastTAI(this)
 
+  /** @inheritdoc */
+  override def ++(other: TimeFormat): AbsoluteTime =
+    AbsoluteTime(this + other)
+
+  /** Shift time by seconds */
+  def ++(shiftBy: Long): AbsoluteTime =
+    ++(shiftBy.toDouble)
+
+  /** @inheritdoc */
+  def ++(shiftBy: Double): AbsoluteTime =
+    AbsoluteTime(this + TimeFormat.fromDouble(shiftBy))
 }
 
 object AbsoluteTime {
-
-  /**
-   * Implicit class providing convenient operators for shifting an `AbsoluteTime`
-   * by a given duration.
-   *
-   * ==Math Note==
-   * - Shifting is equivalent to:
-   *   {{{
-   *   new_time = old_time + Δt
-   *   }}}
-   */
-  implicit class BinOp(self: AbsoluteTime) {
-
-    /** Shift by a [[TimeFormat]] duration. */
-    def ++(other: TimeFormat): AbsoluteTime =
-      AbsoluteTime(self + other)
-
-    /** Shift by a number of seconds (Long). */
-    def ++(shiftBy: Long): AbsoluteTime =
-      ++(shiftBy.toDouble)
-
-    /** Shift by a number of seconds (Double). */
-    def ++(shiftBy: Double): AbsoluteTime =
-      AbsoluteTime(self + TimeFormat.fromDouble(shiftBy))
-  }
-
   /**
    * Creates an `AbsoluteTime` from a Modified Julian Date (MJD).
    *
