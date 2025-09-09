@@ -1,10 +1,13 @@
-package org.abh80.nf.core.math
+package org.abh80.nf
+package core.math
+
+import core.metrics.{AngleUnit, DistanceUnit}
 
 import org.scalatest.funsuite.AnyFunSuite
-import org.abh80.nf.core.metrics.{DistanceUnit, AngleUnit}
+import org.scalatest.matchers.should.Matchers
 
-class Vector3DSpec extends AnyFunSuite {
-  import Vector3D._
+class Vector3DSpec extends AnyFunSuite with Matchers {
+  import Vector3D.*
 
   test("Vector3D magnitude") {
     val v = Vector3D(3, 4, 12)
@@ -64,6 +67,25 @@ class Vector3DSpec extends AnyFunSuite {
     assert(v1.dot(v2) === 32.0)
     assert((v1 X v2) === Vector3D(-3, 6, -3))
   }
-  
+
+  test("Vector3D.negate handle zero vector correctly") {
+    val zero = Vector3D(0.0, 0.0, 0.0)
+    val negated = zero.negate
+    negated.x shouldBe 0.0
+    negated.y shouldBe 0.0
+    negated.z shouldBe 0.0
+  }
+
+  test("Vector3D.negate return a new vector with all components negated") {
+    val v = Vector3D(1.0, -2.0, 3.0)
+    val negated = v.negate
+    negated.x shouldBe -1.0
+    negated.y shouldBe 2.0
+    negated.z shouldBe -3.0
+    // Ensure original vector is unchanged
+    v.x shouldBe 1.0
+    v.y shouldBe -2.0
+    v.z shouldBe 3.0
+  }
 }
 

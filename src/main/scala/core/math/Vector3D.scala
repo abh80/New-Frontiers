@@ -107,6 +107,13 @@ final case class Vector3D(x: Double, y: Double, z: Double) {
    * @return String in the format Vector3D(x, y, z) [m]
    */
   override def toString: String = s"Vector3D($x, $y, $z) [m]"
+
+  /**
+   * Returns a vector with all components negated.
+   *
+   * @return The negated vector.
+   */
+  def negate: Vector3D = Vector3D(-x, -y, -z)
 }
 
 /**
