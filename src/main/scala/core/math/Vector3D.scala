@@ -104,9 +104,9 @@ final case class Vector3D(x: Double, y: Double, z: Double) {
 
   /**
    * Returns a string representation of the vector.
-   * @return String in the format Vector3D(x, y, z) [m]
+   * @return String in the format Vector3D(x, y, z)
    */
-  override def toString: String = s"Vector3D($x, $y, $z) [m]"
+  override def toString: String = s"Vector3D($x, $y, $z)"
 
   /**
    * Returns a vector with all components negated.
@@ -125,6 +125,36 @@ object Vector3D {
    * The zero vector (0, 0, 0).
    */
   val Zero: Vector3D = Vector3D(0, 0, 0)
+
+  /**
+   * Unit vector in the positive x direction (1, 0, 0).
+   */
+  val PLUS_I: Vector3D = Vector3D(1, 0, 0)
+
+  /**
+   * Unit vector in the negative x direction (-1, 0, 0).
+   */
+  val MINUS_I: Vector3D = Vector3D(-1, 0, 0)
+
+  /**
+   * Unit vector in the positive y direction (0, 1, 0).
+   */
+  val PLUS_J: Vector3D = Vector3D(0, 1, 0)
+
+  /**
+   * Unit vector in the negative y direction (0, -1, 0).
+   */
+  val MINUS_J: Vector3D = Vector3D(0, -1, 0)
+
+  /**
+   * Unit vector in the positive z direction (0, 0, 1).
+   */
+  val PLUS_K: Vector3D = Vector3D(0, 0, 1)
+
+  /**
+   * Unit vector in the negative z direction (0, 0, -1).
+   */
+  val MINUS_K: Vector3D = Vector3D(0, 0, -1)
 
   /**
    * Creates a Vector3D from an array of DistanceUnit values.
