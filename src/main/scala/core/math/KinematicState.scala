@@ -51,14 +51,13 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
 
   /**
    * Calculates the position after a time interval dt using the kinematic equation:
-   * r(t + dt) = r(t) + v(t)dt + (1/2)a(t)dt²
+   *   r(t + dt) = r(t) + v(t)·dt + (1/2)·a(t)·dt²
    *
    * where:
-   * - r(t) is the initial position (meters)
-   * - v(t) is the initial velocity (meters/second)
-   * - a(t) is the acceleration (meters/second²)
-   * - dt is the time interval (seconds)
-   *
+   *   - r(t) is the initial position (meters)
+   *   - v(t) is the initial velocity (meters/second)
+   *   - a(t) is the acceleration (meters/second²)
+   *   - dt is the time interval (seconds)
    *
    * @param dt Time interval in seconds.
    * @return New position vector after time dt (meters).
@@ -68,13 +67,12 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
 
   /**
    * Calculates the velocity after a time interval dt using the kinematic equation:
-   * v(t + dt) = v(t) + a(t)dt
+   *   v(t + dt) = v(t) + a(t)·dt
    *
    * where:
-   * - v(t) is the initial velocity (meters/second)
-   * - a(t) is the acceleration (meters/second²)
-   * - dt is the time interval (seconds)
-   *
+   *   - v(t) is the initial velocity (meters/second)
+   *   - a(t) is the acceleration (meters/second²)
+   *   - dt is the time interval (seconds)
    *
    * @param dt Time interval in seconds.
    * @return New velocity vector after time dt (meters/second).
@@ -93,11 +91,11 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
   /**
    * Normalizes the position vector and adjusts velocity and acceleration to maintain consistent derivatives.
    *
-   * The position is normalized to unit length: u = r / ||r||, where r is the position vector.
+   * The position is normalized to unit length: u = r / |r|, where r is the position vector.
    * The velocity is computed as the derivative of the normalized position:
-   * u̇ = v - (u · v)u, where v is the original velocity.
+   *   u̇ = v - (u · v)·u, where v is the original velocity.
    * The acceleration is computed as the derivative of u̇:
-   * ü = w - 2(u · v)v + (3(u · v)² - v · v - u · w)u, where w is the original acceleration.
+   *   ü = w - 2(u · v)·v + (3(u · v)² - v · v - u · w)·u, where w is the original acceleration.
    *
    * @return A new [[KinematicState]] with normalized position and consistent velocity and acceleration derivatives.
    */
@@ -114,39 +112,34 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
     KinematicState(u, uDot, uDotDot)
   }
 
-
   /**
    * Computes the angular momentum of the object based on its position and velocity.
    *
-   * The angular momentum \(\mathbf{L}\) is calculated as:
-   * \[
-   * \mathbf{L} = \mathbf{r} \times \mathbf{v}
-   * \]
+   * The angular momentum L is calculated as:
+   *   L = r × v
    * where:
-   * - \(\mathbf{r}\) is the position vector (meters)
-   * - \(\mathbf{v}\) is the velocity vector (meters/second)
+   *   - r is the position vector (meters)
+   *   - v is the velocity vector (meters/second)
    *
    * The resulting vector is perpendicular to both the position and velocity vectors,
-   * with magnitude equal to r·v·sin(θ), where θ is the angle between r and v.
+   * with magnitude equal to |r|·|v|·sin(θ), where θ is the angle between r and v.
    *
-   * @note this is the momentum for a unit mass, you may want to multiply this result with the `mass` of the object to get the accurate momentum.
+   * @note This is the momentum for a unit mass. Multiply this result by the object's mass to get the actual momentum.
    * @return A [[Vector3D]] representing the angular momentum vector.
    */
-  def getMomentum: Vector3D = position X velocity
+  def getAngularMomentum: Vector3D = position X velocity
 
   /**
    * Computes the angular velocity of the object based on its position and velocity.
    *
-   * The angular velocity \(\omega\) is calculated as:
-   * \[
-   * \mathbf{\omega} = \frac{\mathbf{r} \times \mathbf{v}}{\|\mathbf{r}\|^2}
-   * \]
+   * The angular velocity ω is calculated as:
+   *   ω = (r × v) / |r|²
    * where:
-   * - \(\mathbf{r}\) is the position vector (meters)
-   * - \(\mathbf{v}\) is the velocity vector (meters/second)
-   * - \(\|\mathbf{r}\|^2\) is the squared magnitude of the position vector
+   *   - r is the position vector (meters)
+   *   - v is the velocity vector (meters/second)
+   *   - |r|² is the squared magnitude of the position vector
    *
-   * If the position vector is zero (\(\|\mathbf{r}\|=0\)), the angular velocity is undefined,
+   * If the position vector is zero (|r| = 0), the angular velocity is undefined,
    * and a zero vector is returned to avoid division by zero.
    *
    * @return A [[Vector3D]] representing the angular velocity in radians per second.
@@ -157,7 +150,7 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
     if (rSquared == 0.0) {
       Vector3D.Zero // Return zero vector if position is at origin
     } else {
-      getMomentum * (1.0 / rSquared) // (r × v) / ||r||^2
+      getAngularMomentum * (1.0 / rSquared) // (r × v) / ||r||^2
     }
   }
 
