@@ -38,7 +38,7 @@ class Vector3DSpec extends AnyFunSuite with Matchers {
 
   test("Vector3D toString") {
     val v = Vector3D(1, 2, 3)
-    assert(v.toString === "Vector3D(1.0, 2.0, 3.0) [m]")
+    assert(v.toString === "Vector3D(1.0, 2.0, 3.0)")
   }
 
   test("Vector3D Zero") {
