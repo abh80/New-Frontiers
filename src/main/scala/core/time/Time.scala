@@ -1,7 +1,7 @@
 package org.abh80.nf
 package core.time
 
-import breeze.numerics.abs
+import scala.math.abs
 
 import java.time.{Instant, ZoneOffset, ZonedDateTime}
 import scala.util.hashing.MurmurHash3

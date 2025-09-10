@@ -2,7 +2,6 @@ package org.abh80.nf
 package core.math
 
 import util.TimeShiftable
-import breeze.numerics.pow
 
 /**
  * Represents the state of an object in terms of its kinematic properties (in space-time): position, velocity, and acceleration.
@@ -60,13 +59,12 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
    * - a(t) is the acceleration (meters/second²)
    * - dt is the time interval (seconds)
    *
-   * Uses Breeze for vector operations to ensure numerical stability.
    *
    * @param dt Time interval in seconds.
    * @return New position vector after time dt (meters).
    */
   def positionShiftedBy(dt: Double): Vector3D =
-    this.position + (this.velocity * dt) + (this.acceleration * (0.5 * pow(dt, 2)))
+    this.position + (this.velocity * dt) + (this.acceleration * (0.5 * dt * dt))
 
   /**
    * Calculates the velocity after a time interval dt using the kinematic equation:
@@ -77,7 +75,6 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
    * - a(t) is the acceleration (meters/second²)
    * - dt is the time interval (seconds)
    *
-   * Uses Breeze for vector operations to ensure numerical stability.
    *
    * @param dt Time interval in seconds.
    * @return New velocity vector after time dt (meters/second).
@@ -117,7 +114,7 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
     KinematicState(u, uDot, uDotDot)
   }
 
-  
+
   /**
    * Computes the angular momentum of the object based on its position and velocity.
    *
@@ -131,9 +128,8 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
    *
    * The resulting vector is perpendicular to both the position and velocity vectors,
    * with magnitude equal to r·v·sin(θ), where θ is the angle between r and v.
-   * 
-   * @note this is the momentum for a unit mass, you may want to multiply this result with the `mass` of the object to get the accurate momentum.
    *
+   * @note this is the momentum for a unit mass, you may want to multiply this result with the `mass` of the object to get the accurate momentum.
    * @return A [[Vector3D]] representing the angular momentum vector.
    */
   def getMomentum: Vector3D = position X velocity
@@ -156,7 +152,8 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
    * @return A [[Vector3D]] representing the angular velocity in radians per second.
    */
   def getAngularVelocity: Vector3D = {
-    val rSquared = pow(position.magnitude, 2)
+    val m = position.magnitude
+    val rSquared = m * m
     if (rSquared == 0.0) {
       Vector3D.Zero // Return zero vector if position is at origin
     } else {
@@ -178,6 +175,9 @@ object KinematicState {
    * A constant representing a zero kinematic state, with zero position, velocity, and acceleration.
    */
   val ZERO = new KinematicState(Vector3D.Zero, Vector3D.Zero, Vector3D.Zero)
+
+  def velocityBetween(start: Vector3D, end: Vector3D, dt: Double): Vector3D =
+    (end - start) / dt
 
   /**
    * Provides binary operations for [[KinematicState]] instances.

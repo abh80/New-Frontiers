@@ -1,7 +1,7 @@
 package org.abh80.nf
 package matchers
 
-import breeze.numerics.abs
+import scala.math.abs
 import org.scalatest.matchers.{BeMatcher, MatchResult}
 
 class AlmostEqualsMatcher(expected: Double, tolerance: Double = 1e-6) extends BeMatcher[Double] {

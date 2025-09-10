@@ -185,7 +185,7 @@ object UTCScale {
    */
   case class LeapSecondOffset(startDate: Date, mjdBase: Int, fixedOffset: Double, rate: Double)(implicit tai: TimeScale) {
 
-    import breeze.numerics.abs
+    import scala.math.abs
 
     def getComputedOffset(previousOffset: ComputedLeapSecondOffset): ComputedLeapSecondOffset = {
       val fixedOffsetTime = TimeFormat.fromDouble(fixedOffset)

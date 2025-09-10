@@ -1,7 +1,7 @@
 package org.abh80.nf
 package core.time
 
-import breeze.numerics.*
+import scala.math.{sin, cos}
 import core.metrics.AngleUnit
 
 private val G0 = AngleUnit.Degree(357.53).toRadians
@@ -14,7 +14,7 @@ private val F2 = 0.000028
 
 /**
  *
- * @param tt The Terrestrial Time Scale
+ * @param tt         The Terrestrial Time Scale
  * @param j2000Epoch The j2000 standard epoch
  * @note Do not instantiate this class for most cases. See [[TimeScaleFactory]]
  * @see [[TimeScale]]

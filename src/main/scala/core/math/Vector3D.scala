@@ -4,8 +4,9 @@ package core.math
 import core.metrics.{AngleUnit, DistanceUnit}
 
 /**
- * Represents a 3-dimensional vector with x, y, and z components.
+ * Represents a 3-dimensional vector with x, y, and z components in meters.
  * Provides common vector operations and geometric transformations.
+ * All operations are immutable and return new instances.
  *
  * @param x The x-component (in meters).
  * @param y The y-component (in meters).
@@ -13,38 +14,49 @@ import core.metrics.{AngleUnit, DistanceUnit}
  */
 final case class Vector3D(x: Double, y: Double, z: Double) {
   /**
-   * Calculates the distance to another vector.
+   * Calculates the Euclidean distance to another vector.
+   * Formula: sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+   *
    * @param second The other vector.
    * @param factory Factory function to create a DistanceUnit from a Double.
    * @tparam T The type of DistanceUnit.
    * @return The distance as a DistanceUnit.
    */
   def distanceTo[T <: DistanceUnit](second: Vector3D)(factory: Double => T = DistanceUnit.Meter.apply): T = {
-    val distanceInMeters = Math.sqrt(
-      Math.pow(second.x - x, 2) +
-        Math.pow(second.y - y, 2) +
-        Math.pow(second.z - z, 2)
-    )
-    factory(distanceInMeters)
+    val dx = second.x - x
+    val dy = second.y - y
+    val dz = second.z - z
+    val distanceInMeters = Math.sqrt(dx * dx + dy * dy + dz * dz)
+    if (distanceInMeters.isNaN || distanceInMeters.isInfinite) {
+      factory(0.0) // Handle invalid inputs gracefully
+    } else {
+      factory(distanceInMeters)
+    }
   }
 
   /**
    * Returns the normalized (unit length) vector.
+   * If magnitude is zero, returns the original vector.
    * @return The normalized vector.
    */
   def normalize: Vector3D = {
     val mag = magnitude
-    if (mag == 0) this else this / mag
+    if (mag == 0 || mag.isNaN || mag.isInfinite) this else this / mag
   }
 
   /**
-   * Computes the magnitude (length) of the vector.
-   * @return The magnitude.
+   * Computes the Euclidean magnitude (length) of the vector in meters.
+   * Formula: sqrt(x^2 + y^2 + z^2)
+   * @return The magnitude in meters, or 0.0 if NaN or infinite.
    */
-  def magnitude: Double = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2))
+  def magnitude: Double = {
+    val mag = Math.sqrt(x * x + y * y + z * z)
+    if (mag.isNaN || mag.isInfinite) 0.0 else mag
+  }
 
   /**
    * Calculates the angle between this vector and another.
+   * Formula: acos(dotProduct / (magnitude1 * magnitude2))
    * @param second The other vector.
    * @param factory Factory function to create an AngleUnit from a Double.
    * @tparam T The type of AngleUnit.
@@ -64,7 +76,6 @@ final case class Vector3D(x: Double, y: Double, z: Double) {
   def rotateX(angle: AngleUnit): Vector3D = {
     val cos = Math.cos(angle.toRadians)
     val sin = Math.sin(angle.toRadians)
-
     Vector3D(
       x,
       y * cos - z * sin,
@@ -110,7 +121,6 @@ final case class Vector3D(x: Double, y: Double, z: Double) {
 
   /**
    * Returns a vector with all components negated.
-   *
    * @return The negated vector.
    */
   def negate: Vector3D = Vector3D(-x, -y, -z)
@@ -164,7 +174,6 @@ object Vector3D {
    */
   def fromArray[T <: DistanceUnit](arr: Array[T]): Vector3D = {
     if arr.length != 3 then throw new IllegalArgumentException(s"Vector array expected to have 3 elements (x,y,z) distances but found ${arr.length} elements.")
-
     Vector3D(arr(0), arr(1), arr(2))
   }
 

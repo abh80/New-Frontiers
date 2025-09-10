@@ -1,8 +1,7 @@
 package org.abh80.nf
 package core.time
 
-import breeze.numerics.*
-
+import scala.math.{round, rint}
 import scala.math.BigDecimal.RoundingMode
 import scala.math.Ordered.orderingToOrdered
 import scala.util.hashing.MurmurHash3
