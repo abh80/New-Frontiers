@@ -8,7 +8,7 @@ package core.math.calculus
  * @param maxOrder The maximum derivation order.
  * @param data An array containing the function value and all partial derivatives.
  */
-class DerivativeWrapper(parameters: Int, maxOrder: Int, data: Array[Double]) extends Derivative {
+class DerivativeWrapper(parameters: Int, maxOrder: Int, data: Array[Double]) extends Derivative with Serializable {
   private val sizes: Array[Array[Int]] = computeSizes(parameters, maxOrder)
 
   /**
