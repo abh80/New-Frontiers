@@ -1,136 +1,130 @@
 package org.abh80.nf
 package core.math
 
+import org.abh80.nf.core.math.calculus.{DerivativeWrapper, FiniteDifferencesDifferentiator}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
+import scala.util.Random
+
 class KinematicStateSpec extends AnyFlatSpec with Matchers {
+  private val random = new Random(0x123456789abcdefL)
+
+  private def randomVector3D(max: Double): Vector3D = {
+    val n = random.nextDouble() * max
+    val x = random.nextDouble() * 2 - 1
+    val y = random.nextDouble() * 2 - 1
+    val z = random.nextDouble() * 2 - 1
+    val dir = Vector3D(x, y, z).normalize
+    if (dir.magnitude == 0.0) Vector3D.Zero else dir * n
+  }
+
+  private def normalizedPositionDerivative(state: KinematicState): Vector3D = {
+    val r = state.position
+    val v = state.velocity
+    val rMag = r.magnitude
+    if (rMag == 0.0) Vector3D.Zero
+    else {
+      val rDotV = r dot v
+      val rMagSquared = rMag * rMag
+      (v - (r * (rDotV / rMagSquared))) / rMag
+    }
+  }
+
   "KinematicState constructors" should "initialize with correct position, velocity, and acceleration" in {
-    val pos = new Vector3D(1.0, 0.1, 10.0)
-    val vel = new Vector3D(-1.0, -0.1, -10.0)
-    val acc = new Vector3D(0.0, 0.2, 0.0)
-
-    // Test position-only constructor
-    val k1 = new KinematicState(pos)
-    checkResult(k1, KinematicState(pos, Vector3D.Zero, Vector3D.Zero))
-
-    // Test position and velocity constructor
+    val pos = Vector3D(1.0, 0.1, 10.0)
+    val vel = Vector3D(-1.0, -0.1, -10.0)
+    val acc = Vector3D(0.0, 0.2, 0.0)
     val k2 = new KinematicState(pos, vel)
     checkResult(k2, KinematicState(pos, vel, Vector3D.Zero))
-
-    // Test full constructor
-    val k3 = new KinematicState(pos, vel, acc)
+    val k3 = KinematicState(pos, vel, acc)
     checkResult(k3, KinematicState(pos, vel, acc))
   }
 
   "KinematicState binary operations" should "correctly scale and subtract states" in {
-    val k1 = new KinematicState(new Vector3D(1.0, 0.1, 10.0), new Vector3D(-1.0, -0.1, -10.0), Vector3D.Zero)
-    val k2 = new KinematicState(new Vector3D(3.0, 0.3, 30.0), new Vector3D(-3.0, -0.3, -30.0), Vector3D.Zero)
-    val k3 = new KinematicState(new Vector3D(2.0, 0.2, 20.0), new Vector3D(-2.0, -0.2, -20.0), Vector3D.Zero)
-
-    // Test scaling
+    val k1 = KinematicState(Vector3D(1.0, 0.1, 10.0), Vector3D(-1.0, -0.1, -10.0), Vector3D.Zero)
+    val k2 = KinematicState(Vector3D(3.0, 0.3, 30.0), Vector3D(-3.0, -0.3, -30.0), Vector3D.Zero)
+    val k3 = KinematicState(Vector3D(2.0, 0.2, 20.0), Vector3D(-2.0, -0.2, -20.0), Vector3D.Zero)
     checkResult(k2, k1 * 3.0)
-    checkResult(KinematicState.ZERO, k1 * 0.0) // Edge case: scaling by zero
-
-    // Test subtraction
+    checkResult(KinematicState.ZERO, k1 * 0.0)
     checkResult(k3, k2 - k1)
-    checkResult(KinematicState.ZERO, k1 - k1) // Edge case: subtracting identical states
+    checkResult(KinematicState.ZERO, k1 - k1)
   }
 
   "toString" should "format position, velocity, and acceleration in expected string format" in {
-    val k1 = new KinematicState(new Vector3D(3.0, 0.3, 30.0), new Vector3D(-3.0, -0.3, -30.0), Vector3D.Zero)
+    val k1 = KinematicState(Vector3D(3.0, 0.3, 30.0), Vector3D(-3.0, -0.3, -30.0), Vector3D.Zero)
     k1.toString shouldEqual "{Pos[Vector3D(3.0, 0.3, 30.0)], Vel[Vector3D(-3.0, -0.3, -30.0)], Acc[Vector3D(0.0, 0.0, 0.0)]}"
-
-    val k2 = new KinematicState(new Vector3D(1.0, 0.1, 10.0), new Vector3D(-1.0, -0.1, -10.0), new Vector3D(0.0, 0.2, 0.0))
+    val k2 = KinematicState(Vector3D(1.0, 0.1, 10.0), Vector3D(-1.0, -0.1, -10.0), Vector3D(0.0, 0.2, 0.0))
     k2.toString shouldEqual "{Pos[Vector3D(1.0, 0.1, 10.0)], Vel[Vector3D(-1.0, -0.1, -10.0)], Acc[Vector3D(0.0, 0.2, 0.0)]}"
-
     KinematicState.ZERO.toString shouldEqual "{Pos[Vector3D(0.0, 0.0, 0.0)], Vel[Vector3D(0.0, 0.0, 0.0)], Acc[Vector3D(0.0, 0.0, 0.0)]}"
   }
 
   "getAngularMomentum" should "compute specific angular momentum as position cross velocity" in {
-    val pos = new Vector3D(1, -2, 3)
-    val vel = new Vector3D(-9, 8, -7)
-
-    // General case: r × v = (-10, -20, -10)
+    val pos = Vector3D(1, -2, 3)
+    val vel = Vector3D(-9, 8, -7)
     new KinematicState(pos, vel).getAngularMomentum shouldEqual Vector3D(-10, -20, -10)
-
-    // Confirm non-zero acceleration is ignored
-    new KinematicState(pos, vel, new Vector3D(1, 2, 3)).getAngularMomentum shouldEqual Vector3D(-10, -20, -10)
-
-    // Trigonometric cases
-    new KinematicState(Vector3D.PLUS_I, Vector3D.MINUS_I).getAngularMomentum shouldEqual Vector3D.Zero // r × (-r) = 0
-    new KinematicState(Vector3D.PLUS_I, Vector3D.PLUS_J).getAngularMomentum shouldEqual Vector3D.PLUS_K // i × j = k
-
-    // Edge case: zero position
-    new KinematicState(Vector3D.Zero, vel).getAngularMomentum shouldEqual Vector3D.Zero // 0 × v = 0
+    new KinematicState(pos, vel, Vector3D(1, 2, 3)).getAngularMomentum shouldEqual Vector3D(-10, -20, -10)
+    new KinematicState(Vector3D.PLUS_I, Vector3D.MINUS_I).getAngularMomentum shouldEqual Vector3D.Zero
+    new KinematicState(Vector3D.PLUS_I, Vector3D.PLUS_J).getAngularMomentum shouldEqual Vector3D.PLUS_K
+    new KinematicState(Vector3D.Zero, vel).getAngularMomentum shouldEqual Vector3D.Zero
   }
 
   "shiftBy" should "update position and velocity using constant-acceleration kinematics" in {
-    val p1 = new Vector3D(1.0, 0.1, 10.0)
-    val p2 = new Vector3D(2.0, 0.2, 20.0)
-    val v = new Vector3D(-1.0, -0.1, -10.0)
-    val a = new Vector3D(0.0, 0.2, 0.0)
-
-    // Test with zero acceleration, negative dt
-    checkResult(new KinematicState(p2, v, Vector3D.Zero), new KinematicState(p1, v, Vector3D.Zero).shiftBy(-1.0))
-
-    // Test with zero acceleration, positive dt
-    checkResult(new KinematicState(p1, v, Vector3D.Zero), new KinematicState(p2, v, Vector3D.Zero).shiftBy(1.0))
-
-    // Test with non-zero acceleration
+    val p1 = Vector3D(1.0, 0.1, 10.0)
+    val p2 = Vector3D(2.0, 0.2, 20.0)
+    val v = Vector3D(-1.0, -0.1, -10.0)
+    val a = Vector3D(0.0, 0.2, 0.0)
+    checkResult(KinematicState(p2, v, Vector3D.Zero), KinematicState(p1, v, Vector3D.Zero).shiftBy(-1.0))
+    checkResult(KinematicState(p1, v, Vector3D.Zero), KinematicState(p2, v, Vector3D.Zero).shiftBy(1.0))
     val dt = 2.0
-    val expectedPos = p1 + (v * dt) + (a * (0.5 * dt * dt)) // r + v*dt + (1/2)*a*dt^2
-    val expectedVel = v + (a * dt) // v + a*dt
-    checkResult(
-      new KinematicState(expectedPos, expectedVel, a),
-      new KinematicState(p1, v, a).shiftBy(dt)
-    )
-
-    // Test dt = 0
-    checkResult(new KinematicState(p1, v, a), new KinematicState(p1, v, a).shiftBy(0.0))
-
-    // Test velocityBetween separately
-    KinematicState.velocityBetween(p1, p2, -1.0) shouldBe v // (p2 - p1) / (-1.0) = v
+    val expectedPos = p1 + (v * dt) + (a * (0.5 * dt * dt))
+    val expectedVel = v + (a * dt)
+    checkResult(KinematicState(expectedPos, expectedVel, a), KinematicState(p1, v, a).shiftBy(dt))
+    checkResult(KinematicState(p1, v, a), KinematicState(p1, v, a).shiftBy(0.0))
+    KinematicState.velocityBetween(p1, p2, -1.0) shouldBe v
   }
 
   "getAngularVelocity" should "compute angular velocity as position cross velocity over position magnitude squared" in {
-    // General case: arbitrary position and velocity
-    val pos = new Vector3D(1.0, -2.0, 3.0)
-    val vel = new Vector3D(-4.0, 5.0, -6.0)
-    // Compute expected: ω = (r × v) / ||r||^2
-    // r × v = (1, -2, 3) × (-4, 5, -6) = [(-2)(-6) - (3)(5), (3)(-4) - (1)(-6), (1)(5) - (-2)(-4)] = (12 - 15, -12 + 6, 5 - 8) = (-3, -6, -3)
-    // ||r||^2 = 1^2 + (-2)^2 + 3^2 = 1 + 4 + 9 = 14
-    // ω = (-3, -6, -3) / 14 = (-3/14, -6/14, -3/14)
-    val expected = new Vector3D(-3.0 / 14.0, -6.0 / 14.0, -3.0 / 14.0)
-    checkVector(new KinematicState(pos, vel, Vector3D.Zero).getAngularVelocity, expected)
+    val pos = Vector3D(1.0, -2.0, 3.0)
+    val vel = Vector3D(-4.0, 5.0, -6.0)
+    val expected = Vector3D(-3.0 / 14.0, -6.0 / 14.0, -3.0 / 14.0)
+    checkVector(KinematicState(pos, vel, Vector3D.Zero).getAngularVelocity, expected)
+    checkVector(new KinematicState(Vector3D.PLUS_I, Vector3D.PLUS_J).getAngularVelocity, Vector3D.PLUS_K)
+    checkVector(new KinematicState(Vector3D.PLUS_I, Vector3D.PLUS_I).getAngularVelocity, Vector3D.Zero)
+    checkVector(new KinematicState(Vector3D.Zero, vel).getAngularVelocity, Vector3D.Zero)
+    checkVector(new KinematicState(Vector3D(1e-10, 0.0, 0.0), Vector3D(0.0, 1e-10, 0.0)).getAngularVelocity, Vector3D.PLUS_K)
+  }
 
-    // Trigonometric case: perpendicular vectors (i × j = k)
-    // r = (1, 0, 0), v = (0, 1, 0) => r × v = (0, 0, 1), ||r||^2 = 1 => ω = (0, 0, 1)
-    checkVector(
-      new KinematicState(Vector3D.PLUS_I, Vector3D.PLUS_J).getAngularVelocity,
-      Vector3D.PLUS_K
-    )
+  "normalize" should "normalize position, velocity, and acceleration with derivatives" in {
+    val h = 1.0e-3
+    val posTol = 1.0e-16
+    val velTol = 3.0e-13
+    val accTol = 6.0e-10
 
-    // Trigonometric case: parallel vectors (i × i = 0)
-    // r = (1, 0, 0), v = (1, 0, 0) => r × v = (0, 0, 0), ||r||^2 = 1 => ω = (0, 0, 0)
-    checkVector(
-      new KinematicState(Vector3D.PLUS_I, Vector3D.PLUS_I).getAngularVelocity,
-      Vector3D.Zero
-    )
+    val differentiator = FiniteDifferencesDifferentiator(5, h)
 
-    // Edge case: zero position
-    // r = (0, 0, 0), v = arbitrary => ||r||^2 = 0 => ω = (0, 0, 0)
-    checkVector(
-      new KinematicState(Vector3D.Zero, vel).getAngularVelocity,
-      Vector3D.Zero
-    )
+    for (_ <- 0 until 200) {
+      val state = KinematicState(randomVector3D(1e6), randomVector3D(1e3), randomVector3D(1.0))
+      val normalized = state.normalize
 
-    // Edge case: small position vector to test numerical stability
-    // r = (1e-10, 0, 0), v = (0, 1e-10, 0) => r × v = (0, 0, 1e-20), ||r||^2 = 1e-20 => ω = (0, 0, 1)
-    checkVector(
-      new KinematicState(new Vector3D(1e-10, 0.0, 0.0), new Vector3D(0.0, 1e-10, 0.0)).getAngularVelocity,
-      Vector3D.PLUS_K
-    )
+      val x = differentiator.differentiateToWrapper(i => state.shiftBy(i).position.normalize.x, 0.0, 2)
+      val y = differentiator.differentiateToWrapper(i => state.shiftBy(i).position.normalize.y, 0.0, 2)
+      val z = differentiator.differentiateToWrapper(i => state.shiftBy(i).position.normalize.z, 0.0, 2)
+
+      x.getValue shouldEqual normalized.position.x +- posTol
+      y.getValue shouldEqual normalized.position.y +- posTol
+      z.getValue shouldEqual normalized.position.z +- posTol
+
+      val firstOrder = Array(1)
+      x.getPartialDerivative(firstOrder) shouldEqual normalized.velocity.x +- velTol
+      y.getPartialDerivative(firstOrder) shouldEqual normalized.velocity.y +- velTol
+      z.getPartialDerivative(firstOrder) shouldEqual normalized.velocity.z +- velTol
+
+      val secondOrder = Array(2)
+      x.getPartialDerivative(secondOrder) shouldEqual normalized.acceleration.x +- accTol
+      y.getPartialDerivative(secondOrder) shouldEqual normalized.acceleration.y +- accTol
+      z.getPartialDerivative(secondOrder) shouldEqual normalized.acceleration.z +- accTol
+    }
   }
 
   private def checkResult(expected: KinematicState, actual: KinematicState, tolerance: Double = 1.0e-15) = {
@@ -140,11 +134,14 @@ class KinematicStateSpec extends AnyFlatSpec with Matchers {
     expected.velocity.x shouldEqual actual.velocity.x +- tolerance
     expected.velocity.y shouldEqual actual.velocity.y +- tolerance
     expected.velocity.z shouldEqual actual.velocity.z +- tolerance
+    expected.acceleration.x shouldEqual actual.acceleration.x +- tolerance
+    expected.acceleration.y shouldEqual actual.acceleration.y +- tolerance
+    expected.acceleration.z shouldEqual actual.acceleration.z +- tolerance
   }
 
   private def checkVector(actual: Vector3D, expected: Vector3D, tolerance: Double = 1.0e-15): Unit = {
     val diff = actual - expected
-    val error = diff.magnitude // Euclidean norm of difference
+    val error = diff.magnitude
     assert(error < tolerance, s"Vector mismatch: $actual != $expected, error = $error")
   }
 }

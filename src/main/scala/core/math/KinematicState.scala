@@ -100,16 +100,18 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
    * @return A new [[KinematicState]] with normalized position and consistent velocity and acceleration derivatives.
    */
   def normalize: KinematicState = {
-    val inv = 1.0 / position.magnitude
-    val u = position * inv // Normalized position
-    val v = velocity * inv // Scaled velocity
-    val w = acceleration * inv // Scaled acceleration
-    val uv = u.dot(v) // Dot product u · v
-    val v2 = v.dot(v) // Dot product v · v
-    val uw = u.dot(w) // Dot product u · w
-    val uDot = v - (u * uv) // Velocity: derivative of normalized position
-    val uDotDot = w - (v * 2 * uv) + (u * (3 * uv * uv - v2 - uw)) // Acceleration: derivative of uDot
-    KinematicState(u, uDot, uDotDot)
+    val r = position.magnitude
+    if (r == 0.0) throw new ArithmeticException("Cannot normalize zero norm vector")
+    val inv = 1.0 / r
+    val u = position * inv
+    val q = velocity * inv
+    val s = acceleration * inv
+    val alpha = u dot q
+    val gamma = q dot q
+    val beta = u dot s
+    val uDot = q - (u * alpha)
+    val uDDot = s - (q * (2.0 * alpha)) + (u * (3.0 * alpha * alpha - gamma - beta))
+    KinematicState(u, uDot, uDDot)
   }
 
   /**
