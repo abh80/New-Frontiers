@@ -209,21 +209,30 @@ object KinematicState {
     /**
      * Computes the cross product of two kinematic states.
      * The cross product is applied component-wise, with velocity and acceleration terms derived to maintain consistency:
-     * - Position: r₁ × r₂
-     * - Velocity: (r₁ × v₂) + (r₂ × v₁)
-     * - Acceleration: (r₁ × a₂) + 2(v₁ × v₂) + (a₁ × r₂)
+     * - Position: P₁ × P₂
+     * - Velocity: (V₁ × P₂) + (P₁ × V₂)
+     * - Acceleration: (A₁ × P₂) + (P₁ × A₂) + 2(V₁ × V₂)
      *
-     * where r₁, v₁, a₁ are the position, velocity, and acceleration of the first state,
-     * and r₂, v₂, a₂ are those of the second state.
+     * where P₁, V₁, A₁ are the position, velocity, and acceleration of the first state,
+     * and P₂, V₂, A₂ are those of the second state.
      *
      * @param second The kinematic state to compute the cross product with.
      * @return A new [[KinematicState]] representing the cross product.
      */
-    def X(second: KinematicState) =
+    def X(second: KinematicState): KinematicState = {
+      // Correct velocity term: (V₁ × P₂) + (P₁ × V₂)
+      val vel = (self.velocity X second.position) + (self.position X second.velocity)
+
+      // Correct acceleration term: (A₁ × P₂) + (P₁ × A₂) + 2(V₁ × V₂)
+      val acc = (self.acceleration X second.position) +
+        (self.position X second.acceleration) +
+        ((self.velocity X second.velocity) * 2.0)
+
       new KinematicState(
         self.position X second.position,
-        (self.position X second.velocity) + (second.position X self.velocity),
-        (self.position X second.acceleration) + ((self.velocity X second.velocity) * 2) + (self.acceleration X second.position)
+        vel,
+        acc
       )
+    }
   }
 }
