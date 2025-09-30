@@ -126,6 +126,39 @@ class KinematicStateSpec extends AnyFlatSpec with Matchers {
       z.getPartialDerivative(secondOrder) shouldEqual normalized.acceleration.z +- accTol
     }
   }
+  "KinematicState cross product (X)" should "correctly compute position, velocity, and acceleration terms" in {
+    val h = 1.0e-3
+    val posTol = 1.0e-16
+    val velTol = 9.0e-10
+    val accTol = 3.0e-9
+
+    val differentiator = FiniteDifferencesDifferentiator(5, h)
+
+    for (_ <- 0 until 200) {
+      val state1 = KinematicState(randomVector3D(1e6), randomVector3D(1e3), randomVector3D(1.0))
+      val state2 = KinematicState(randomVector3D(1e6), randomVector3D(1e3), randomVector3D(1.0))
+
+      val x = differentiator.differentiateToWrapper(i => (state1.shiftBy(i).position X state2.shiftBy(i).position).x, 0.0, 2)
+      val y = differentiator.differentiateToWrapper(i => (state1.shiftBy(i).position X state2.shiftBy(i).position).y, 0.0, 2)
+      val z = differentiator.differentiateToWrapper(i => (state1.shiftBy(i).position X state2.shiftBy(i).position).z, 0.0, 2)
+
+      val crossed = state1 X state2
+
+      x.getValue shouldEqual crossed.position.x +- posTol
+      y.getValue shouldEqual crossed.position.y +- posTol
+      z.getValue shouldEqual crossed.position.z +- posTol
+
+      val firstOrder = Array(1)
+      x.getPartialDerivative(firstOrder) shouldEqual crossed.velocity.x +- velTol
+      y.getPartialDerivative(firstOrder) shouldEqual crossed.velocity.y +- velTol
+      z.getPartialDerivative(firstOrder) shouldEqual crossed.velocity.z +- velTol
+
+      val secondOrder = Array(2)
+      x.getPartialDerivative(secondOrder) shouldEqual crossed.acceleration.x +- accTol
+      y.getPartialDerivative(secondOrder) shouldEqual crossed.acceleration.y +- accTol
+      z.getPartialDerivative(secondOrder) shouldEqual crossed.acceleration.z +- accTol
+    }
+  }
 
   private def checkResult(expected: KinematicState, actual: KinematicState, tolerance: Double = 1.0e-15) = {
     expected.position.x shouldEqual actual.position.x +- tolerance
