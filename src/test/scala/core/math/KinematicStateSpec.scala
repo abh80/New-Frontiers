@@ -135,8 +135,8 @@ class KinematicStateSpec extends AnyFlatSpec with Matchers {
     val differentiator = FiniteDifferencesDifferentiator(5, h)
 
     for (_ <- 0 until 200) {
-      val state1 = KinematicState(randomVector3D(1e6), randomVector3D(1e3), randomVector3D(1.0))
-      val state2 = KinematicState(randomVector3D(1e6), randomVector3D(1e3), randomVector3D(1.0))
+      val state1 = KinematicState(randomVector3D(1.0), randomVector3D(1.0), randomVector3D(1.0))
+      val state2 = KinematicState(randomVector3D(1.0), randomVector3D(1.0), randomVector3D(1.0))
 
       val x = differentiator.differentiateToWrapper(i => (state1.shiftBy(i).position X state2.shiftBy(i).position).x, 0.0, 2)
       val y = differentiator.differentiateToWrapper(i => (state1.shiftBy(i).position X state2.shiftBy(i).position).y, 0.0, 2)
