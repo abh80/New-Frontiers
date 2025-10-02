@@ -1,0 +1,39 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run all test" type="ScalaTestRunConfiguration" factoryName="ScalaTest" show_console_on_std_err="false" show_console_on_std_out="false">
+    <module name="New Frontiers.test" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="org.abh80.nf.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="VMParameters" value="" />
+    <option name="allowRunningInParallel" value="false" />
+    <option name="alternativeJrePath" />
+    <option name="alternativeJrePathEnabled" value="false" />
+    <option name="classpathModifications">
+      <list />
+    </option>
+    <option name="envFilePaths">
+      <list />
+    </option>
+    <option name="envs">
+      <map />
+    </option>
+    <option name="passParentEnvs" value="true" />
+    <option name="programParameters" value="" />
+    <option name="projectPathOnTarget" />
+    <option name="selectedOptions">
+      <list />
+    </option>
+    <option name="testKind" value="All in package" />
+    <option name="workingDirectory" value="C:\Users\udaya\dev\new-frontiers" />
+    <option name="shortenClasspath" value="NONE" />
+    <option name="testPackagePath" value="org.abh80.nf" />
+    <option name="useUiWithSbt" value="true" />
+    <option name="workingDirectory" value="C:\Users\udaya\dev\new-frontiers" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
