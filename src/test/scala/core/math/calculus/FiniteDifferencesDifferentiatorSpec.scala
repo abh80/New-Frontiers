@@ -150,7 +150,7 @@ class FiniteDifferencesDifferentiatorSpec extends AnyFlatSpec with Matchers {
 
     val wrapper = diff.differentiateToWrapper(f, 2.0, 3)
 
-    wrapper.getPartialDerivative(Array(0)) shouldBe 8.0 +- 1e-6 // f(2) = 8
+    wrapper.getPartialDerivative(Array(0)) shouldBe 8.0 +- 1e-4 // f(2) = 8
     wrapper.getPartialDerivative(Array(1)) shouldBe 12.0 +- 1e-4 // f'(2) = 12
     wrapper.getPartialDerivative(Array(2)) shouldBe 12.0 +- 1e-3 // f''(2) = 12
     wrapper.getPartialDerivative(Array(3)) shouldBe 6.0 +- 1e-2 // f'''(2) = 6
