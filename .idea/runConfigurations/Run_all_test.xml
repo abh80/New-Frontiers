@@ -28,6 +28,27 @@
     </option>
     <option name="testKind" value="All in package" />
     <option name="workingDirectory" value="C:\Users\udaya\dev\new-frontiers" />
+    <option name="classBuf">
+      <list>
+        <option value="org.abh80.nf.core.math.KinematicStateSpec" />
+        <option value="org.abh80.nf.core.math.Vector3DSpec" />
+        <option value="org.abh80.nf.core.math.calculus.DerivativeWrapperSpec" />
+        <option value="org.abh80.nf.core.metrics.AngleUnitSpec" />
+        <option value="org.abh80.nf.core.metrics.DistanceUnitSpec" />
+        <option value="org.abh80.nf.core.time.AbsoluteTimeSpec" />
+        <option value="org.abh80.nf.core.time.DateSpec" />
+        <option value="org.abh80.nf.core.time.EpochFactorySpec" />
+        <option value="org.abh80.nf.core.time.GLONASSScaleSpec" />
+        <option value="org.abh80.nf.core.time.GPSScaleSpec" />
+        <option value="org.abh80.nf.core.time.IRNSSScaleSpec" />
+        <option value="org.abh80.nf.core.time.TDBScaleSpec" />
+        <option value="org.abh80.nf.core.time.TTScaleTest" />
+        <option value="org.abh80.nf.core.time.TimeFormatSpec" />
+        <option value="org.abh80.nf.core.time.TimeSpec" />
+        <option value="org.abh80.nf.core.time.UTCScaleSpec" />
+        <option value="org.abh80.nf.util.DateUtilSpec" />
+      </list>
+    </option>
     <option name="shortenClasspath" value="NONE" />
     <option name="testPackagePath" value="org.abh80.nf" />
     <option name="useUiWithSbt" value="true" />
