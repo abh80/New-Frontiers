@@ -1,0 +1,1585 @@
+<!DOCTYPE html><html data-pathToRoot="../../../../" data-rawLocation="org/abh80/nf/core/time" data-dynamicSideMenu="false"><head><meta charset="utf-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"></meta><title>org.abh80.nf.core.time</title><link rel="shortcut icon" type="image/x-icon" href="../../../../favicon.ico"></link><script type="text/javascript" src="../../../../scripts/theme.js"></script><script type="text/javascript" src="../../../../scripts/searchData.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/scastieConfiguration.js" defer="true"></script><link rel="stylesheet" href="../../../../styles/theme/bundle.css"></link><link rel="stylesheet" href="../../../../styles/theme/components/bundle.css"></link><link rel="stylesheet" href="../../../../styles/theme/components/button/bundle.css"></link><link rel="stylesheet" href="../../../../styles/theme/layout/bundle.css"></link><link rel="stylesheet" href="../../../../styles/nord-light.css"></link><link rel="stylesheet" href="../../../../styles/dotty-icons.css"></link><link rel="stylesheet" href="../../../../styles/filter-bar.css"></link><link rel="stylesheet" href="../../../../styles/code-snippets.css"></link><link rel="stylesheet" href="../../../../styles/searchbar.css"></link><link rel="stylesheet" href="../../../../styles/social-links.css"></link><link rel="stylesheet" href="../../../../styles/versions-dropdown.css"></link><link rel="stylesheet" href="../../../../styles/content-contributors.css"></link><link rel="stylesheet" href="../../../../styles/fontawesome.css"></link><script type="text/javascript" src="../../../../hljs/highlight.pack.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/hljs-scala3.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/ux.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/common/component.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/common/utils.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/components/FilterBar.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/components/DocumentableList.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/components/Input.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/components/FilterGroup.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/components/Filter.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/scaladoc-scalajs.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/contributors.js" defer="true"></script><script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js" defer="true"></script><script type="text/javascript" src="https://d3js.org/d3.v6.min.js" defer="true"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/graphlib-dot@0.6.2/dist/graphlib-dot.min.js" defer="true"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.1/dagre-d3.min.js" defer="true"></script><script type="text/javascript" src="https://scastie.scala-lang.org/embedded.js" defer="true"></script><script type="text/javascript" src="../../../../scripts/data.js" defer="true"></script><link rel="stylesheet" href="../../../../styles/apistyles.css"></link><script>var pathToRoot = "../../../../";</script></head><body><div id=""><div id="header" class="body-small"><div class="header-container-left"><a href="../../../../" class="logo-container"><span class="project-name h300">New Frontiers</span></a><span onclick="dropdownHandler(event)" class="text-button with-arrow" id="dropdown-trigger"><a></a></span><div id="version-dropdown" class="dropdown-menu"></div></div><div class="header-container-right"><button id="search-toggle" class="icon-button"></button><span id="theme-toggle" class="icon-button"></span><span id="mobile-menu-toggle" class="icon-button hamburger"></span></div></div><div id="mobile-menu"><div class="mobile-menu-header body-small"><span class="mobile-menu-logo"><span class="project-name h300">New Frontiers</span></span><button id="mobile-menu-close" class="icon-button close"></button></div><div class="mobile-menu-container body-medium"><input id="mobile-scaladoc-searchbar-input" class="scaladoc-searchbar-input" type="search" placeholder="Find anything"></input><span id="mobile-theme-toggle" class="mobile-menu-item mode"></span></div></div><span id="mobile-sidebar-toggle" class="floating-button"></span><div id="leftColumn" class="body-small"><div class="switcher-container"><a id="api-nav-button" class="switcher h100 selected" href="../../../../index.html">API</a></div><nav id="api-nav" class="side-menu"><div class="ni n0 expanded"><span class="nh h100 expanded cs"><button class="ar icon-button expanded"></button><a href="../../nf.html"><span class="micon pa"></span><span>org.abh80.nf</span></a></span><div class="ni n1 expanded"><span class="nh h100 expanded cs"><button class="ar icon-button expanded"></button><a href="../core.html"><span class="micon pa"></span><span>core</span></a></span><div class="ni n2"><span class="nh "><button class="ar icon-button "></button><a href="math.html"><span class="micon pa"></span><span>math</span></a></span><div class="ni n3"><span class="nh "><button class="ar icon-button "></button><a href="math/calculus.html"><span class="micon pa"></span><span>calculus</span></a></span><div class="ni n4 "><span class="nh "><a href="math/calculus/Derivative.html"><span class="micon tr"></span><span>Derivative</span></a></span></div><div class="ni n4 "><span class="nh "><a href="math/calculus/DerivativeWrapper.html"><span class="micon cl"></span><span>DerivativeWrapper</span></a></span></div><div class="ni n4 "><span class="nh "><a href="math/calculus/FiniteDifferencesDifferentiator.html"><span class="micon cl"></span><span>FiniteDifferencesDifferentiator</span></a></span></div></div><div class="ni n3 "><span class="nh "><a href="math/KinematicState.html"><span class="micon cl"></span><span>KinematicState</span></a></span></div><div class="ni n3"><span class="nh "><button class="ar icon-button "></button><a href="math/KinematicState$.html"><span class="micon ob"></span><span>KinematicState</span></a></span><div class="ni n4 "><span class="nh "><a href="math/KinematicState$$BinOp.html"><span class="micon cl"></span><span>BinOp</span></a></span></div></div><div class="ni n3 "><span class="nh "><a href="math/Vector3D.html"><span class="micon cl"></span><span>Vector3D</span></a></span></div><div class="ni n3"><span class="nh "><button class="ar icon-button "></button><a href="math/Vector3D$.html"><span class="micon ob"></span><span>Vector3D</span></a></span><div class="ni n4 "><span class="nh "><a href="math/Vector3D$$BinOp.html"><span class="micon cl"></span><span>BinOp</span></a></span></div></div></div><div class="ni n2"><span class="nh "><button class="ar icon-button "></button><a href="metrics.html"><span class="micon pa"></span><span>metrics</span></a></span><div class="ni n3 "><span class="nh "><a href="metrics/AngleUnit.html"><span class="micon tr"></span><span>AngleUnit</span></a></span></div><div class="ni n3"><span class="nh "><button class="ar icon-button "></button><a href="metrics/AngleUnit$.html"><span class="micon ob"></span><span>AngleUnit</span></a></span><div class="ni n4 "><span class="nh "><a href="metrics/AngleUnit$$ArcMinute.html"><span class="micon cl"></span><span>ArcMinute</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/AngleUnit$$ArcMinute$.html"><span class="micon ob"></span><span>ArcMinute</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/AngleUnit$$ArcSecond.html"><span class="micon cl"></span><span>ArcSecond</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/AngleUnit$$ArcSecond$.html"><span class="micon ob"></span><span>ArcSecond</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/AngleUnit$$BinOp.html"><span class="micon cl"></span><span>BinOp</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/AngleUnit$$Degree.html"><span class="micon cl"></span><span>Degree</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/AngleUnit$$Degree$.html"><span class="micon ob"></span><span>Degree</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/AngleUnit$$HourAngle.html"><span class="micon cl"></span><span>HourAngle</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/AngleUnit$$HourAngle$.html"><span class="micon ob"></span><span>HourAngle</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/AngleUnit$$Radian.html"><span class="micon cl"></span><span>Radian</span></a></span></div></div><div class="ni n3 "><span class="nh "><a href="metrics/AngleUnitCompanion.html"><span class="micon tr"></span><span>AngleUnitCompanion</span></a></span></div><div class="ni n3 "><span class="nh "><a href="metrics/DistanceUnit.html"><span class="micon tr"></span><span>DistanceUnit</span></a></span></div><div class="ni n3"><span class="nh "><button class="ar icon-button "></button><a href="metrics/DistanceUnit$.html"><span class="micon ob"></span><span>DistanceUnit</span></a></span><div class="ni n4 "><span class="nh "><a href="metrics/DistanceUnit$$AstronomicalUnit.html"><span class="micon cl"></span><span>AstronomicalUnit</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/DistanceUnit$$AstronomicalUnit$.html"><span class="micon ob"></span><span>AstronomicalUnit</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/DistanceUnit$$BinOp.html"><span class="micon cl"></span><span>BinOp</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/DistanceUnit$$Kilometer.html"><span class="micon cl"></span><span>Kilometer</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/DistanceUnit$$Kilometer$.html"><span class="micon ob"></span><span>Kilometer</span></a></span></div><div class="ni n4 "><span class="nh "><a href="metrics/DistanceUnit$$Meter.html"><span class="micon cl"></span><span>Meter</span></a></span></div></div><div class="ni n3 "><span class="nh "><a href="metrics/DistanceUnitCompanion.html"><span class="micon tr"></span><span>DistanceUnitCompanion</span></a></span></div></div><div class="ni n2 expanded"><span class="nh h100 selected"><button class="ar icon-button expanded"></button><a href="#"><span class="micon pa"></span><span>time</span></a></span><div class="ni n3 "><span class="nh "><a href="time/AbsoluteTime.html"><span class="micon cl"></span><span>AbsoluteTime</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/AbsoluteTime$.html"><span class="micon ob"></span><span>AbsoluteTime</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/Date.html"><span class="micon cl"></span><span>Date</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/Date$.html"><span class="micon ob"></span><span>Date</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/EpochFactory$.html"><span class="micon ob"></span><span>EpochFactory</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/FixedTimeOffsetScale.html"><span class="micon cl"></span><span>FixedTimeOffsetScale</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/GLONASSScale.html"><span class="micon cl"></span><span>GLONASSScale</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/GPSScale.html"><span class="micon cl"></span><span>GPSScale</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/IRNSSScale.html"><span class="micon cl"></span><span>IRNSSScale</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/TAIScale.html"><span class="micon cl"></span><span>TAIScale</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/TDBScale.html"><span class="micon cl"></span><span>TDBScale</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/TDTScale.html"><span class="micon cl"></span><span>TDTScale</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/TTScale.html"><span class="micon cl"></span><span>TTScale</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/Time.html"><span class="micon cl"></span><span>Time</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/Time$.html"><span class="micon ob"></span><span>Time</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/TimeFormat.html"><span class="micon cl"></span><span>TimeFormat</span></a></span></div><div class="ni n3"><span class="nh "><button class="ar icon-button "></button><a href="time/TimeFormat$.html"><span class="micon ob"></span><span>TimeFormat</span></a></span><div class="ni n4 "><span class="nh "><a href="time/TimeFormat$$BinOp.html"><span class="micon cl"></span><span>BinOp</span></a></span></div></div><div class="ni n3 "><span class="nh "><a href="time/TimeScale.html"><span class="micon tr"></span><span>TimeScale</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/TimeScaleFactory$.html"><span class="micon ob"></span><span>TimeScaleFactory</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/TimeUnit.html"><span class="micon en"></span><span>TimeUnit</span></a></span></div><div class="ni n3 "><span class="nh "><a href="time/UTCScale.html"><span class="micon cl"></span><span>UTCScale</span></a></span></div><div class="ni n3"><span class="nh "><button class="ar icon-button "></button><a href="time/UTCScale$.html"><span class="micon ob"></span><span>UTCScale</span></a></span><div class="ni n4 "><span class="nh "><a href="time/UTCScale$$ComputedLeapSecondOffset.html"><span class="micon cl"></span><span>ComputedLeapSecondOffset</span></a></span></div><div class="ni n4 "><span class="nh "><a href="time/UTCScale$$LeapSecondOffset.html"><span class="micon cl"></span><span>LeapSecondOffset</span></a></span></div></div></div><div class="ni n2 "><span class="nh "><a href="Constants$.html"><span class="micon ob"></span><span>Constants</span></a></span></div></div><div class="ni n1"><span class="nh "><button class="ar icon-button "></button><a href="../frames.html"><span class="micon pa"></span><span>frames</span></a></span><div class="ni n2"><span class="nh "><button class="ar icon-button "></button><a href="../frames/transformer.html"><span class="micon pa"></span><span>transformer</span></a></span><div class="ni n3 "><span class="nh "><a href="../frames/transformer/ReferenceFrameTransform.html"><span class="micon tr"></span><span>ReferenceFrameTransform</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../frames/transformer/ReferenceFrameTransformProvider.html"><span class="micon tr"></span><span>ReferenceFrameTransformProvider</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../frames/transformer/StaticReferenceFrameTransform.html"><span class="micon tr"></span><span>StaticReferenceFrameTransform</span></a></span></div></div><div class="ni n2 "><span class="nh "><a href="../frames/DefaultFrames.html"><span class="micon en"></span><span>DefaultFrames</span></a></span></div><div class="ni n2 "><span class="nh "><a href="../frames/Frame.html"><span class="micon cl"></span><span>Frame</span></a></span></div><div class="ni n2 "><span class="nh "><a href="../frames/Frame$.html"><span class="micon ob"></span><span>Frame</span></a></span></div></div><div class="ni n1"><span class="nh "><button class="ar icon-button "></button><a href="../orbit.html"><span class="micon pa"></span><span>orbit</span></a></span><div class="ni n2 "><span class="nh "><a href="../orbit/CircularOrbit.html"><span class="micon cl"></span><span>CircularOrbit</span></a></span></div><div class="ni n2 "><span class="nh "><a href="../orbit/KeplerianOrbit.html"><span class="micon cl"></span><span>KeplerianOrbit</span></a></span></div><div class="ni n2 "><span class="nh "><a href="../orbit/Orbit.html"><span class="micon tr"></span><span>Orbit</span></a></span></div></div><div class="ni n1"><span class="nh "><button class="ar icon-button "></button><a href="../util.html"><span class="micon pa"></span><span>util</span></a></span><div class="ni n2"><span class="nh "><button class="ar icon-button "></button><a href="../util/DateUtil$.html"><span class="micon ob"></span><span>DateUtil</span></a></span><div class="ni n3 "><span class="nh "><a href="../util/DateUtil$$ANSI_INCITS_30_1997.html"><span class="micon cl"></span><span>ANSI_INCITS_30_1997</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../util/DateUtil$$ASIAN.html"><span class="micon cl"></span><span>ASIAN</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../util/DateUtil$$DateName.html"><span class="micon tr"></span><span>DateName</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../util/DateUtil$$DateSeparator$.html"><span class="micon ob"></span><span>DateSeparator</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../util/DateUtil$$EN28601.html"><span class="micon cl"></span><span>EN28601</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../util/DateUtil$$ISO8601.html"><span class="micon cl"></span><span>ISO8601</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../util/DateUtil$$Month.html"><span class="micon en"></span><span>Month</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../util/DateUtil$$Month$.html"><span class="micon ob"></span><span>Month</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../util/DateUtil$$RFC822.html"><span class="micon cl"></span><span>RFC822</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../util/DateUtil$$StringDateFormat.html"><span class="micon tr"></span><span>StringDateFormat</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../util/DateUtil$$WeekUtil$.html"><span class="micon ob"></span><span>WeekUtil</span></a></span></div><div class="ni n3 "><span class="nh "><a href="../util/DateUtil$$Weekday.html"><span class="micon en"></span><span>Weekday</span></a></span></div></div><div class="ni n2 "><span class="nh "><a href="../util/TimeShiftable.html"><span class="micon tr"></span><span>TimeShiftable</span></a></span></div></div></div></nav></div><div id="footer" class="body-small"><div class="left-container">Generated with</div><div class="right-container"><div class="text"></div></div><div class="text-mobile"></div></div><div id="scaladoc-searchBar"></div><div id="main"><div class="breadcrumbs container"><a href="../../../../index.html">New Frontiers</a>/<a href="../../nf.html">org.abh80.nf</a>/<a href="../core.html">org.abh80.nf.core</a>/<a href="time.html">org.abh80.nf.core.time</a></div><div id="content" class="body-medium"><div><div class="cover-header">
+ <span class="icon"><span class="micon pa"></span></span>
+ <h1 class="h600 single">org.abh80.nf.core.time</h1>
+</div>
+<div class="fqname body-large">
+ <span></span>
+</div>
+<div class="main-signature mono-small-block">
+ <div class="signature">
+  <span class="modifiers"></span><span class="kind"><span t="k">package </span></span><a href="time.html" t="n" class="documentableName ">org.abh80.nf.core.time</a>
+ </div>
+</div>
+<section id="members-list">
+ <h2 class="h500">Members list</h2>
+ <div class="documentableFilter">
+  <div class="filtersContainer"></div><input class="filterableInput" placeholder="Filter by any phrase" data-test-id="filterBarInput" type="search"><button class="clearButton label-only-button" data-test-id="filterBarClearButton">Clear all</button>
+ </div>
+ <div class="membersList expand">
+  <div class="tabs">
+   <div class="contents">
+    <section id="Type-members">
+     <div data-togglable="Type members" class="tab expand">
+      <div class="member-group-header">
+       <h3 data-togglable="Type members" class="h400">Type members</h3>
+      </div>
+      <section id="Classlikes">
+       <div class="documentableList expand">
+        <div class="documentableList-expander">
+         <button class="icon-button show-content expand"></button>
+         <h4 class="groupHeader h200">Classlikes</h4>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/AbsoluteTime.html" t="n" class="documentableName ">AbsoluteTime</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">tf</span>: <a href="time/TimeFormat.html" t="t">TimeFormat</a>)<span t="k"> extends </span><a href="time/TimeFormat.html" t="t">TimeFormat</a><span t="k">, </span></span><span class="signature-long"><span data-unresolved-link="" t="t">Comparable</span>[<a href="time/TimeFormat.html" t="t">TimeFormat</a>]<span t="k">, </span><span data-unresolved-link="" t="t">Serializable</span><span t="k">, </span><a href="../util/TimeShiftable.html" t="t">TimeShiftable</a>[<a href="time/AbsoluteTime.html" t="t">AbsoluteTime</a>]</span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Represents an absolute point in time based on a given time format and timescale.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Represents an absolute point in time based on a given time format and timescale.</p>
+              <p>Internally, time is represented as a <a href="time/TimeFormat.html">TimeFormat</a> (seconds + attoseconds) relative to the J2000 epoch (January 1, 2000, 12:00 TT).</p>
+              <p>==Mathematical Background==</p>
+              <ul>
+               <li>The J2000 epoch is defined as <strong>JD 2451545.0 TT</strong> (Julian Date).</li>
+               <li>Conversion between calendar date and J2000 offset is done by:</li>
+              </ul>
+              <div class="snippet mono-small-block">
+               <pre><code class="language-"><span line-number="1" class=""><span class="tooltip-container"></span><span class="hideable"> </span>seconds = (days_since_J2000 * 86400) + time_of_day_seconds
+</span></code></pre>
+               <div class="buttons"></div>
+              </div>
+              <ul>
+               <li>Leap seconds and timescale offsets (e.g., UTC → TAI → TT) are applied using <a href="time/TimeScale.html">TimeScale</a> transformations.</li>
+              </ul>
+             </div>
+             <h2 class="h200">Value parameters</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               tf
+              </dt>
+              <dd class="body-medium">
+               <p>the underlying time format instance used to represent the absolute time</p>
+              </dd>
+             </dl>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               See also
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <p>TimeFormat</p>
+                </div>
+                <div>
+                 <p>TimeScale</p>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="time/AbsoluteTime$.html">object</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="../util/TimeShiftable.html" t="n">TimeShiftable</a>[<a href="time/AbsoluteTime.html" t="t">AbsoluteTime</a>]
+                </div>
+                <div>
+                 class <a href="time/TimeFormat.html" t="n">TimeFormat</a>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Serializable</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Comparable</span>[<a href="time/TimeFormat.html" t="t">TimeFormat</a>]
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span class="show-all-code show-content text-button h100">Show all</span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="time/AbsoluteTime$.html" t="n" class="documentableName ">AbsoluteTime</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="cover">
+             <div class="doc"></div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="time/AbsoluteTime.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="time/AbsoluteTime$.html" t="n">AbsoluteTime</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/Date.html" t="n" class="documentableName ">Date</a><span t="k"> extends </span><span data-unresolved-link="" t="t">Comparable</span>[<a href="time/Date.html" t="t">Date</a>]<span t="k">, </span></span><span class="signature-long"><span data-unresolved-link="" t="t">Serializable</span></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A robust date implementation that handles dates in different calendar systems.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A robust date implementation that handles dates in different calendar systems.</p>
+              <p>This class provides functionality to work with dates across three calendar systems:</p>
+              <ul>
+               <li>Gregorian calendar (current standard calendar system)</li>
+               <li>Julian calendar (historical calendar used before Gregorian)</li>
+               <li>Proleptic Julian calendar (extension of Julian calendar for dates before year 1)</li>
+              </ul>
+              <p>The implementation uses J2000 day number as internal representation, which counts days from January 1, 2000 (known as the J2000 epoch in astronomy).</p>
+              <p>The class automatically handles calendar transitions:</p>
+              <ul>
+               <li>Before year 1: Proleptic Julian calendar</li>
+               <li>Years 1-1582: Julian calendar</li>
+               <li>After October 4, 1582: Gregorian calendar</li>
+              </ul>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Note
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <p>This class is immutable and thread-safe</p>
+                </div>
+                <div>
+                 <p>it's recommended to initialize this class from the <code>Date</code> companion object</p>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="time/Date$.html">object</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <span data-unresolved-link="" t="n">Serializable</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Comparable</span>[<a href="time/Date.html" t="t">Date</a>]
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="time/Date$.html" t="n" class="documentableName ">Date</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Factory methods for creating <code>Date</code> instances.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Factory methods for creating <code>Date</code> instances.</p>
+              <p>This companion object provides various <code>apply</code> methods to construct <code>Date</code> objects using different date components and epoch references. These methods offer flexibility in creating <code>Date</code> instances from J2000 offsets, year/month/day combinations, or year/day-of-year combinations.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="time/Date.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="time/Date$.html" t="n">Date</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="time/EpochFactory$.html" t="n" class="documentableName ">EpochFactory</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Factory object providing commonly used epoch reference dates in astronomy and time systems.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Factory object providing commonly used epoch reference dates in astronomy and time systems.</p>
+              <p>This object contains predefined epoch dates that are frequently used in astronomical calculations and various time reference systems. These epochs serve as reference points for different time scales and coordinate systems.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               See also
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <p><a href="https://spsweb.fltops.jpl.nasa.gov/portaldataops/mpg/MPG_Docs/MPG%20Book/Release/Chapter2-TimeScales.pdf">https://spsweb.fltops.jpl.nasa.gov/portaldataops/mpg/MPG_Docs/MPG%20Book/Release/Chapter2-TimeScales.pdf</a></p>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="time/EpochFactory$.html" t="n">EpochFactory</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/FixedTimeOffsetScale.html" t="n" class="documentableName ">FixedTimeOffsetScale</a>(<span t="k"></span><span t="k">val </span><span data-unresolved-link="" t="n">name</span>: <span data-unresolved-link="" t="t">String</span>, <span t="k">val </span><span data-unresolved-link="" t="n">offset</span>: <a href="time/TimeFormat.html" t="t">TimeFormat</a>)<span t="k"> extends </span><a href="time/TimeScale.html" t="t">TimeScale</a></span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A time scale that applies a fixed offset to TAI.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A time scale that applies a fixed offset to TAI.</p>
+             </div>
+             <h2 class="h200">Value parameters</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               name
+              </dt>
+              <dd class="body-medium">
+               <p>The name of this time scale.</p>
+              </dd>
+              <dt class="body-small">
+               offset
+              </dt>
+              <dd class="body-medium">
+               <p>The fixed offset to apply to TAI. This offset represents the difference between the target time scale and TAI. For example, if the target time scale is always 10 seconds ahead of TAI, then the offset should be +10 seconds.</p>
+              </dd>
+             </dl>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="time/TimeScale.html" t="n">TimeScale</a>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Known subtypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block subtypes">
+                <div>
+                 class <a href="time/GPSScale.html" t="n">GPSScale</a>
+                </div>
+                <div>
+                 class <a href="time/IRNSSScale.html" t="n">IRNSSScale</a>
+                </div>
+                <div>
+                 class <a href="time/TAIScale.html" t="n">TAIScale</a>
+                </div>
+                <div>
+                 class <a href="time/TTScale.html" t="n">TTScale</a>
+                </div>
+                <div>
+                 class <a href="time/TDTScale.html" t="n">TDTScale</a>
+                </div><span></span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/GLONASSScale.html" t="n" class="documentableName ">GLONASSScale</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">utc</span>: <a href="time/TimeScale.html" t="t">TimeScale</a>)<span t="k"> extends </span><a href="time/TimeScale.html" t="t">TimeScale</a></span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>GLONASS scale implementation GLONASS is a fixed offset from UTC + 3 hours</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>GLONASS scale implementation GLONASS is a fixed offset from UTC + 3 hours</p>
+             </div>
+             <h2 class="h200">Value parameters</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               utc
+              </dt>
+              <dd class="body-medium">
+               <p>UTC scale</p>
+              </dd>
+             </dl>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="time/TimeScale.html" t="n">TimeScale</a>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/GPSScale.html" t="n" class="documentableName ">GPSScale</a><span t="k"> extends </span><a href="time/FixedTimeOffsetScale.html" t="t">FixedTimeOffsetScale</a></span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>GPS scale implementation</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>GPS scale implementation</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               See also
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <p><a href="time/FixedTimeOffsetScale.html">FixedTimeOffsetScale</a></p>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="time/FixedTimeOffsetScale.html" t="n">FixedTimeOffsetScale</a>
+                </div>
+                <div>
+                 trait <a href="time/TimeScale.html" t="n">TimeScale</a>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/IRNSSScale.html" t="n" class="documentableName ">IRNSSScale</a><span t="k"> extends </span><a href="time/FixedTimeOffsetScale.html" t="t">FixedTimeOffsetScale</a></span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>NavIC timescale (also called IRNWT for IRNSS NetWork Time).</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>NavIC timescale (also called IRNWT for IRNSS NetWork Time).</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               See also
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <p><a href="time/TimeScale.html">TimeScale</a></p>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="time/FixedTimeOffsetScale.html" t="n">FixedTimeOffsetScale</a>
+                </div>
+                <div>
+                 trait <a href="time/TimeScale.html" t="n">TimeScale</a>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/TAIScale.html" t="n" class="documentableName ">TAIScale</a><span t="k"> extends </span><a href="time/FixedTimeOffsetScale.html" t="t">FixedTimeOffsetScale</a></span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>TAI scale implementation</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>TAI scale implementation</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               See also
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <p><a href="time/FixedTimeOffsetScale.html">FixedTimeOffsetScale</a></p>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="time/FixedTimeOffsetScale.html" t="n">FixedTimeOffsetScale</a>
+                </div>
+                <div>
+                 trait <a href="time/TimeScale.html" t="n">TimeScale</a>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/TDBScale.html" t="n" class="documentableName ">TDBScale</a>(<span t="k"></span><span t="k">val </span><span data-unresolved-link="" t="n">tt</span>: <a href="time/TimeScale.html" t="t">TimeScale</a>, <span t="k"></span><span data-unresolved-link="" t="n">j2000Epoch</span>: <a href="time/AbsoluteTime.html" t="t">AbsoluteTime</a>)<span t="k"> extends </span><a href="time/TimeScale.html" t="t">TimeScale</a></span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="cover">
+             <div class="doc"></div>
+             <h2 class="h200">Value parameters</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               j2000Epoch
+              </dt>
+              <dd class="body-medium">
+               <p>The j2000 standard epoch</p>
+              </dd>
+              <dt class="body-small">
+               tt
+              </dt>
+              <dd class="body-medium">
+               <p>The Terrestrial Time Scale</p>
+              </dd>
+             </dl>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               See also
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <p><a href="time/TimeScale.html">TimeScale</a></p>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Note
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <p>Do not instantiate this class for most cases. See <a href="time/TimeScaleFactory$.html">TimeScaleFactory</a></p>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="time/TimeScale.html" t="n">TimeScale</a>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/TDTScale.html" t="n" class="documentableName ">TDTScale</a><span t="k"> extends </span><a href="time/TTScale.html" t="t">TTScale</a></span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>TDT is the same as <a href="time/TTScale.html">TTScale</a></p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>TDT is the same as <a href="time/TTScale.html">TTScale</a></p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="time/TTScale.html" t="n">TTScale</a>
+                </div>
+                <div>
+                 class <a href="time/FixedTimeOffsetScale.html" t="n">FixedTimeOffsetScale</a>
+                </div>
+                <div>
+                 trait <a href="time/TimeScale.html" t="n">TimeScale</a>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span class="show-all-code show-content text-button h100">Show all</span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/TTScale.html" t="n" class="documentableName ">TTScale</a><span t="k"> extends </span><a href="time/FixedTimeOffsetScale.html" t="t">FixedTimeOffsetScale</a></span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>TT scale implementation</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>TT scale implementation</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               See also
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <p><a href="time/FixedTimeOffsetScale.html">FixedTimeOffsetScale</a></p>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <a href="time/FixedTimeOffsetScale.html" t="n">FixedTimeOffsetScale</a>
+                </div>
+                <div>
+                 trait <a href="time/TimeScale.html" t="n">TimeScale</a>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Known subtypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block subtypes">
+                <div>
+                 class <a href="time/TDTScale.html" t="n">TDTScale</a>
+                </div><span></span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/Time.html" t="n" class="documentableName ">Time</a><span t="k"> extends </span><span data-unresolved-link="" t="t">Comparable</span>[<a href="time/Time.html" t="t">Time</a>]<span t="k">, </span></span><span class="signature-long"><span data-unresolved-link="" t="t">Serializable</span></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A robust time implementation with Hour, Minutes, Seconds of a day. Seconds are in precision up to attoseconds.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A robust time implementation with Hour, Minutes, Seconds of a day. Seconds are in precision up to attoseconds.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               See also
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <p>TimeFormat</p>
+                </div>
+                <div>
+                 <p>Date</p>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Note
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <p>This class is immutable and thread-safe</p>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="time/Time$.html">object</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <span data-unresolved-link="" t="n">Serializable</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Comparable</span>[<a href="time/Time.html" t="t">Time</a>]
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="time/Time$.html" t="n" class="documentableName ">Time</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="cover">
+             <div class="doc"></div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="time/Time.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="time/Time$.html" t="n">Time</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/TimeFormat.html" t="n" class="documentableName ">TimeFormat</a>(<span t="k"></span><span t="k">var </span><span data-unresolved-link="" t="n">seconds</span>: <span data-unresolved-link="" t="t">Long</span>, <span t="k">var </span><span data-unresolved-link="" t="n">attoseconds</span>: <span data-unresolved-link="" t="t">Long</span>)<span t="k"> extends </span><span data-unresolved-link="" t="t">Comparable</span>[<a href="time/TimeFormat.html" t="t">TimeFormat</a>]<span t="k">, </span></span><span class="signature-long"><span data-unresolved-link="" t="t">Serializable</span></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Represents a time format with second and attosecond precision.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Represents a time format with second and attosecond precision.</p>
+              <p>This class allows representing time values with a high degree of precision, using seconds and attoseconds (10^-18 seconds) as the units. It provides functionalities for basic arithmetic operations, comparisons, and conversions to and from other time units.</p>
+             </div>
+             <h2 class="h200">Value parameters</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               attoseconds
+              </dt>
+              <dd class="body-medium">
+               <p>The number of attoseconds. Can be positive, negative, or zero. Must be in the range (-10^18, 10^18).</p>
+              </dd>
+              <dt class="body-small">
+               seconds
+              </dt>
+              <dd class="body-medium">
+               <p>The number of seconds. Can be positive, negative, or zero.</p>
+              </dd>
+             </dl>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Throws
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <span data-unresolved-link="">IllegalArgumentException</span>
+                 <p>if attoseconds is outside the allowed range. Example usage:</p>
+                 <div class="snippet mono-small-block">
+                  <pre><code class="language-"><span line-number="1" class=""><span class="tooltip-container"></span><span class="hideable"> </span>val time1 = new TimeFormat(1, 500000000000000000L) // 1.5 seconds
+</span><span line-number="2" class=""><span class="tooltip-container"></span><span class="hideable"> </span>val time2 = new TimeFormat(0, 750000000000000000L) // 0.75 seconds
+</span><span line-number="3" class=""><span class="tooltip-container"></span><span class="hideable"> </span>val sum = time1 + time2 // 2.25 seconds
+</span><span line-number="4" class=""><span class="tooltip-container"></span><span class="hideable"> </span>val difference = time1 - time2 // 0.75 seconds
+</span><span line-number="5" class=""><span class="tooltip-container"></span><span class="hideable"> </span>println(s"Sum: $sum")
+</span><span line-number="6" class=""><span class="tooltip-container"></span><span class="hideable"> </span>println(s"Difference: $difference")
+</span></code></pre>
+                  <div class="buttons"></div>
+                 </div>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="time/TimeFormat$.html">object</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <span data-unresolved-link="" t="n">Serializable</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Comparable</span>[<a href="time/TimeFormat.html" t="t">TimeFormat</a>]
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Known subtypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block subtypes">
+                <div>
+                 class <a href="time/AbsoluteTime.html" t="n">AbsoluteTime</a>
+                </div><span></span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="time/TimeFormat$.html" t="n" class="documentableName ">TimeFormat</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="cover">
+             <div class="doc"></div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="time/TimeFormat.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="time/TimeFormat$.html" t="n">TimeFormat</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">trait </span></span><a href="time/TimeScale.html" t="n" class="documentableName ">TimeScale</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A trait representing a time scale system for astronomical time calculations.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A trait representing a time scale system for astronomical time calculations.</p>
+              <p>TimeScale provides mechanisms to convert between different time standards, with TAI (International Atomic Time) serving as a reference scale. Time scales may handle leap seconds and other time adjustments differently.</p>
+              <p>Common implementations include UTC, TAI, TT, etc.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Known subtypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block subtypes">
+                <div>
+                 class <a href="time/FixedTimeOffsetScale.html" t="n">FixedTimeOffsetScale</a>
+                </div>
+                <div>
+                 class <a href="time/GPSScale.html" t="n">GPSScale</a>
+                </div>
+                <div>
+                 class <a href="time/IRNSSScale.html" t="n">IRNSSScale</a>
+                </div>
+                <div>
+                 class <a href="time/TAIScale.html" t="n">TAIScale</a>
+                </div>
+                <div>
+                 class <a href="time/TTScale.html" t="n">TTScale</a>
+                </div>
+                <div>
+                 class <a href="time/TDTScale.html" t="n">TDTScale</a>
+                </div>
+                <div>
+                 class <a href="time/GLONASSScale.html" t="n">GLONASSScale</a>
+                </div>
+                <div>
+                 class <a href="time/TDBScale.html" t="n">TDBScale</a>
+                </div>
+                <div>
+                 class <a href="time/UTCScale.html" t="n">UTCScale</a>
+                </div><span class="show-all-code show-content text-button h100">Show all</span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="time/TimeScaleFactory$.html" t="n" class="documentableName ">TimeScaleFactory</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>A factory for obtaining singleton instances of various time scales.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>A factory for obtaining singleton instances of various time scales.</p>
+              <p>This object uses a thread-safe approach with <code>AtomicReference</code> to ensure that only a single instance of each time scale is created and returned. This is a form of the <strong>Singleton design pattern</strong>.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="time/TimeScaleFactory$.html" t="n">TimeScaleFactory</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">enum </span></span><a href="time/TimeUnit.html" t="n" class="documentableName ">TimeUnit</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Represents different units of time measurement in descending order of magnitude.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Represents different units of time measurement in descending order of magnitude.</p>
+              <p>This enum provides various time units from days down to attoseconds, allowing for precise time measurements and conversions across different scales.</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <span data-unresolved-link="" t="n">Enum</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Serializable</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Product</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Equals</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span class="show-all-code show-content text-button h100">Show all</span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="signature-short"><span class="modifiers"></span><span class="kind"><span t="k">class </span></span><a href="time/UTCScale.html" t="n" class="documentableName ">UTCScale</a>(<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">tai</span>: <a href="time/TimeScale.html" t="t">TimeScale</a>, <span t="k"></span><span data-unresolved-link="" t="n">leapOffsets</span>: <span data-unresolved-link="" t="t">Array</span>[<a href="time/UTCScale$$LeapSecondOffset.html" t="t">LeapSecondOffset</a>])<span t="k"> extends </span><a href="time/TimeScale.html" t="t">TimeScale</a></span><span class="signature-long"></span>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Implements the UTC (Coordinated Universal Time) time scale, including leap second handling.</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Implements the UTC (Coordinated Universal Time) time scale, including leap second handling.</p>
+              <p>This class provides conversion between TAI (International Atomic Time) and UTC, accounting for historical and current leap second definitions. It maintains a list of leap second offsets and computes the appropriate offset for any given time.</p>
+             </div>
+             <h2 class="h200">Value parameters</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               leapOffsets
+              </dt>
+              <dd class="body-medium">
+               <p>The leap offsets after Jan 1. 2017. Likely to be deprecated after 2035, since the leap seconds will be dropped by then.</p>
+              </dd>
+              <dt class="body-small">
+               tai
+              </dt>
+              <dd class="body-medium">
+               <p>The TAI time scale instance used as a reference for conversions.</p>
+              </dd>
+             </dl>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               See also
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <p><a href="time/TimeScale.html">TimeScale</a></p>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Example
+              </dt>
+              <dd class="body-medium">
+               <div>
+                <div>
+                 <div class="snippet mono-small-block">
+                  <pre><code class="language-"><span line-number="1" class=""><span class="tooltip-container"></span><span class="hideable">                  </span>val leapOffsets = Array(
+</span><span line-number="2" class=""><span class="tooltip-container"></span><span class="hideable">                  </span>  LeapSecondOffset(Date(2024, 1, 1), 0, 38, 0),
+</span><span line-number="3" class=""><span class="tooltip-container"></span><span class="hideable">                  </span>  LeapSecondOffset(Date(2025, 7, 1), 0, 39, 0)
+</span><span line-number="4" class=""><span class="tooltip-container"></span><span class="hideable">                  </span>)
+</span><span line-number="5" class=""><span class="tooltip-container"></span><span class="hideable">                  </span>val scale = UTCScale(TimeScaleFactory.getTAI, leapOffsets)
+</span></code></pre>
+                  <div class="buttons"></div>
+                 </div>
+                </div>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="time/UTCScale$.html">object</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 trait <a href="time/TimeScale.html" t="n">TimeScale</a>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">object </span></span><a href="time/UTCScale$.html" t="n" class="documentableName ">UTCScale</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="cover">
+             <div class="doc"></div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               Companion
+              </dt>
+              <dd class="body-medium">
+               <a href="time/UTCScale.html">class</a>
+              </dd>
+              <dt class="body-small">
+               Supertypes
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <div>
+                 class <span data-unresolved-link="" t="n">Object</span>
+                </div>
+                <div>
+                 trait <span data-unresolved-link="" t="n">Matchable</span>
+                </div>
+                <div>
+                 class <span data-unresolved-link="" t="n">Any</span>
+                </div><span></span>
+               </div>
+              </dd>
+              <dt class="body-small">
+               Self type
+              </dt>
+              <dd class="body-medium">
+               <div class="mono-small-block supertypes">
+                <span></span>
+                <div>
+                 <a href="time/UTCScale$.html" t="n">UTCScale</a>.<span t="k">type</span>
+                </div>
+               </div>
+              </dd>
+             </dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+       </div>
+      </section>
+     </div>
+    </section>
+   </div>
+  </div>
+ </div>
+</section></div><div id="toc" class="body-small"><div id="toc-container"><span class="toc-title h200">In this article</span><nav class="toc-nav"><ul class="toc-list"><li><a href="#members-list">Members list</a><ul><li><a href="#Type-members">Type members</a><ul><li><a href="#Classlikes">Classlikes</a></li></ul></li></ul></li></ul></nav></div></div></div><div id="footer" class="body-small mobile-footer"><div class="left-container">Generated with</div><div class="right-container"><div class="text"></div></div><div class="text-mobile"></div></div></div></div></body></html>
