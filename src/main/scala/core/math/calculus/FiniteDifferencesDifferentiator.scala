@@ -14,7 +14,7 @@ import scala.math._
  * @param tMax     Maximum abscissa value (can be Double.PositiveInfinity)
  * @note Even though not a `case` class, the instances of this class are guaranteed to be immutable
  */
-class FiniteDifferencesDifferentiator private (val nbPoints: Int, val stepSize: Double,
+class FiniteDifferencesDifferentiator (val nbPoints: Int, val stepSize: Double,
                                                val tMin: Double, val tMax: Double) extends Serializable {
 
   private val halfSampleSpan: Double = 0.5 * stepSize * (nbPoints - 1)
