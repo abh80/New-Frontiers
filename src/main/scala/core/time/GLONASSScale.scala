@@ -3,7 +3,7 @@ package core.time
 
 import core.Constants
 
-import breeze.numerics.floor
+import scala.math.floor
 
 /**
  * GLONASS scale implementation

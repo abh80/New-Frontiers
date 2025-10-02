@@ -1,7 +1,7 @@
 package org.abh80.nf
 package core.time
 
-import breeze.numerics.abs
+import scala.math.abs
 import org.scalatest.funsuite.AnyFunSuite
 import matchers.AlmostEqualsMatcher._
 import scala.util.Random
