@@ -176,19 +176,20 @@ object AngleUnit {
       Math.abs(self.toRadians - second.toRadians) < epsilon
 
     /**
-     * Multiplies two angle units.
-     * @param second the other angle unit
-     * @return the product as an AngleUnit
+     * Scales this angle by a dimensionless scalar.
+     * @param scalar the scaling factor
+     * @return the scaled angle in the same unit
      */
-    def *(second: AngleUnit): AngleUnit =
-      self.fromRadians(self.toRadians * second.toRadians)
+    def *(scalar: Double): AngleUnit =
+      self.fromRadians(self.toRadians * scalar)
 
     /**
-     * Divides one angle unit by another.
-     * @param second the other angle unit
-     * @return the quotient as an AngleUnit
+     * Returns the dimensionless ratio of this angle to another.
+     * Dividing two angles yields a pure number, not an angle.
+     * @param second the divisor angle
+     * @return the ratio (this / second), dimensionless
      */
-    def /(second: AngleUnit): AngleUnit =
-      self.fromRadians(self.toRadians / second.toRadians)
+    def ratio(second: AngleUnit): Double =
+      self.toRadians / second.toRadians
   }
 }

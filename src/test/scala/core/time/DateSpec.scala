@@ -177,6 +177,25 @@ class DateSpec extends AnyFunSuite {
     assertResult(35)(Date(Date.MJD, 35).getMJD)
   }
 
+  test("invalid day throws (day-check fix)") {
+    // Regular month overflows
+    assertThrows[IllegalArgumentException](Date(2023, 2, 29))  // non-leap Feb
+    assertThrows[IllegalArgumentException](Date(2023, 2, 30))  // Feb overflow
+    assertThrows[IllegalArgumentException](Date(2023, 4, 31))  // April has 30 days
+    assertThrows[IllegalArgumentException](Date(2023, 11, 31)) // November has 30 days
+
+    // Oct 1582 calendar-reform gap: days 5-14 don't exist in either calendar.
+    // These map to Julian dates in the same year+month (e.g. Oct 12 Gregorian → Oct 2 Julian),
+    // so only the check.day != day branch catches them — the old year/month checks pass.
+    assertThrows[IllegalArgumentException](Date(1582, 10, 10))
+    assertThrows[IllegalArgumentException](Date(1582, 10, 12))
+    assertThrows[IllegalArgumentException](Date(1582, 10, 14))
+
+    // Boundary: last valid Julian day and first valid Gregorian day must NOT throw
+    assert(Date(1582, 10, 4).getJ2000Day === -152385)  // last Julian day
+    assert(Date(1582, 10, 15).getJ2000Day === -152384) // first Gregorian day
+  }
+
   test("gregorian leap-year rule (isLeap)") {
     // Dec 31 day-of-year is 366 in a leap year, 365 otherwise. Exercises GeorgianYear.isLeap
     // (regression for the reference-equality `eq`/`ne` bug; locks the century rule).

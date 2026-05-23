@@ -92,11 +92,14 @@ object DistanceUnit {
     def ~(second: DistanceUnit, epsilon: Double = 1e-10): Boolean =
       Math.abs(self.toMeter - second.toMeter) < epsilon
 
-    def *(second: DistanceUnit): DistanceUnit =
-      self.fromMeter(self.toMeter * second.toMeter)
+    /** Scales this distance by a dimensionless scalar. */
+    def *(scalar: Double): DistanceUnit =
+      self.fromMeter(self.toMeter * scalar)
 
-    def /(second: DistanceUnit): DistanceUnit =
-      self.fromMeter(self.toMeter / second.toMeter)
+    /** Returns the dimensionless ratio of this distance to another.
+     * Dividing two distances yields a pure number, not a distance. */
+    def ratio(second: DistanceUnit): Double =
+      self.toMeter / second.toMeter
   }
 
   object AstronomicalUnit extends DistanceUnitCompanion[AstronomicalUnit] {

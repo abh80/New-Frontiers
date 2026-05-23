@@ -12,30 +12,21 @@ import java.util.concurrent.atomic.AtomicReference
  * a form of the **Singleton design pattern**.
  */
 object TimeScaleFactory {
-  private val TTRef = AtomicReference[TTScale]()
-  private val TDBRef = AtomicReference[TDBScale]()
-  private val TAIRef = AtomicReference[TAIScale]()
-  private val UTCRef = AtomicReference[UTCScale]()
-  private val TDTRef = AtomicReference[TDTScale]()
-  private val GLONASSRef = AtomicReference[GLONASSScale]()
-  private val IRNSSRef = AtomicReference[IRNSSScale]()
-  private val GPSRef = AtomicReference[GPSScale]()
+  private val TTRef      = new AtomicReference[TTScale]()
+  private val TDBRef     = new AtomicReference[TDBScale]()
+  private val TAIRef     = new AtomicReference[TAIScale]()
+  private val UTCRef     = new AtomicReference[UTCScale]()
+  private val TDTRef     = new AtomicReference[TDTScale]()
+  private val GLONASSRef = new AtomicReference[GLONASSScale]()
+  private val IRNSSRef   = new AtomicReference[IRNSSScale]()
+  private val GPSRef     = new AtomicReference[GPSScale]()
 
   /**
    * Returns a singleton instance of the Terrestrial Time (TT) scale.
    *
    * @return A `TimeScale` representing the Terrestrial Time.
    */
-  def getTT: TimeScale = {
-    var ref = TTRef.get()
-
-    if ref == null then {
-      TTRef.set(TTScale())
-      ref = TTRef.get()
-    }
-
-    ref
-  }
+  def getTT: TimeScale = TTRef.updateAndGet(r => if r != null then r else TTScale())
 
   /**
    * Returns a singleton instance of the Barycentric Dynamical Time (TDB) scale.
@@ -45,16 +36,7 @@ object TimeScaleFactory {
    * @return A `TimeScale` representing the Barycentric Dynamical Time.
    * @see [[TDBScale]]
    */
-  def getTDB: TimeScale = {
-    var ref = TDBRef.get()
-
-    if ref == null then {
-      TDBRef.set(TDBScale(getTT, EpochFactory.J2000_0))
-      ref = TDBRef.get()
-    }
-
-    ref
-  }
+  def getTDB: TimeScale = TDBRef.updateAndGet(r => if r != null then r else TDBScale(getTT, EpochFactory.J2000_0))
 
   /**
    * Returns a singleton instance of the International Atomic Time (TAI) scale.
@@ -62,16 +44,7 @@ object TimeScaleFactory {
    * @return A `TimeScale` representing the International Atomic Time.
    * @see [[TAIScale]]
    */
-  def getTAI: TimeScale = {
-    var ref = TAIRef.get()
-
-    if ref == null then {
-      TAIRef.set(TAIScale())
-      ref = TAIRef.get()
-    }
-
-    ref
-  }
+  def getTAI: TimeScale = TAIRef.updateAndGet(r => if r != null then r else TAIScale())
 
   /**
    * Returns a singleton instance of the Coordinated Universal Time (UTC) scale.
@@ -79,18 +52,9 @@ object TimeScaleFactory {
    * This scale is initialized based on the International Atomic Time (TAI) scale.
    *
    * @return A `TimeScale` representing the Coordinated Universal Time.
-   * @see [[TTScale]]
+   * @see [[UTCScale]]
    */
-  def getUTC: TimeScale = {
-    var ref = UTCRef.get()
-
-    if ref == null then {
-      UTCRef.set(UTCScale(getTAI))
-      ref = UTCRef.get()
-    }
-
-    ref
-  }
+  def getUTC: TimeScale = UTCRef.updateAndGet(r => if r != null then r else UTCScale(getTAI))
 
   /**
    * Returns a singleton instance of the Terrestrial Dynamic Time (TDT) scale.
@@ -100,16 +64,7 @@ object TimeScaleFactory {
    * @return A `TimeScale` Terrestrial Dynamic Time.
    * @see [[TDTScale]]
    */
-  def getTDT: TimeScale = {
-    var ref = TDTRef.get()
-
-    if ref == null then {
-      TDTRef.set(TDTScale())
-      ref = TDTRef.get()
-    }
-
-    ref
-  }
+  def getTDT: TimeScale = TDTRef.updateAndGet(r => if r != null then r else TDTScale())
 
   /**
    * Returns a singleton instance of the GLONASS time scale.
@@ -119,16 +74,7 @@ object TimeScaleFactory {
    * @return A `TimeScale` representing the GLONASS time.
    * @see [[GLONASSScale]]
    */
-  def getGLONASS: TimeScale = {
-    var ref = GLONASSRef.get()
-
-    if ref == null then {
-      GLONASSRef.set(GLONASSScale(getUTC))
-      ref = GLONASSRef.get()
-    }
-
-    ref
-  }
+  def getGLONASS: TimeScale = GLONASSRef.updateAndGet(r => if r != null then r else GLONASSScale(getUTC))
 
   /**
    * Returns a singleton instance of the IRNSS time scale.
@@ -136,16 +82,7 @@ object TimeScaleFactory {
    * @return A `TimeScale` representing the IRNSS time.
    * @see [[IRNSSScale]]
    */
-  def getIRNSS: TimeScale = {
-    var ref = IRNSSRef.get()
-
-    if ref == null then {
-      IRNSSRef.set(IRNSSScale())
-      ref = IRNSSRef.get()
-    }
-
-    ref
-  }
+  def getIRNSS: TimeScale = IRNSSRef.updateAndGet(r => if r != null then r else IRNSSScale())
 
   /**
    * Returns a singleton instance of the GPS time scale.
@@ -153,14 +90,5 @@ object TimeScaleFactory {
    * @return A `TimeScale` representing the GPS time.
    * @see [[GPSScale]]
    */
-  def getGPS: TimeScale = {
-    var ref = GPSRef.get()
-
-    if ref == null then {
-      GPSRef.set(GPSScale())
-      ref = GPSRef.get()
-    }
-    
-    ref
-  }
+  def getGPS: TimeScale = GPSRef.updateAndGet(r => if r != null then r else GPSScale())
 }

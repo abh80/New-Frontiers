@@ -99,9 +99,10 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
    *
    * @return A new [[KinematicState]] with normalized position and consistent velocity and acceleration derivatives.
    */
+  @throws[IllegalArgumentException]
   def normalize: KinematicState = {
     val r = position.magnitude
-    if (r == 0.0) throw new ArithmeticException("Cannot normalize zero norm vector")
+    if (r == 0.0) throw new IllegalArgumentException("Cannot normalize zero norm vector")
     val inv = 1.0 / r
     val u = position * inv
     val q = velocity * inv
@@ -185,7 +186,7 @@ object KinematicState {
      * @param scalar The scaling factor.
      * @return A new [[KinematicState]] with scaled components.
      */
-    def *(scalar: Double) =
+    def *(scalar: Double): KinematicState =
       new KinematicState(
         self.position * scalar,
         self.velocity * scalar,
@@ -199,7 +200,7 @@ object KinematicState {
      * @param second The kinematic state to subtract.
      * @return A new [[KinematicState]] representing the difference.
      */
-    def -(second: KinematicState) =
+    def -(second: KinematicState): KinematicState =
       new KinematicState(
         self.position - second.position,
         self.velocity - second.velocity,

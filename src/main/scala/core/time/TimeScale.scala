@@ -40,7 +40,7 @@ trait TimeScale {
    * @return The offset to add to the input time to get TAI
    */
   def timeToTAI(date: Date, time: Time): TimeFormat =
-    val ref = new AbsoluteTime(date, time, TAIScale())
+    val ref = new AbsoluteTime(date, time, TimeScaleFactory.getTAI)
     var offset = TimeFormat.Zero
 
     // Iteratively refine the conversion

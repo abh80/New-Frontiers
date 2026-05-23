@@ -79,7 +79,7 @@ class Date private extends Comparable[Date] with Serializable {
     this.year = year
 
     val check = Date(getJ2000Day)
-    if check.year != year || month != check.month || year != check.year then throw new IllegalArgumentException("The provided year/month/day sequence does not exist")
+    if check.year != year || check.month != month || check.day != day then throw new IllegalArgumentException(s"The provided $year/$month/$day sequence does not exist")
   }
 
 

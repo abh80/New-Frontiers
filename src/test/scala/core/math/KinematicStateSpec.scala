@@ -126,6 +126,15 @@ class KinematicStateSpec extends AnyFlatSpec with Matchers {
       z.getPartialDerivative(secondOrder) shouldEqual normalized.acceleration.z +- accTol
     }
   }
+  "normalize" should "throw IllegalArgumentException when position is zero" in {
+    intercept[IllegalArgumentException] {
+      new KinematicState(Vector3D.Zero, Vector3D(1.0, 0.0, 0.0), Vector3D.Zero).normalize
+    }
+    intercept[IllegalArgumentException] {
+      new KinematicState(Vector3D.Zero).normalize
+    }
+  }
+
   "KinematicState cross product (X)" should "correctly compute position, velocity, and acceleration terms" in {
     val h = 1.0e-3
     val posTol = 1.0e-16

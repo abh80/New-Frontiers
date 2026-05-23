@@ -24,15 +24,16 @@ import java.time.Instant
  * - Leap seconds and timescale offsets (e.g., UTC → TAI → TT) are applied
  *   using [[TimeScale]] transformations.
  *
- * @param tf the underlying time format instance used to represent the absolute time
+ * @param offset the underlying time format instance used to represent the absolute time
  * @see TimeFormat
  * @see TimeScale
  */
-class AbsoluteTime(tf: TimeFormat)
-  extends TimeFormat(tf)
-    with Comparable[TimeFormat]
+final class AbsoluteTime private (val offset: TimeFormat)
+  extends Comparable[AbsoluteTime]
     with Serializable
     with TimeShiftable[AbsoluteTime] {
+
+  export offset.{getSeconds, getAttoSeconds, toDouble, isZero}
 
   /**
    * Default constructor.
@@ -189,7 +190,7 @@ class AbsoluteTime(tf: TimeFormat)
    * ==Math Note==
    * - Duration = Δt = (this.seconds - other.seconds).
    */
-  def durationFrom(time: AbsoluteTime): TimeFormat = this - time
+  def durationFrom(time: AbsoluteTime): TimeFormat = offset - time.offset
 
   /**
    * Returns the ISO-8601 string representation of this time in UTC.
@@ -226,7 +227,7 @@ class AbsoluteTime(tf: TimeFormat)
    * @return a tuple of (Date, Time)
    */
   def getDateTime(scale: TimeScale): (Date, Time) =
-    val timeOffset = this + scale.timePastTAI(this)
+    val timeOffset = offset + scale.timePastTAI(this)
     val j2000_shifted = timeOffset.getSeconds + 43200L
 
     var time = j2000_shifted % Constants.SECONDS_IN_A_JULIAN_DAY
@@ -263,7 +264,7 @@ class AbsoluteTime(tf: TimeFormat)
 
   /** @inheritdoc */
   override def ++(other: TimeFormat): AbsoluteTime =
-    AbsoluteTime(this + other)
+    new AbsoluteTime(offset + other)
 
   /** Shift time by seconds */
   def ++(shiftBy: Long): AbsoluteTime =
@@ -271,7 +272,16 @@ class AbsoluteTime(tf: TimeFormat)
 
   /** @inheritdoc */
   def ++(shiftBy: Double): AbsoluteTime =
-    AbsoluteTime(this + TimeFormat.fromDouble(shiftBy))
+    new AbsoluteTime(offset + TimeFormat.fromDouble(shiftBy))
+
+  override def compareTo(o: AbsoluteTime): Int = offset.compareTo(o.offset)
+
+  override def hashCode(): Int = offset.hashCode()
+
+  override def equals(obj: Any): Boolean = obj match {
+    case that: AbsoluteTime => offset == that.offset
+    case _ => false
+  }
 }
 
 object AbsoluteTime {

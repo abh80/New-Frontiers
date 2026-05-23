@@ -37,8 +37,8 @@ class DistanceUnitSpec extends AnyFunSuite {
     assert((m1 - m2) === Meter(50.0))
     assert((m1 ~ Meter(100.0)))
     assert(!(m1 ~ Meter(101.0)))
-    assert((m1 * Meter(2.0)) === Meter(200.0))
-    assert((m1 / Meter(2.0)) === Meter(50.0))
+    assert((m1 * 2.0) === Meter(200.0))
+    assert(m1.ratio(m2) === 2.0)
   }
 
   test("fromMeters utility") {

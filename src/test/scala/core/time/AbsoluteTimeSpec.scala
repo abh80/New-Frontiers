@@ -31,4 +31,21 @@ class AbsoluteTimeSpec extends AnyFunSuite with Matchers {
     assertResult("1970-01-01T00:00:00.000Z")(t.toString)
     assertResult(EpochFactory.UNIX)(t)
   }
+
+  test("equality and comparison") {
+    val t1 = AbsoluteTime(2017, 2, 24, 15, 38, 0, TimeScaleFactory.getUTC)
+    val t2 = AbsoluteTime(2017, 2, 24, 15, 38, 0, TimeScaleFactory.getUTC)
+    assert(t1 == t2)
+    assert(t1.compareTo(t2) == 0)
+
+    val t3 = t1 ++ 1.0
+    assert(t1 != t3)
+    assert(t1.compareTo(t3) < 0)
+    assert(t3.compareTo(t1) > 0)
+
+    // AbsoluteTime must not equal a plain TimeFormat with the same offset (cross-type bug fix)
+    val tf = TimeFormat(t1.getSeconds, t1.getAttoSeconds)
+    assert(!(t1 == tf))
+    assert(!(tf == t1))
+  }
 }

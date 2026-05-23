@@ -49,5 +49,20 @@ class AngleUnitSpec extends AnyFunSuite {
     val deg = AngleUnit.fromRadians(Math.PI, Degree.fromRadians)
     assert(math.abs(deg.value - 180.0) < 1e-10)
   }
+
+  test("BinOp * scales by scalar; ratio gives dimensionless result") {
+    val rad90 = Radian(math.Pi / 2)
+    assert(math.abs((rad90 * 2.0).toRadians - math.Pi) < 1e-10)
+    assert(math.abs((rad90 * 0.5).toRadians - math.Pi / 4) < 1e-10)
+
+    val deg180 = Degree(180.0)
+    val deg90  = Degree(90.0)
+    assert(math.abs(deg180.ratio(deg90) - 2.0) < 1e-10)
+    assert(math.abs(deg90.ratio(deg180) - 0.5) < 1e-10)
+
+    // ratio is dimensionless — result is a plain Double, not an angle
+    val r: Double = deg180.ratio(deg90)
+    assert(r === 2.0)
+  }
 }
 

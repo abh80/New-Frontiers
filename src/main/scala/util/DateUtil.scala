@@ -3,8 +3,8 @@ package util
 
 /**
  * Utility object for date formatting and manipulation.
- * 
- * Provides various date formats. 
+ *
+ * Provides various date formats.
  * If you want American standard (MM/DD/YYYY), use ANSI_INCITS_30_1997.
  * If you want ISO standard (YYYY-MM-DD), use ISO8601.
  * If you want Asian style (YYYY.MM.DD), use ASIAN.
@@ -26,22 +26,23 @@ object DateUtil {
 
   /**
    * Base trait for date formats represented as strings.
-   * 
-   * @param dd Day
-   * @param mm Month
+   *
+   * Each format implements [[render]] which defines the complete string representation.
+   * Use [[toString]] to retrieve the formatted date string.
+   *
+   * @param dd   Day
+   * @param mm   Month
    * @param yyyy Year
    */
   sealed trait StringDateFormat(dd: Int, mm: Int, yyyy: Int) {
-    /** Tuple of formatted date parts, order depends on format. */
-    val formatted3partitionTuple: (String, String, String)
-    /** Separator used in string representation. */
-    val sep: DateSeparator = DateSeparator.hyphen
-    protected val f_day: String = formattedDay(dd)
+    protected val f_day: String   = formattedDay(dd)
     protected val f_month: String = formattedMonth(mm)
-    protected val f_year: String = formattedYear(yyyy)
+    protected val f_year: String  = formattedYear(yyyy)
 
-    /** Returns the formatted date string. */
-    override def toString: String = Array(formatted3partitionTuple._1, formatted3partitionTuple._2, formatted3partitionTuple._3).mkString(sep)
+    /** Returns the formatted date string for this format. */
+    def render: String
+
+    override def toString: String = render
   }
 
   /**
@@ -57,7 +58,7 @@ object DateUtil {
    * Use this for international standard.
    */
   final case class ISO8601(dd: Int, mm: Int, yyyy: Int) extends StringDateFormat(dd, mm, yyyy) {
-    override val formatted3partitionTuple: (String, String, String) = (f_year, f_month, f_day)
+    override def render: String = s"$f_year-$f_month-$f_day"
   }
 
   /**
@@ -65,9 +66,8 @@ object DateUtil {
    * Use this for email headers and similar.
    */
   final case class RFC822(dd: Int, mm: Int, yyyy: Int, weekDay: Int) extends StringDateFormat(dd, mm, yyyy) {
-    override val formatted3partitionTuple: (String, String, String) = null
-
-    override def toString: String = s"${WeekUtil.fromInt(weekDay).toCapitalizedString.slice(0, 3)}, $f_day ${Month.getMonth(mm).toCapitalizedString.slice(0, 3)} $yyyy"
+    override def render: String =
+      s"${WeekUtil.fromInt(weekDay).toCapitalizedString.slice(0, 3)}, $f_day ${Month.getMonth(mm).toCapitalizedString.slice(0, 3)} $yyyy"
   }
 
   /**
@@ -75,9 +75,7 @@ object DateUtil {
    * If you want American standard, use this.
    */
   final case class ANSI_INCITS_30_1997(dd: Int, mm: Int, yyyy: Int) extends StringDateFormat(dd, mm, yyyy) {
-    override val sep: DateSeparator = DateSeparator.slash
-
-    override val formatted3partitionTuple: (String, String, String) = (f_month, f_day, f_year)
+    override def render: String = s"$f_month/$f_day/$f_year"
   }
 
   /**
@@ -85,9 +83,7 @@ object DateUtil {
    * If you want European standard, use this.
    */
   final case class EN28601(dd: Int, mm: Int, yyyy: Int) extends StringDateFormat(dd, mm, yyyy) {
-    override val formatted3partitionTuple: (String, String, String) = (f_day, f_month, f_year)
-
-    override val sep: DateSeparator = DateSeparator.slash
+    override def render: String = s"$f_day/$f_month/$f_year"
   }
 
   /**
@@ -95,9 +91,7 @@ object DateUtil {
    * If you want Asian style, use this.
    */
   final case class ASIAN(dd: Int, mm: Int, yyyy: Int) extends StringDateFormat(dd, mm, yyyy) {
-    override val sep: DateSeparator = DateSeparator.dot
-
-    override val formatted3partitionTuple: (String, String, String) = (f_year, f_month, f_day)
+    override def render: String = s"$f_year.$f_month.$f_day"
   }
 
   /**
@@ -105,13 +99,13 @@ object DateUtil {
    * Use WeekUtil for conversions and checks.
    */
   enum Weekday(asInt: Int) extends DateName {
-    case MONDAY extends Weekday(1)
-    case TUESDAY extends Weekday(2)
+    case MONDAY    extends Weekday(1)
+    case TUESDAY   extends Weekday(2)
     case WEDNESDAY extends Weekday(3)
-    case THURSDAY extends Weekday(4)
-    case FRIDAY extends Weekday(5)
-    case SATURDAY extends Weekday(6)
-    case SUNDAY extends Weekday(7)
+    case THURSDAY  extends Weekday(4)
+    case FRIDAY    extends Weekday(5)
+    case SATURDAY  extends Weekday(6)
+    case SUNDAY    extends Weekday(7)
   }
 
   /**
@@ -119,18 +113,18 @@ object DateUtil {
    * Use Month.getMonth to convert from integer.
    */
   enum Month(val asInt: Int) extends DateName {
-    case JANUARY extends Month(1)
-    case FEBRUARY extends Month(2)
-    case MARCH extends Month(3)
-    case APRIL extends Month(4)
-    case MAY extends Month(5)
-    case JUNE extends Month(6)
-    case JULY extends Month(7)
-    case AUGUST extends Month(8)
+    case JANUARY   extends Month(1)
+    case FEBRUARY  extends Month(2)
+    case MARCH     extends Month(3)
+    case APRIL     extends Month(4)
+    case MAY       extends Month(5)
+    case JUNE      extends Month(6)
+    case JULY      extends Month(7)
+    case AUGUST    extends Month(8)
     case SEPTEMBER extends Month(9)
-    case OCTOBER extends Month(10)
-    case NOVEMBER extends Month(11)
-    case DECEMBER extends Month(12)
+    case OCTOBER   extends Month(10)
+    case NOVEMBER  extends Month(11)
+    case DECEMBER  extends Month(12)
 
     /** Returns the integer value of the month (1-12). */
     def getIntegerValue: Int = asInt
@@ -165,8 +159,10 @@ object DateUtil {
      * Converts integer (1-7) to Weekday enum.
      * @throws IllegalArgumentException if out of range.
      */
+    @throws[IllegalArgumentException]
     def fromInt(asInt: Int): Weekday =
-      Weekday.values.find(_.ordinal + 1 == asInt).getOrElse(throw new IllegalArgumentException(s"integer value $asInt is not a qualified weekday"))
+      if asInt >= 1 && asInt <= 7 then Weekday.fromOrdinal(asInt - 1)
+      else throw new IllegalArgumentException(s"integer value $asInt is not a qualified weekday")
   }
 
   /**
@@ -179,6 +175,7 @@ object DateUtil {
      */
     @throws[IllegalArgumentException]
     def getMonth(asInt: Int): Month =
-      Month.values.find(_.ordinal + 1 == asInt).getOrElse(throw new IllegalArgumentException(s"integer value $asInt is not a qualified month"))
+      if asInt >= 1 && asInt <= 12 then Month.fromOrdinal(asInt - 1)
+      else throw new IllegalArgumentException(s"integer value $asInt is not a qualified month")
   }
 }
