@@ -274,17 +274,15 @@ phases add the layers that sit on top of it.
 
 ## Contributing
 
-Contributions are welcome. A few conventions keep the codebase consistent:
+Contributions are welcome. Please read the
+[**Contributing Guidelines**](../../wiki/Contributing-Guidelines) in the project wiki — they spell
+out the coding conventions, testing requirements, commit format, and pull-request process in full.
 
-- Follow the coding conventions in [`CLAUDE.md`](CLAUDE.md) and
-  [`.claude/rules/scala.md`](.claude/rules/scala.md): immutable types, typed units, formulas in
-  radians/meters/seconds, and no external math dependencies.
-- Ship new public behavior with a spec. Exercise the domain's characteristic edge cases — zero
-  vectors, leap-second instants, calendar transitions, anomaly singularities, and step-size
-  sensitivity.
-- Run the relevant spec(s) with `sbt "testOnly *YourSpec"` rather than the whole suite while
-  iterating.
-- Keep Scaladoc (`@since`, `@throws`, params) accurate — it is the published API surface.
+In short: immutable types, typed units, formulas in radians/meters/seconds, no external math
+dependencies, and a spec for every new public behavior (covering the domain's edge cases — zero
+vectors, leap seconds, calendar transitions, anomaly singularities, step-size sensitivity). Run a
+single spec with `sbt "testOnly *YourSpec"` while iterating, and keep Scaladoc accurate — it is the
+published API surface.
 
 Issue and pull-request templates are provided under [`.github/`](.github/).
 
