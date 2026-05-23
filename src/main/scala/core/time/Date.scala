@@ -244,8 +244,12 @@ class Date private extends Comparable[Date] with Serializable {
 
   private object JulianYear extends YearFactory {
     override def getYear(j2000Day: Int): Int =
-      val f_years = math.floor(j2000Day / 365.25)
-      2000 + f_years.toInt
+      var year = 2000 + math.floor(j2000Day / 365.25).toInt
+
+      while j2000Day <= getLastJ2000DayOfYear(year - 1) do year -= 1
+      while j2000Day > getLastJ2000DayOfYear(year) do year += 1
+
+      year
 
     override def getLastJ2000DayOfYear(year: Int): Int = {
       365 * year + year / 4 + JULIAN_YEAR_START_J2000

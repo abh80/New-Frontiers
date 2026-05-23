@@ -206,4 +206,20 @@ class DateSpec extends AnyFunSuite {
     assertResult(366)(Date(2024, 12, 31).getDayOfYear) // divisible by 4 -> leap
     assertResult(365)(Date(2023, 12, 31).getDayOfYear) // not divisible by 4 -> non-leap
   }
+
+  test("julian Dec 31 dates round-trip at year boundary") {
+    val samples = Seq(1, 4, 100, 1581)
+
+    for (year <- samples) {
+      val date = Date(year, 12, 31)
+      assertResult(year)(date.getYear)
+      assertResult(12)(date.getMonth)
+      assertResult(31)(date.getDay)
+
+      val decoded = Date(date.getJ2000Day)
+      assertResult(year)(decoded.getYear)
+      assertResult(12)(decoded.getMonth)
+      assertResult(31)(decoded.getDay)
+    }
+  }
 }
