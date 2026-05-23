@@ -171,6 +171,18 @@ class DateSpec extends AnyFunSuite {
     assertResult(31)(dateBeforeJ2000.getDay)
   }
 
+  test("construct Date from pre-1970 Instant uses floor semantics") {
+    val midnightUtc = new Date(Instant.parse("1969-12-31T00:00:00Z"))
+    assertResult(1969)(midnightUtc.getYear)
+    assertResult(12)(midnightUtc.getMonth)
+    assertResult(31)(midnightUtc.getDay)
+
+    val endOfDayUtc = new Date(Instant.parse("1969-12-31T23:59:59Z"))
+    assertResult(1969)(endOfDayUtc.getYear)
+    assertResult(12)(endOfDayUtc.getMonth)
+    assertResult(31)(endOfDayUtc.getDay)
+  }
+
   test("mjd") {
     assertResult(0)(Date.MJD.getMJD)
     assertResult(37665)(Date(1962, 1,  1).getMJD)
@@ -221,5 +233,29 @@ class DateSpec extends AnyFunSuite {
       assertResult(12)(decoded.getMonth)
       assertResult(31)(decoded.getDay)
     }
+  }
+
+  test("proleptic Julian epoch and BCE boundary stay aligned") {
+    assertResult(0)(Date.JULIAN.getJulianDay)
+    assertResult(-2451545)(Date.JULIAN.getJ2000Day)
+
+    val yearZeroLastDay = Date(0, 12, 31)
+    val firstCommonEraDay = Date(1, 1, 1)
+    assertResult(yearZeroLastDay.getJ2000Day + 1)(firstCommonEraDay.getJ2000Day)
+
+    val decodedYearZeroLastDay = Date(yearZeroLastDay.getJ2000Day)
+    assertResult(0)(decodedYearZeroLastDay.getYear)
+    assertResult(12)(decodedYearZeroLastDay.getMonth)
+    assertResult(31)(decodedYearZeroLastDay.getDay)
+  }
+
+  test("1582 Gregorian cutover gap dates are all rejected") {
+    (5 to 14).foreach { day =>
+      assertThrows[IllegalArgumentException](Date(1582, 10, day))
+    }
+
+    val lastJulianDay = Date(1582, 10, 4)
+    val firstGregorianDay = Date(1582, 10, 15)
+    assertResult(lastJulianDay.getJ2000Day + 1)(firstGregorianDay.getJ2000Day)
   }
 }
