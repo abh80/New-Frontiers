@@ -176,4 +176,15 @@ class DateSpec extends AnyFunSuite {
     assertResult(37665)(Date(1962, 1,  1).getMJD)
     assertResult(35)(Date(Date.MJD, 35).getMJD)
   }
+
+  test("gregorian leap-year rule (isLeap)") {
+    // Dec 31 day-of-year is 366 in a leap year, 365 otherwise. Exercises GeorgianYear.isLeap
+    // (regression for the reference-equality `eq`/`ne` bug; locks the century rule).
+    assertResult(366)(Date(1600, 12, 31).getDayOfYear) // divisible by 400 -> leap
+    assertResult(365)(Date(1700, 12, 31).getDayOfYear) // divisible by 100, not 400 -> non-leap
+    assertResult(365)(Date(1900, 12, 31).getDayOfYear) // divisible by 100, not 400 -> non-leap
+    assertResult(366)(Date(2000, 12, 31).getDayOfYear) // divisible by 400 -> leap
+    assertResult(366)(Date(2024, 12, 31).getDayOfYear) // divisible by 4 -> leap
+    assertResult(365)(Date(2023, 12, 31).getDayOfYear) // not divisible by 4 -> non-leap
+  }
 }

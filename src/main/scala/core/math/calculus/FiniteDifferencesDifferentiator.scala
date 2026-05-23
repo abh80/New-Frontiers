@@ -1,7 +1,7 @@
 package org.abh80.nf
 package core.math.calculus
 
-import scala.math._
+import scala.math.{min, max}
 
 /**
  * Implements finite differences method for numerical differentiation of functions.
@@ -45,7 +45,9 @@ class FiniteDifferencesDifferentiator (val nbPoints: Int, val stepSize: Double,
    * @return A function that takes a point x and returns a function from order to derivative value.
    */
   def differentiate(f: Double => Double): Double => Int => Double = { x =>
-    val (t0, y, a, tPoints) = computeSamplePoints(x)(f)
+    val (_, _, a, tPoints) = computeSamplePoints(x)(f)
+    // Independent of order — build once per x instead of on every order request.
+    val base = buildPolynomialCoefficients(tPoints, a)
 
     order =>
       if (order < 0) {
@@ -54,9 +56,11 @@ class FiniteDifferencesDifferentiator (val nbPoints: Int, val stepSize: Double,
       if (order >= nbPoints) {
         throw new IllegalArgumentException(s"Derivation order $order is too large, max is ${nbPoints - 1}")
       }
-      var coeffs = buildPolynomialCoefficients(tPoints, a)
-      for (_ <- 1 to order) {
+      var coeffs = base
+      var k = 0
+      while (k < order) {
         coeffs = differentiatePolynomial(coeffs)
+        k += 1
       }
       evaluatePolynomial(coeffs, x)
   }
@@ -80,7 +84,7 @@ class FiniteDifferencesDifferentiator (val nbPoints: Int, val stepSize: Double,
     // Compute sample points and function values
 
 
-    val (t0, y, a, tPoints) = computeSamplePoints(x)(f)
+    val (_, _, a, tPoints) = computeSamplePoints(x)(f)
 
     // Compute all derivatives up to maxOrder
     val data = new Array[Double](maxOrder + 1)

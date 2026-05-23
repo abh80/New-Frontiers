@@ -39,9 +39,8 @@ private val ATTOSECOND_SPLIT = 1_000_000_000L
 @throws[IllegalArgumentException]
 class TimeFormat(private var seconds: Long, private var attoseconds: Long) extends Comparable[TimeFormat] with Serializable {
 
-  require(attoseconds >= Long.MinValue && attoseconds <= Long.MaxValue,
-    s"Attoseconds must be in range (${Long.MinValue}, ${Long.MaxValue}) but found $attoseconds")
-
+  // init() canonicalizes any attoseconds value into [0, ATTOSECONDS_PER_SECOND); no range
+  // precondition is needed (a prior require against Long bounds was always-true / dead).
   init()
 
   /** Compares this TimeFormat instance with another TimeFormat instance.
@@ -244,7 +243,7 @@ object TimeFormat {
 
   @throws[IllegalArgumentException]
   def fromDouble(seconds: Double): TimeFormat = {
-    require(Double.NaN != seconds, "Input should not be a type of NaN")
+    require(!seconds.isNaN, "Input should not be a type of NaN")
     require(Double.MaxValue >= seconds && Double.MinValue <= seconds, "Input seconds is not in range of Double")
 
     val roundSeconds = rint(seconds)

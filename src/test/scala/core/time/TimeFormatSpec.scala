@@ -207,4 +207,9 @@ class TimeFormatSpec extends AnyFunSuite with Matchers {
     assertResult(-1L)(t1.getSeconds)
     assertResult(999999999999999990L)(t1.getAttoSeconds)
   }
+
+  test("fromDouble rejects NaN") {
+    // Regression: previously `Double.NaN != seconds` was always true, so NaN slipped through.
+    assertThrows[IllegalArgumentException](TimeFormat.fromDouble(Double.NaN))
+  }
 }

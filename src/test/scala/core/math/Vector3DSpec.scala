@@ -87,5 +87,26 @@ class Vector3DSpec extends AnyFunSuite with Matchers {
     v.y shouldBe -2.0
     v.z shouldBe 3.0
   }
+
+  test("Vector3D angleTo clamps acos domain (no NaN for parallel/antiparallel)") {
+    val v = Vector3D(1, 2, 3)
+    val same = v.angleTo(v)().toRadians
+    assert(!same.isNaN)
+    assert(math.abs(same) < 1e-7) // parallel -> 0
+    val opp = v.angleTo(v.negate)().toRadians
+    assert(!opp.isNaN)
+    assert(math.abs(opp - Math.PI) < 1e-7) // antiparallel -> pi
+  }
+
+  test("Vector3D angleTo throws on zero-length vector") {
+    assertThrows[IllegalArgumentException](Vector3D.Zero.angleTo(Vector3D(1, 0, 0))())
+    assertThrows[IllegalArgumentException](Vector3D(1, 0, 0).angleTo(Vector3D.Zero)())
+  }
+
+  test("Vector3D magnitude and distanceTo propagate NaN (no longer masked to 0.0)") {
+    assert(Vector3D(Double.NaN, 0, 0).magnitude.isNaN)
+    val d = Vector3D(0, 0, 0).distanceTo(Vector3D(Double.NaN, 0, 0))()
+    assert(d.value.isNaN)
+  }
 }
 

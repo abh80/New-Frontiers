@@ -26,12 +26,7 @@ final case class Vector3D(x: Double, y: Double, z: Double) {
     val dx = second.x - x
     val dy = second.y - y
     val dz = second.z - z
-    val distanceInMeters = Math.sqrt(dx * dx + dy * dy + dz * dz)
-    if (distanceInMeters.isNaN || distanceInMeters.isInfinite) {
-      factory(0.0) // Handle invalid inputs gracefully
-    } else {
-      factory(distanceInMeters)
-    }
+    factory(Math.sqrt(dx * dx + dy * dy + dz * dz))
   }
 
   /**
@@ -49,10 +44,7 @@ final case class Vector3D(x: Double, y: Double, z: Double) {
    * Formula: sqrt(x^2 + y^2 + z^2)
    * @return The magnitude in meters, or 0.0 if NaN or infinite.
    */
-  def magnitude: Double = {
-    val mag = Math.sqrt(x * x + y * y + z * z)
-    if (mag.isNaN || mag.isInfinite) 0.0 else mag
-  }
+  def magnitude: Double = Math.sqrt(x * x + y * y + z * z)
 
   /**
    * Calculates the angle between this vector and another.
@@ -63,9 +55,11 @@ final case class Vector3D(x: Double, y: Double, z: Double) {
    * @return The angle as an AngleUnit.
    */
   def angleTo[T <: AngleUnit](second: Vector3D)(factory: Double => T = AngleUnit.Radian.apply): T = {
-    val dotProduct = this.dot(second)
     val magnitudes = this.magnitude * second.magnitude
-    AngleUnit.fromRadians(Math.acos(dotProduct / magnitudes), factory)
+    require(magnitudes != 0.0, "angleTo is undefined for a zero-length vector")
+    // Clamp to [-1, 1] so rounding on (anti)parallel vectors can't push acos out of its domain (NaN).
+    val cosTheta = Math.max(-1.0, Math.min(1.0, this.dot(second) / magnitudes))
+    AngleUnit.fromRadians(Math.acos(cosTheta), factory)
   }
 
   /**

@@ -329,7 +329,7 @@ class Date private extends Comparable[Date] with Serializable {
       val j2000Day = jd - JULIAN_DAY_AT_J2000
       j2000Day
 
-    override def isLeap(year: Int): Boolean = ((year % 4) eq 0) && (((year % 400) eq 0) || ((year % 100) ne 0))
+    override def isLeap(year: Int): Boolean = (year % 4 == 0) && (year % 400 == 0 || year % 100 != 0)
   }
 
   private object LeapYearFactory extends MonthFactory {

@@ -238,4 +238,21 @@ class FiniteDifferencesDifferentiatorSpec extends AnyFlatSpec with Matchers {
     error2 should be < error1
     error3 should be < error2
   }
+
+  behavior of "differentiate closure reuse (order-independent base)"
+
+  it should "return consistent results across repeated, out-of-order multi-order calls" in {
+    // Regression for the hoist refactor: the polynomial base is built once per x and must not
+    // be mutated by differentiatePolynomial across order requests.
+    val diff = new FiniteDifferencesDifferentiator(7, 0.0001)
+    val f = (x: Double) => x * x * x // at x=2: f=8, f'=12, f''=12, f'''=6
+    val derivative = diff.differentiate(f)
+
+    derivative(2.0)(2) shouldBe 12.0 +- 1e-3
+    derivative(2.0)(0) shouldBe 8.0 +- 1e-4
+    derivative(2.0)(3) shouldBe 6.0 +- 1e-2
+    derivative(2.0)(1) shouldBe 12.0 +- 1e-4
+    derivative(2.0)(0) shouldBe 8.0 +- 1e-4 // repeat -> identical
+    derivative(2.0)(1) shouldBe 12.0 +- 1e-4 // repeat -> identical
+  }
 }
