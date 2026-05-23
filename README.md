@@ -12,6 +12,13 @@ The design closely mirrors [Orekit](https://www.orekit.org/) concepts (`TimeScal
 > The time, math, calculus, metrics, and util layers are implemented and tested. Reference
 > frames and orbit models are scaffolding and not yet usable — see the [Roadmap](#roadmap).
 
+> **A note on benchmarks.** We try to be open about how New Frontiers compares to
+> [Orekit](https://www.orekit.org/) and its Hipparchus math backend. There's a small benchmark
+> suite that looks at speed, memory, and accuracy, and we keep the results (with charts) in the repo
+> at [`benchmarks/result/`](benchmarks/result/README.md) if you'd like to take a look. It's still
+> early and we add to it as the library grows, so please treat it as a work in progress rather than
+> the final word. If you want to check the numbers yourself, `sbt benchAll` regenerates everything.
+
 ---
 
 ## Table of contents
