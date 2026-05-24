@@ -1,85 +1,151 @@
 # New Frontiers vs Orekit/Hipparchus benchmark baseline
 
-`nf` is New Frontiers, `ok` is Orekit/Hipparchus. Lower is better in every column.
-ns/op comes from JMH AverageTime, B/op from the JMH GC profiler (`gc.alloc.rate.norm`), and error is the absolute distance from an analytic or known value. `speed x` is ok ns/op divided by nf ns/op, so above 1 means NF is faster.
+Lower is better for speed and memory; higher is better for precision. Every chart has two
+lines, New Frontiers first and Orekit/Hipparchus second. Speed (ns/op) and memory (bytes/op)
+come from JMH. Precision is shown as accurate decimal digits, `-log10(absolute error)`, capped
+at 18; a point at 18 means the result was exact. Regenerate with `sbt benchAll`.
 
 ## Differentiator
 
-### Speed and memory
+### Performance and memory
 
-| op | nf ns/op | ok ns/op | speed x | nf B/op | ok B/op |
-|----|---------:|---------:|--------:|--------:|--------:|
-| firstDerivative | 228.512 | 306.225 | 1.34 | 736.002 | 1088.002 |
+```mermaid
+xychart-beta
+    title "Differentiator speed (ns/op, lower is better)"
+    x-axis ["firstDerivative"]
+    y-axis "ns/op"
+    line [228.5]
+    line [306.2]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
 
-![Differentiator ns/op](./Differentiator-nsop.png)
+```mermaid
+xychart-beta
+    title "Differentiator memory (bytes/op, lower is better)"
+    x-axis ["firstDerivative"]
+    y-axis "bytes/op"
+    line [736]
+    line [1088]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
 
-### Precision (absolute error from an analytic or known value)
+### Precision
 
-| op | nf err | ok err |
-|----|-------:|-------:|
-| exp | 1.181e-13 | 1.186e-13 |
-| recip | 1.055e-13 | 1.057e-13 |
-| sin | 7.216e-15 | 7.216e-15 |
+```mermaid
+xychart-beta
+    title "Differentiator precision (accurate digits, higher is better)"
+    x-axis ["exp", "recip", "sin"]
+    y-axis "digits"
+    line [12.93, 12.98, 14.14]
+    line [12.93, 12.98, 14.14]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
 
 ## Kinematic
 
-### Speed and memory
+### Performance and memory
 
-| op | nf ns/op | ok ns/op | speed x | nf B/op | ok B/op |
-|----|---------:|---------:|--------:|--------:|--------:|
-| momentum | 4.683 | 10.592 | 2.26 | 40.000 | 40.000 |
-| shift | 11.186 | 24.418 | 2.18 | 104.000 | 104.000 |
+```mermaid
+xychart-beta
+    title "Kinematic speed (ns/op, lower is better)"
+    x-axis ["momentum", "shift"]
+    y-axis "ns/op"
+    line [4.683, 11.19]
+    line [10.59, 24.42]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
 
-![Kinematic ns/op](./Kinematic-nsop.png)
+```mermaid
+xychart-beta
+    title "Kinematic memory (bytes/op, lower is better)"
+    x-axis ["momentum", "shift"]
+    y-axis "bytes/op"
+    line [40, 104]
+    line [40, 104]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
 
-### Precision (absolute error from an analytic or known value)
+### Precision
 
-| op | nf err | ok err |
-|----|-------:|-------:|
-| propagate_120s | 0 | 3.553e-15 |
+```mermaid
+xychart-beta
+    title "Kinematic precision (accurate digits, higher is better)"
+    x-axis ["propagate_120s"]
+    y-axis "digits"
+    line [18]
+    line [14.45]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
 
 ## Time
 
-### Speed and memory
+### Performance and memory
 
-| op | nf ns/op | ok ns/op | speed x | nf B/op | ok B/op |
-|----|---------:|---------:|--------:|--------:|--------:|
-| construct | 72.075 | 11.347 | 0.16 | 368.000 | 32.000 |
-| durationFrom | 3.801 | 0.935 | 0.25 | 2.595e-05 | 6.380e-06 |
-| shift | 6.231 | 3.995 | 0.64 | 48.000 | 32.000 |
-| utcOffset | 20.354 | 15.789 | 0.78 | 56.000 | 1.074e-04 |
+```mermaid
+xychart-beta
+    title "Time speed (ns/op, lower is better)"
+    x-axis ["construct", "durationFrom", "shift", "utcOffset"]
+    y-axis "ns/op"
+    line [72.07, 3.801, 6.231, 20.35]
+    line [11.35, 0.9353, 3.995, 15.79]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
 
-![Time ns/op](./Time-nsop.png)
+```mermaid
+xychart-beta
+    title "Time memory (bytes/op, lower is better)"
+    x-axis ["construct", "durationFrom", "shift", "utcOffset"]
+    y-axis "bytes/op"
+    line [368, 0, 48, 56]
+    line [32, 0, 32, 0]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
 
-### Precision (absolute error from an analytic or known value)
+### Precision
 
-| op | nf err | ok err |
-|----|-------:|-------:|
-| accumulate_0.1s_x10M | 0 | 1.000e-10 |
+```mermaid
+xychart-beta
+    title "Time precision (accurate digits, higher is better)"
+    x-axis ["accumulate_0.1s_x10M"]
+    y-axis "digits"
+    line [18]
+    line [10]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
 
 ## Vector3D
 
-### Speed and memory
+### Performance and memory
 
-| op | nf ns/op | ok ns/op | speed x | nf B/op | ok B/op |
-|----|---------:|---------:|--------:|--------:|--------:|
-| add | 4.858 | 8.373 | 1.72 | 40.000 | 40.000 |
-| angleTo | 10.416 | 90.874 | 8.72 | 7.103e-05 | 6.162e-04 |
-| cross | 4.496 | 36.091 | 8.03 | 40.000 | 40.000 |
-| dot | 1.019 | 9.853 | 9.67 | 6.944e-06 | 6.716e-05 |
-| magnitude | 1.626 | 2.648 | 1.63 | 1.111e-05 | 1.802e-05 |
-| normalize | 4.979 | 6.442 | 1.29 | 40.000 | 40.000 |
-| rotateX | 13.080 | 27.124 | 2.07 | 40.000 | 72.000 |
-| scale | 5.957 | 5.559 | 0.93 | 40.000 | 40.000 |
-| sub | 5.605 | 6.763 | 1.21 | 40.000 | 40.000 |
+```mermaid
+xychart-beta
+    title "Vector3D speed (ns/op, lower is better)"
+    x-axis ["add", "angleTo", "cross", "dot", "magnitude", "normalize", "rotateX", "scale", "sub"]
+    y-axis "ns/op"
+    line [4.858, 10.42, 4.496, 1.019, 1.626, 4.979, 13.08, 5.957, 5.605]
+    line [8.373, 90.87, 36.09, 9.853, 2.648, 6.442, 27.12, 5.559, 6.763]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
 
-![Vector3D ns/op](./Vector3D-nsop.png)
+```mermaid
+xychart-beta
+    title "Vector3D memory (bytes/op, lower is better)"
+    x-axis ["add", "angleTo", "cross", "dot", "magnitude", "normalize", "rotateX", "scale", "sub"]
+    y-axis "bytes/op"
+    line [40, 0, 40, 0, 0, 40, 40, 40, 40]
+    line [40, 0, 40, 0, 0, 40, 72, 40, 40]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
 
-### Precision (absolute error from an analytic or known value)
+### Precision
 
-| op | nf err | ok err |
-|----|-------:|-------:|
-| cross | 0 | 0 |
-| normalize | 0 | 0 |
-| rotateX | 9.930e-16 | 1.256e-15 |
+```mermaid
+xychart-beta
+    title "Vector3D precision (accurate digits, higher is better)"
+    x-axis ["cross", "normalize", "rotateX"]
+    y-axis "digits"
+    line [18, 18, 15]
+    line [18, 18, 14.9]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
 

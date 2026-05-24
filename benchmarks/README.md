@@ -4,7 +4,7 @@ Compares New Frontiers against Orekit/Hipparchus on speed, memory, and precision
 
 ## Run everything
     sbt benchAll
-Outputs `benchmarks/result/README.md` + per-category PNG charts.
+Outputs `benchmarks/result/README.md` with Mermaid line charts for speed, memory, and error (renders on GitHub).
 
 ## Pieces
 - Timing + memory only: `sbt "benchmarks/Jmh/run -prof gc -rf json -rff target/results.json"` (JMH's fork cwd is the `benchmarks/` dir)

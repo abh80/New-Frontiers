@@ -1,12 +1,8 @@
 package bench.report
 
 import bench.support.PrecisionResult
-import org.knowm.xchart.{CategoryChart, CategoryChartBuilder, BitmapEncoder}
-import org.knowm.xchart.BitmapEncoder.BitmapFormat
-import org.knowm.xchart.style.Styler.LegendPosition
 
-import java.nio.file.{Files, Path, Paths}
-import scala.jdk.CollectionConverters.*
+import java.nio.file.{Files, Paths}
 
 object ReportGen:
   final case class TimingRow(category: String, operation: String, library: String, nsPerOp: Double, bytesPerOp: Double)
@@ -33,71 +29,72 @@ object ReportGen:
       TimingRow(category, operation, library, ns, bytes)
     }
 
-  private def fmt(d: Double): String =
-    if d.isNaN then "n/a"
-    else if d == 0.0 then "0"
-    else if math.abs(d) < 1e-3 || math.abs(d) >= 1e6 then f"$d%.3e"
-    else f"$d%.3f"
+  /** Compact number for a Mermaid axis: integers stay integers, tiny values collapse to 0. */
+  private def num(d: Double): String =
+    if d.isNaN || math.abs(d) < 1e-3 then "0"
+    else
+      val r = BigDecimal(d).round(new java.math.MathContext(4)).toDouble
+      if r == r.toLong.toDouble then r.toLong.toString else r.toString
 
-  /** Build the markdown report. Speed/memory and precision are separate tables per category
-   *  because their operation sets differ (precision uses analytic identities, not the timed ops). */
+  /** Turn an absolute error into "accurate decimal digits" = -log10(error), capped at 18
+   *  (attosecond-ish). 0 error is exact, so it gets the cap. Higher is better. */
+  private def digits(e: Double): Double =
+    if e <= 0.0 then 18.0 else math.max(0.0, math.min(18.0, -math.log10(e)))
+
+  private def lineChart(title: String, yTitle: String, ops: Seq[String], nf: Seq[Double], ok: Seq[Double]): String =
+    val xs  = ops.map(o => "\"" + o + "\"").mkString(", ")
+    val nfs = nf.map(num).mkString(", ")
+    val oks = ok.map(num).mkString(", ")
+    s"""```mermaid
+xychart-beta
+    title "$title"
+    x-axis [$xs]
+    y-axis "$yTitle"
+    line [$nfs]
+    line [$oks]
+```
+*First line: New Frontiers. Second line: Orekit/Hipparchus.*
+"""
+
+  /** A README with Mermaid line charts per category: speed and memory together, error separately. */
   def buildMarkdown(timing: Seq[TimingRow], precision: Seq[PrecisionResult]): String =
     val sb = new StringBuilder
     sb.append("# New Frontiers vs Orekit/Hipparchus benchmark baseline\n\n")
-    sb.append("`nf` is New Frontiers, `ok` is Orekit/Hipparchus. Lower is better in every column.\n")
-    sb.append("ns/op comes from JMH AverageTime, B/op from the JMH GC profiler (`gc.alloc.rate.norm`), ")
-    sb.append("and error is the absolute distance from an analytic or known value. `speed x` is ok ns/op divided by nf ns/op, so above 1 means NF is faster.\n\n")
+    sb.append("Lower is better for speed and memory; higher is better for precision. Every chart has two\n")
+    sb.append("lines, New Frontiers first and Orekit/Hipparchus second. Speed (ns/op) and memory (bytes/op)\n")
+    sb.append("come from JMH. Precision is shown as accurate decimal digits, `-log10(absolute error)`, capped\n")
+    sb.append("at 18; a point at 18 means the result was exact. Regenerate with `sbt benchAll`.\n\n")
 
-    val tByCat = timing.groupBy(_.category)
-    val pByCat = precision.groupBy(_.category)
+    def cell(rows: Seq[TimingRow], cat: String, op: String, lib: String, f: TimingRow => Double): Double =
+      rows.find(r => r.category == cat && r.operation == op && r.library == lib).map(f).getOrElse(Double.NaN)
+
     val cats = (timing.map(_.category) ++ precision.map(_.category)).distinct.sorted
-
     cats.foreach { cat =>
       sb.append(s"## $cat\n\n")
 
-      val tRows = tByCat.getOrElse(cat, Nil)
-      if tRows.nonEmpty then
-        sb.append("### Speed and memory\n\n")
-        sb.append("| op | nf ns/op | ok ns/op | speed x | nf B/op | ok B/op |\n")
-        sb.append("|----|---------:|---------:|--------:|--------:|--------:|\n")
-        tRows.map(_.operation).distinct.sorted.foreach { op =>
-          val nf = tRows.find(r => r.operation == op && r.library == "nf")
-          val ok = tRows.find(r => r.operation == op && r.library == "ok")
-          val speedup = for { n <- nf; o <- ok if n.nsPerOp != 0 } yield o.nsPerOp / n.nsPerOp
-          sb.append(s"| $op | ${nf.map(r => fmt(r.nsPerOp)).getOrElse("-")} | ${ok.map(r => fmt(r.nsPerOp)).getOrElse("-")} " +
-            s"| ${speedup.map(s => f"$s%.2f").getOrElse("-")} | ${nf.map(r => fmt(r.bytesPerOp)).getOrElse("-")} " +
-            s"| ${ok.map(r => fmt(r.bytesPerOp)).getOrElse("-")} |\n")
-        }
-        sb.append(s"\n![${cat} ns/op](./${cat}-nsop.png)\n\n")
+      val tOps = timing.filter(_.category == cat).map(_.operation).distinct.sorted
+      if tOps.nonEmpty then
+        sb.append("### Performance and memory\n\n")
+        sb.append(lineChart(s"$cat speed (ns/op, lower is better)", "ns/op", tOps,
+          tOps.map(o => cell(timing, cat, o, "nf", _.nsPerOp)),
+          tOps.map(o => cell(timing, cat, o, "ok", _.nsPerOp))))
+        sb.append("\n")
+        sb.append(lineChart(s"$cat memory (bytes/op, lower is better)", "bytes/op", tOps,
+          tOps.map(o => cell(timing, cat, o, "nf", _.bytesPerOp)),
+          tOps.map(o => cell(timing, cat, o, "ok", _.bytesPerOp))))
+        sb.append("\n")
 
-      val pRows = pByCat.getOrElse(cat, Nil)
-      if pRows.nonEmpty then
-        sb.append("### Precision (absolute error from an analytic or known value)\n\n")
-        sb.append("| op | nf err | ok err |\n")
-        sb.append("|----|-------:|-------:|\n")
-        pRows.map(_.operation).distinct.sorted.foreach { op =>
-          val nfErr = pRows.find(r => r.operation == op && r.library == "nf").map(_.error)
-          val okErr = pRows.find(r => r.operation == op && r.library == "ok").map(_.error)
-          sb.append(s"| $op | ${nfErr.map(fmt).getOrElse("-")} | ${okErr.map(fmt).getOrElse("-")} |\n")
-        }
+      val pOps = precision.filter(_.category == cat).map(_.operation).distinct.sorted
+      if pOps.nonEmpty then
+        def err(op: String, lib: String): Double =
+          precision.find(r => r.category == cat && r.operation == op && r.library == lib).map(_.error).getOrElse(Double.NaN)
+        sb.append("### Precision\n\n")
+        sb.append(lineChart(s"$cat precision (accurate digits, higher is better)", "digits", pOps,
+          pOps.map(o => digits(err(o, "nf"))),
+          pOps.map(o => digits(err(o, "ok")))))
         sb.append("\n")
     }
     sb.toString
-
-  /** One grouped bar chart per category for ns/op (NF vs OK). */
-  private def writeChart(dir: Path, category: String, timing: Seq[TimingRow]): Unit =
-    val ops = timing.filter(_.category == category).map(_.operation).distinct.sorted
-    def series(lib: String): java.util.List[java.lang.Double] =
-      ops.map(op => java.lang.Double.valueOf(
-        timing.find(r => r.category == category && r.operation == op && r.library == lib).map(_.nsPerOp).getOrElse(0.0)
-      )).asJava
-    val chart: CategoryChart = new CategoryChartBuilder()
-      .width(900).height(500).title(s"$category ns/op (lower is better)")
-      .xAxisTitle("operation").yAxisTitle("ns/op").build()
-    chart.getStyler.setLegendPosition(LegendPosition.InsideNW)
-    chart.addSeries("New Frontiers", ops.asJava, series("nf"))
-    chart.addSeries("Orekit/Hipparchus", ops.asJava, series("ok"))
-    BitmapEncoder.saveBitmap(chart, dir.resolve(s"$category-nsop").toString, BitmapFormat.PNG)
 
   def main(args: Array[String]): Unit =
     val jmhPath = Paths.get(if args.length > 0 then args(0) else "benchmarks/target/results.json")
@@ -108,6 +105,6 @@ object ReportGen:
     val timing = parseJmh(Files.readString(jmhPath))
     val precision = PrecisionResult.read(prcPath)
 
-    timing.map(_.category).distinct.foreach(cat => writeChart(outDir, cat, timing))
-    Files.writeString(outDir.resolve("README.md"), buildMarkdown(timing, precision))
-    println(s"Wrote report + ${timing.map(_.category).distinct.size} charts to $outDir")
+    val out = outDir.resolve("README.md")
+    Files.writeString(out, buildMarkdown(timing, precision))
+    println(s"Wrote $out (${timing.size} timing rows, ${precision.size} precision rows)")
