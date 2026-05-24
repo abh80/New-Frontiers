@@ -35,7 +35,7 @@ lazy val root = (project in file("."))
   )
 
 // Benchmark-only module. Compares New Frontiers against Orekit/Hipparchus.
-// Never published: keeps Orekit/JMH/XChart out of the library artifact.
+// Never published: keeps Orekit/JMH/XChart off the library artifact.
 lazy val benchmarks = (project in file("benchmarks"))
   .dependsOn(root)
   .enablePlugins(JmhPlugin)
