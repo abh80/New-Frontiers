@@ -175,6 +175,10 @@ class UTCScale(tai: TimeScale, leapOffsets: Array[UTCScale.LeapSecondOffset] = A
 }
 
 object UTCScale {
+  import scala.math.BigDecimal.RoundingMode
+
+  private val AttosecondsPerSecondBig = BigDecimal("1000000000000000000")
+
   /**
    * Used to represent leap second offset.
    *
@@ -193,12 +197,12 @@ object UTCScale {
       val r = getRateInNanosPerSec(rate)
 
       val dt = (startDate.getMJD - mjdBase) * SECONDS_IN_DAY
-      val drift = TimeFormat.NANOSECOND * (abs(dt) * r)
-      val startOffset = if dt < 0 then TimeFormat.fromDouble(fixedOffset) - drift else TimeFormat.fromDouble(fixedOffset) + drift
+      val drift = secondsToTimeFormat(BigDecimal(abs(dt)) * BigDecimal.decimal(rate) / BigDecimal(SECONDS_IN_DAY))
+      val startOffset = if dt < 0 then fixedOffsetTime - drift else fixedOffsetTime + drift
 
       val leapStart = new AbsoluteTime(startDate, tai) ++ prev
       val leapEnd = new AbsoluteTime(startDate, tai) ++ startOffset
-      val leap = leapEnd.durationFrom(leapStart).*(NANOS_IN_SECONDS)./(r + NANOS_IN_SECONDS)
+      val leap = scale(leapEnd.durationFrom(leapStart), BigDecimal(1) / (BigDecimal(1) + r / BigDecimal(NANOS_IN_SECONDS)))
 
       val mjdBaseTime = AbsoluteTime.fromMJDDate(mjdBase, tai) ++ fixedOffsetTime
 
@@ -225,7 +229,7 @@ object UTCScale {
    * @param rate        The rate of change of the offset, usually in units per day (e.g., nanoseconds per second per day).
    * @param leap        value of the leap at offset validity start
    */
-  case class ComputedLeapSecondOffset(startTime: AbsoluteTime, mjdDate: Int, mjdBaseTime: AbsoluteTime, mjdBase: Int, fixedOffset: TimeFormat, rate: Int, leap: TimeFormat) {
+  case class ComputedLeapSecondOffset(startTime: AbsoluteTime, mjdDate: Int, mjdBaseTime: AbsoluteTime, mjdBase: Int, fixedOffset: TimeFormat, rate: BigDecimal, leap: TimeFormat) {
     val validityStart: AbsoluteTime = startTime ++ leap
 
     def offsetFrom(time: AbsoluteTime): TimeFormat =
@@ -233,7 +237,7 @@ object UTCScale {
 
       val dt = time.durationFrom(mjdBaseTime)
 
-      val drift = dt.*(rate)./(rate + NANOS_IN_SECONDS)
+      val drift = scale(dt, rate / (rate + BigDecimal(NANOS_IN_SECONDS)))
 
       fixedOffset + drift
 
@@ -242,7 +246,7 @@ object UTCScale {
 
       val dt = TimeFormat((date.getMJD - mjdBase) * SECONDS_IN_DAY + time.getHour * 3600 + time.getMinute * 60 + time.getSecondsAsTimeFormat.getSeconds, time.getSecondsAsTimeFormat.getAttoSeconds)
 
-      val drift = dt.*(rate)./(NANOS_IN_SECONDS)
+      val drift = scale(dt, rate / BigDecimal(NANOS_IN_SECONDS))
 
       fixedOffset + drift
     }
@@ -254,6 +258,19 @@ object UTCScale {
    * @param rate The rate of leap offset, in s/day
    * @return The rate in ns/s
    */
-  private def getRateInNanosPerSec(rate: Double): Int =
-    ((rate * NANOS_IN_SECONDS) / SECONDS_IN_DAY).toInt
+  private def getRateInNanosPerSec(rate: Double): BigDecimal =
+    (BigDecimal.decimal(rate) * BigDecimal(NANOS_IN_SECONDS)) / BigDecimal(SECONDS_IN_DAY)
+
+  private def scale(time: TimeFormat, factor: BigDecimal): TimeFormat =
+    val totalAttoseconds = (BigDecimal(time.getSeconds) * AttosecondsPerSecondBig + BigDecimal(time.getAttoSeconds)) * factor
+    fromRoundedAttoseconds(totalAttoseconds)
+
+  private def secondsToTimeFormat(seconds: BigDecimal): TimeFormat =
+    fromRoundedAttoseconds(seconds * AttosecondsPerSecondBig)
+
+  private def fromRoundedAttoseconds(attoseconds: BigDecimal): TimeFormat =
+    val rounded = attoseconds.setScale(0, RoundingMode.HALF_UP)
+    val seconds = (rounded / AttosecondsPerSecondBig).setScale(0, RoundingMode.FLOOR).toLongExact
+    val atto = (rounded - BigDecimal(seconds) * AttosecondsPerSecondBig).toLongExact
+    TimeFormat(seconds, atto)
 }

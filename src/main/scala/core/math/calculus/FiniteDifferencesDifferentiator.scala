@@ -100,7 +100,8 @@ class FiniteDifferencesDifferentiator (val nbPoints: Int, val stepSize: Double,
   }
 
   private def computeSamplePoints(x: Double)(implicit f: Double => Double): (Double, Array[Double], Array[Double], Array[Double]) = {
-    val t0 = max(min(x, tMax), tMin) - halfSampleSpan
+    val sampleSpan = 2.0 * halfSampleSpan
+    val t0 = max(tMin, min(x - halfSampleSpan, tMax - sampleSpan))
     val y = Array.tabulate(nbPoints)(i => f(t0 + i * stepSize))
     val a = computeNewtonCoefficients(y)
     val tPoints = Array.tabulate(nbPoints)(i => t0 + i * stepSize)

@@ -228,12 +228,11 @@ final class AbsoluteTime private (val offset: TimeFormat)
    */
   def getDateTime(scale: TimeScale): (Date, Time) =
     val timeOffset = offset + scale.timePastTAI(this)
-    val j2000_shifted = timeOffset.getSeconds + 43200L
+    val j2000_shifted = Math.addExact(timeOffset.getSeconds, 43200L)
 
-    var time = j2000_shifted % Constants.SECONDS_IN_A_JULIAN_DAY
-    if time < 0L then time += Constants.SECONDS_IN_A_JULIAN_DAY
+    val time = Math.floorMod(j2000_shifted, Constants.SECONDS_IN_A_JULIAN_DAY)
 
-    val date = ((j2000_shifted - time) / Constants.SECONDS_IN_A_JULIAN_DAY).toInt
+    val date = Math.toIntExact(Math.floorDiv(j2000_shifted, Constants.SECONDS_IN_A_JULIAN_DAY))
 
     val leap =
       if scale.isInsideLeapSecond(this) then scale.getLeap(this)

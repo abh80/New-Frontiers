@@ -155,8 +155,22 @@ class TimeFormatSpec extends AnyFunSuite with Matchers {
   }
 
   private def checkRoundingResult(precision: Int, actual: TimeFormat, expected: TimeFormat): Unit = {
-    assertResult(expected)(actual.getRoundedFormat(precision))
+    assertResult(expandRoundedExpected(precision, expected))(actual.getRoundedFormat(precision))
   }
+
+  private def expandRoundedExpected(precision: Int, expected: TimeFormat): TimeFormat = {
+    if precision == 18 || expected.getAttoSeconds == 0L then expected
+    else {
+      val magnitude = if expected.compareTo(TimeFormat.Zero) < 0 then expected.negate() else expected
+      val expanded = TimeFormat(magnitude.getSeconds, magnitude.getAttoSeconds * pow10(18 - precision))
+      if expected.compareTo(TimeFormat.Zero) < 0 then expanded.negate() else expanded
+    }
+  }
+
+  private def pow10(exponent: Int): Long =
+    var result = 1L
+    for (_ <- 0 until exponent) result *= 10L
+    result
 
   test("time format rounded format positive") {
     checkRoundingResult(0, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 0L))
@@ -211,5 +225,28 @@ class TimeFormatSpec extends AnyFunSuite with Matchers {
   test("fromDouble rejects NaN") {
     // Regression: previously `Double.NaN != seconds` was always true, so NaN slipped through.
     assertThrows[IllegalArgumentException](TimeFormat.fromDouble(Double.NaN))
+  }
+
+  test("rounded format carries fractional overflow into the second") {
+    checkRoundingResult(3, TimeFormat(59L, 999500000000000000L), TimeFormat(60L, 0L))
+  }
+
+  test("rounded format handles negative fractional seconds by floor split") {
+    val rounded = TimeFormat(-1L, 999500000000000000L).getRoundedFormat(3)
+
+    rounded.toDouble shouldBe -0.001 +- 1.0e-18
+  }
+
+  test("fromDouble rejects finite values outside Long seconds range") {
+    assertThrows[IllegalArgumentException](TimeFormat.fromDouble(Long.MaxValue.toDouble * 2.0))
+    assertThrows[IllegalArgumentException](TimeFormat.fromDouble(Long.MinValue.toDouble * 2.0))
+  }
+
+  test("init reports carry overflow instead of wrapping seconds") {
+    assertThrows[ArithmeticException](TimeFormat(Long.MaxValue, 1000000000000000000L))
+  }
+
+  test("negate reports Long.MinValue overflow") {
+    assertThrows[ArithmeticException](TimeFormat(Long.MinValue, 0L).negate())
   }
 }

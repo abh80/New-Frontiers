@@ -48,4 +48,10 @@ class AbsoluteTimeSpec extends AnyFunSuite with Matchers {
     assert(!(t1 == tf))
     assert(!(tf == t1))
   }
+
+  test("getDateTime reports day index overflow instead of wrapping") {
+    val t = AbsoluteTime() ++ ((Int.MaxValue.toLong + 1L) * 86400.0)
+
+    assertThrows[ArithmeticException](t.getDateTime(TimeScaleFactory.getTAI))
+  }
 }

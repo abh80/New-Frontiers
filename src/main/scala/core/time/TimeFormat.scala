@@ -1,7 +1,7 @@
 package org.abh80.nf
 package core.time
 
-import scala.math.{round, rint}
+import scala.math.{rint, round}
 import scala.math.BigDecimal.RoundingMode
 import scala.math.Ordered.orderingToOrdered
 import scala.util.hashing.MurmurHash3
@@ -72,7 +72,7 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
    * @return A new TimeFormat instance with negated values
    */
   def negate(): TimeFormat =
-    TimeFormat(-seconds, -attoseconds)
+    TimeFormat(Math.negateExact(seconds), Math.negateExact(attoseconds))
 
   /** Checks if this TimeFormat represents zero time (both seconds and attoseconds are 0).
    *
@@ -88,7 +88,7 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
     this(tf.getSeconds, tf.getAttoSeconds)
 
   def getRoundedFormat(precision: Int): TimeFormat = {
-    if (attoseconds < 0) return TimeFormat.Zero
+    require(precision >= 0 && precision <= 18, "Precision must be between 0 and 18")
 
     // Compute the value as a BigDecimal in seconds
     val value = BigDecimal(seconds) + BigDecimal(attoseconds) / BigDecimal("1e18")
@@ -96,12 +96,11 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
     val roundedValue = value.setScale(precision, RoundingMode.HALF_UP)
 
     // Extract whole seconds part
-    val secondsRounded: Long = roundedValue.setScale(0, RoundingMode.DOWN).toLong
+    val secondsRounded: Long = roundedValue.setScale(0, RoundingMode.FLOOR).toLongExact
 
-    // Extract fractional part, then scale to attoseconds at the desired precision
-    val scaleFactor = BigDecimal(10).pow(precision)
-    val attosecBig = (roundedValue - BigDecimal(secondsRounded)) * scaleFactor
-    val attosecondsRounded: Long = attosecBig.setScale(0, RoundingMode.HALF_UP).toLong
+    // Extract fractional part as canonical attoseconds.
+    val attosecBig = (roundedValue - BigDecimal(secondsRounded)) * BigDecimal(ATTOSECONDS_PER_SECOND)
+    val attosecondsRounded: Long = attosecBig.setScale(0, RoundingMode.HALF_UP).toLongExact
 
     TimeFormat(secondsRounded, attosecondsRounded)
   }
@@ -127,15 +126,10 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
   def getAttoSeconds: Long = attoseconds
 
   private def init(): Unit =
-    val qAtto = attoseconds / ATTOSECONDS_PER_SECOND
-    val rAtto = attoseconds - qAtto * ATTOSECONDS_PER_SECOND
-    if (rAtto < 0L) {
-      this.seconds = seconds + qAtto - 1L
-      this.attoseconds = ATTOSECONDS_PER_SECOND + rAtto
-    } else {
-      this.seconds = seconds + qAtto
-      this.attoseconds = rAtto
-    }
+    val qAtto = Math.floorDiv(attoseconds, ATTOSECONDS_PER_SECOND)
+    val rAtto = Math.floorMod(attoseconds, ATTOSECONDS_PER_SECOND)
+    this.seconds = Math.addExact(seconds, qAtto)
+    this.attoseconds = rAtto
 }
 
 object TimeFormat {
@@ -160,7 +154,7 @@ object TimeFormat {
      * @return A new TimeFormat instance representing the sum
      */
     def +(second: TimeFormat): TimeFormat =
-      new TimeFormat(self.seconds + second.seconds, self.attoseconds + second.attoseconds)
+      new TimeFormat(Math.addExact(self.seconds, second.seconds), Math.addExact(self.attoseconds, second.attoseconds))
 
     /** Subtracts one TimeFormat instance from another.
      *
@@ -168,7 +162,7 @@ object TimeFormat {
      * @return A new TimeFormat instance representing the difference
      */
     def -(second: TimeFormat): TimeFormat =
-      new TimeFormat(self.seconds - second.seconds, self.attoseconds - second.attoseconds)
+      new TimeFormat(Math.subtractExact(self.seconds, second.seconds), Math.subtractExact(self.attoseconds, second.attoseconds))
 
     /** Multiplies the time value by a scalar.
      *
@@ -243,12 +237,11 @@ object TimeFormat {
 
   @throws[IllegalArgumentException]
   def fromDouble(seconds: Double): TimeFormat = {
-    require(!seconds.isNaN, "Input should not be a type of NaN")
-    require(Double.MaxValue >= seconds && Double.MinValue <= seconds, "Input seconds is not in range of Double")
+    require(!seconds.isNaN && !seconds.isInfinity, "Input should be finite")
+    require(seconds >= Long.MinValue.toDouble && seconds < Long.MaxValue.toDouble, "Input seconds is outside Long range")
 
     val roundSeconds = rint(seconds)
     val frac = seconds - roundSeconds
-
 
     if frac < 0 then
       TimeFormat(roundSeconds.toLong - 1L, round(frac * ATTOSECONDS_PER_SECOND) + ATTOSECONDS_PER_SECOND)

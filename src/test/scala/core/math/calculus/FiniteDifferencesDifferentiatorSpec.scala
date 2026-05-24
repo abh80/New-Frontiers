@@ -201,6 +201,21 @@ class FiniteDifferencesDifferentiatorSpec extends AnyFlatSpec with Matchers {
     }
   }
 
+  it should "keep the sample window inside the upper bound" in {
+    val diff = new FiniteDifferencesDifferentiator(5, 0.01, -10.0, 10.0)
+    val f = (x: Double) => {
+      if (x < -10.0 || x > 10.0) {
+        throw new IllegalArgumentException(s"sample $x outside domain")
+      }
+      x * x
+    }
+    val derivative = diff.differentiate(f)
+
+    noException should be thrownBy {
+      derivative(9.999)(1)
+    }
+  }
+
   behavior of "differentiator serialization"
 
   it should "be serializable" in {

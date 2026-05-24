@@ -209,7 +209,9 @@ class Time private extends Comparable[Time] with Serializable {
     val rounded = seconds.getRoundedFormat(secondsPrecision)
 
     if (secondsPrecision > 0) {
-      f"$hour%02d:$minute%02d:${rounded.getSeconds}%02d." ++ String.format(s"%0${secondsPrecision}d", rounded.getAttoSeconds)
+      val scale = Math.pow(10.0, 18 - secondsPrecision).toLong
+      val fractionalSeconds = rounded.getAttoSeconds / scale
+      f"$hour%02d:$minute%02d:${rounded.getSeconds}%02d." ++ String.format(s"%0${secondsPrecision}d", fractionalSeconds)
     } else {
       f"$hour%02d:$minute%02d:${rounded.getSeconds}%02d"
     }

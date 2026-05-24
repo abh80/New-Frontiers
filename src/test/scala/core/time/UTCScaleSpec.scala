@@ -106,6 +106,51 @@ class UTCScaleSpec extends AnyFunSuite with Matchers {
     assertResult(false)(UTC.isInsideLeapSecond(t))
   }
 
+  test("pre-1972 UTC calendar conversion is self inverse") {
+    val samples = Array(
+      (Date(1961, 1, 2), Time(0, 0, 0.125)),
+      (Date(1965, 7, 2), Time(13, 14, 15.25)),
+      (Date(1968, 2, 2), Time(23, 59, 59.75)),
+      (Date(1971, 12, 31), Time(12, 0, 0.5))
+    )
+
+    for ((date, time) <- samples) {
+      val absolute = AbsoluteTime(date, time, UTC)
+      val (roundTripDate, roundTripTime) = absolute.getDateTime(UTC)
+
+      roundTripDate shouldBe date
+      roundTripTime shouldBe time
+    }
+  }
+
+  test("pre-1972 UTC offset overloads agree for calendar inputs") {
+    val samples = Array(
+      (Date(1961, 8, 2), Time(0, 0, 0.125)),
+      (Date(1963, 11, 2), Time(13, 14, 15.25)),
+      (Date(1966, 1, 2), Time(23, 59, 59.75)),
+      (Date(1971, 12, 31), Time(12, 0, 0.5))
+    )
+
+    for ((date, time) <- samples) {
+      val absolute = AbsoluteTime(date, time, UTC)
+
+      UTC.timeToTAI(date, time) shouldBe UTC.timePastTAI(absolute).negate()
+    }
+  }
+
+  test("custom UTC drift keeps sub-nanosecond per second rate") {
+    implicit val tai: TimeScale = TimeScaleFactory.getTAI
+    val rateSecondsPerDay = 0.0013392 // 15.5 ns/s
+    val driftingUTC = UTCScale(
+      tai,
+      Array(UTCScale.LeapSecondOffset(Date(2020, 1, 1), Date(2020, 1, 1).getMJD, 38.0, rateSecondsPerDay))
+    )
+
+    val time = AbsoluteTime(Date(2020, 1, 2), Time.MIDNIGHT, driftingUTC)
+
+    driftingUTC.timePastTAI(time).toDouble shouldBe -(38.0 + rateSecondsPerDay) +- 1.0e-12
+  }
+
   private def checkOffset(year: Int, month: Int, day: Int, offset: Double): Unit =
     val time = new AbsoluteTime(year, month, day, UTC)
     offset should be(almostEquals(UTC.timePastTAI(time).toDouble))
