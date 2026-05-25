@@ -15,29 +15,29 @@ import core.time.TimeFormat
  *
  */
 trait TimeShiftable[T] {
-  /** Get a timeshifted instance of [[T]]
+  /** Get a timeshifted instance of `T`
    *
    * @param dt time to be shifted in seconds
    */
   def ++(dt: Double): T
 
-  /** Get a timeshifted instance of [[T]]
+  /** Get a timeshifted instance of `T`
    *
    * @param timeFormat time to be shifted in TimeFormat
-   * @see [[TimeFormat]]
+   * @see [[org.abh80.nf.core.time.TimeFormat]]
    */
   def ++(timeFormat: TimeFormat): T = ++(timeFormat.toDouble)
 
-  /** Get a timeshifted instance of [[T]]
+  /** Get a timeshifted instance of `T`
    *
    * @param dt time to be shifted in seconds
    */
   def shiftBy(dt: Double): T = ++(dt)
 
-  /** Get a timeshifted instance of [[T]]
+  /** Get a timeshifted instance of `T`
    *
    * @param timeFormat time to be shifted in TimeFormat
-   * @see [[TimeFormat]]
+   * @see [[org.abh80.nf.core.time.TimeFormat]]
    */
   def shiftBy(timeFormat: TimeFormat): T = ++(timeFormat.toDouble)
 }

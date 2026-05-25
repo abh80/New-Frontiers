@@ -9,9 +9,9 @@ import util.TimeShiftable
  * position and velocity shifts. All vectors are in SI units (meters for position, meters/second for velocity,
  * meters/second² for acceleration).
  *
- * Instances of this class are immutable and time-shiftable, adhering to the [[TimeShiftable]] trait.
+ * Instances of this class are immutable and time-shiftable, adhering to the [[org.abh80.nf.util.TimeShiftable]] trait.
  *
- * @see [[TimeShiftable]]
+ * @see [[org.abh80.nf.util.TimeShiftable]]
  * @param position     The position vector of the object in 3D space (meters).
  * @param velocity     The velocity vector of the object in 3D space (meters/second).
  * @param acceleration The acceleration vector of the object in 3D space (meters/second²).

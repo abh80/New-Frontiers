@@ -122,7 +122,7 @@ final class AbsoluteTime private (val offset: TimeFormat)
    * hour, minute, seconds (as `TimeFormat`), and a `TimeScale`.
    *
    * ==Math Note==
-   * - Uses [[Month.getIntegerValue]] to map enum → integer month.
+   * - Uses [[org.abh80.nf.util.DateUtil.Month.getIntegerValue]] to map enum → integer month.
    */
   @throws[IllegalArgumentException]
   def this(
@@ -168,7 +168,7 @@ final class AbsoluteTime private (val offset: TimeFormat)
     this(Date(year, month, day), scale)
 
   /**
-   * Constructor to create an `AbsoluteTime` instance from a Java [[Instant]] and a given timescale.
+   * Constructor to create an `AbsoluteTime` instance from a Java `Instant` and a given timescale.
    *
    * ==Math Note==
    * - Java Instant is always UTC-based.
@@ -178,7 +178,7 @@ final class AbsoluteTime private (val offset: TimeFormat)
     this(new Date(instant), Time(instant), scale)
 
   /**
-   * Constructor to create an `AbsoluteTime` instance from a Java [[Instant]].
+   * Constructor to create an `AbsoluteTime` instance from a Java `Instant`.
    * Uses UTC as the default timescale.
    */
   def this(instant: Instant) =
@@ -311,7 +311,7 @@ object AbsoluteTime {
    * Returns the current system time as an `AbsoluteTime` in UTC.
    *
    * ==Math Note==
-   * - Uses [[Instant.now]] (system clock, UTC).
+   * - Uses `Instant.now` (system clock, UTC).
    * - Conversion: epoch_seconds → J2000 offset.
    */
   def now(): AbsoluteTime = new AbsoluteTime(Instant.now())

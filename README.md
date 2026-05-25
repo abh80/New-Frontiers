@@ -8,10 +8,6 @@ math, numerical differentiation, typed physical units, reference frames, and orb
 The design closely mirrors [Orekit](https://www.orekit.org/) concepts (`TimeScale`,
 `AbsoluteTime`, `KinematicState`, `Frame`) but reimplements them idiomatically in Scala 3.
 
-> **Project status: early stage (`0.1.0-SNAPSHOT`).**
-> The time, math, calculus, metrics, and util layers are implemented and tested. Reference
-> frames and orbit models are scaffolding and not yet usable — see the [Roadmap](#roadmap).
-
 > **A note on benchmarks.** We try to be open about how New Frontiers compares to
 > [Orekit](https://www.orekit.org/) and its Hipparchus math backend. There's a small benchmark
 > suite that looks at speed, memory, and accuracy, and we keep the results (with charts) in the repo
@@ -95,22 +91,33 @@ Highlights:
 
 ### Using the library
 
-New Frontiers is not yet published to a Maven repository. For now, build it from source and
-publish it to your local Ivy cache:
-
-```powershell
-git clone https://github.com/abh80/new-frontiers.git
-cd new-frontiers
-sbt publishLocal
-```
-
-Then depend on it from another sbt project:
+New Frontiers is published to **Maven Central**. Add it with sbt:
 
 ```scala
-libraryDependencies += "org.abh80" %% "new-frontiers" % "0.1.0-SNAPSHOT"
+libraryDependencies += "io.github.abh80" %% "new-frontiers" % "0.1.0"
 ```
 
-Or simply explore it in a REPL with the project on the classpath:
+<details>
+<summary>Gradle / Maven</summary>
+
+**Gradle** (Kotlin DSL) — note the explicit `_3` Scala suffix:
+
+```kotlin
+implementation("io.github.abh80:new-frontiers_3:0.1.0")
+```
+
+**Maven**:
+
+```xml
+<dependency>
+  <groupId>io.github.abh80</groupId>
+  <artifactId>new-frontiers_3</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+</details>
+
+Or explore it in a REPL with the project on the classpath:
 
 ```powershell
 sbt console
