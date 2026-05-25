@@ -38,7 +38,7 @@ jobs:
 
       - name: Verify tag matches build.sbt version
         run: |
-          BUILD_VERSION="$(sbt -batch -error 'print version' | tr -d '[:space:]')"
+          BUILD_VERSION="$(sbt -Dsbt.log.noformat=true -batch -error 'print version' | tr -dc '0-9A-Za-z.+-')"
           TAG_VERSION="${GITHUB_REF_NAME#v}"
           echo "build.sbt=$BUILD_VERSION  tag=$TAG_VERSION"
           if [ "$BUILD_VERSION" != "$TAG_VERSION" ]; then
