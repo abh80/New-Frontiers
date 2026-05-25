@@ -1,0 +1,79 @@
+name: Release
+
+# Tag-triggered release to Maven Central (Sonatype Central Portal), but the VERSION is locked
+# in build.sbt — it is NOT derived from the tag. Flow: bump `version` in build.sbt, then push a
+# matching tag `vX.Y.Z`. The `build` job refuses to proceed unless the tag matches build.sbt,
+# runs the tests, then `publish` waits for manual approval before signing + publishing.
+on:
+  push:
+    tags:
+      - "v*"
+
+# Least privilege: ci-release publishes to Sonatype, it does not write back to the repo.
+permissions:
+  contents: read
+
+# Serialize releases; never cancel a publish midway.
+concurrency:
+  group: maven-central-release
+  cancel-in-progress: false
+
+jobs:
+  # Gate + tests run immediately (no secrets, no approval) so a reviewer only approves green.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Setup JDK
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
+        with:
+          distribution: temurin
+          java-version: 11
+          cache: sbt
+
+      - name: Setup sbt launcher
+        uses: sbt/setup-sbt@2e222825582620cc38d2a54e674f3c01b7c14f5d # v1.1.24
+
+      - name: Verify tag matches build.sbt version
+        run: |
+          BUILD_VERSION="$(sbt -batch -error 'print version' | tr -d '[:space:]')"
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          echo "build.sbt=$BUILD_VERSION  tag=$TAG_VERSION"
+          if [ "$BUILD_VERSION" != "$TAG_VERSION" ]; then
+            echo "::error::Tag '$TAG_VERSION' does not match build.sbt version '$BUILD_VERSION'. Bump build.sbt or retag."
+            exit 1
+          fi
+
+      - name: Run tests
+        run: sbt +test
+
+  # Publish only after `build` passes AND a reviewer approves the `maven-central` environment.
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    # GitHub Environment holding the PGP/Sonatype secrets + required reviewers (the approval gate).
+    environment: maven-central
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Setup JDK
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
+        with:
+          distribution: temurin
+          java-version: 11
+          cache: sbt
+
+      - name: Setup sbt launcher
+        uses: sbt/setup-sbt@2e222825582620cc38d2a54e674f3c01b7c14f5d # v1.1.24
+
+      # Version is non-SNAPSHOT -> ci-release runs `+publishSigned; sonatypeBundleRelease`.
+      - name: Publish to Maven Central
+        run: sbt ci-release
+        env:
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          PGP_SECRET: ${{ secrets.PGP_SECRET }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
