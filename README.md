@@ -1,6 +1,6 @@
 # New Frontiers
 
-A high-precision **astrodynamics and orbital-mechanics library for Scala 3**.
+A high-precision **astrodynamics and orbital-mechanics library for Scala 3** (*subject to change see https://github.com/abh80/New-Frontiers/issues/3*).
 
 New Frontiers provides the foundational building blocks for spaceflight and astronomy
 computations — astronomical time scales with attosecond resolution, 3D vector and kinematic
