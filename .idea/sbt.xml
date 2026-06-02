@@ -7,8 +7,9 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/project" />
+            <option value="D:\dev\apps\new-frontiers" />
+            <option value="D:\dev\apps\new-frontiers\benchmarks" />
+            <option value="D:\dev\apps\new-frontiers\project" />
           </set>
         </option>
         <option name="sbtVersion" value="1.11.3" />

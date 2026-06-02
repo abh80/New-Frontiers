@@ -2,6 +2,6 @@
 <project version="4">
   <component name="ScalaCompilerConfiguration">
     <option name="separateProdTestSources" value="true" />
-    <profile name="sbt 1" modules="New Frontiers,New Frontiers.main,New Frontiers.test" />
+    <profile name="sbt 1" modules="New Frontiers,New Frontiers.main,New Frontiers.new-frontiers-benchmarks,New Frontiers.new-frontiers-benchmarks.main,New Frontiers.new-frontiers-benchmarks.test,New Frontiers.test" />
   </component>
 </project>
