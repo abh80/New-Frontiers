@@ -29,7 +29,7 @@ ThisBuild / versionScheme := Some("early-semver")
 // git tag. sbt-ci-release still drives signing + Sonatype Central publishing, but this
 // explicit setting overrides sbt-dynver's git-derived version. The Release workflow refuses
 // to publish unless the pushed `vX.Y.Z` tag matches this string. Bump this to cut a release.
-ThisBuild / version := "0.1.0"
+ThisBuild / version := "0.1.1"
 
 // Publish to the Sonatype Central Portal (central.sonatype.com), not the legacy OSSRH host.
 ThisBuild / sonatypeCredentialHost := xerial.sbt.Sonatype.sonatypeCentralHost
