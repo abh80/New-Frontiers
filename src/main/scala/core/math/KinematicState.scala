@@ -164,6 +164,28 @@ case class KinematicState(position: Vector3D, velocity: Vector3D, acceleration: 
    * @return A string describing the position, velocity, and acceleration vectors.
    */
   override def toString: String = f"{Pos[${position.toString}], Vel[${velocity.toString}], Acc[${acceleration.toString}]}"
+
+  /** Component-wise scaling by a scalar. */
+  def *(scalar: Double): KinematicState =
+    new KinematicState(position * scalar, velocity * scalar, acceleration * scalar)
+
+  /** Component-wise subtraction. */
+  def -(second: KinematicState): KinematicState =
+    new KinematicState(
+      position - second.position,
+      velocity - second.velocity,
+      acceleration - second.acceleration
+    )
+
+  /** Cross product across both kinematic states, with derived velocity and acceleration terms. */
+  def X(second: KinematicState): KinematicState = {
+    val vel = (velocity X second.position) + (position X second.velocity)
+    val acc = (acceleration X second.position) +
+      (position X second.acceleration) +
+      ((velocity X second.velocity) * 2.0)
+
+    new KinematicState(position X second.position, vel, acc)
+  }
 }
 
 object KinematicState {
@@ -175,65 +197,4 @@ object KinematicState {
   def velocityBetween(start: Vector3D, end: Vector3D, dt: Double): Vector3D =
     (end - start) / dt
 
-  /**
-   * Provides binary operations for [[KinematicState]] instances.
-   */
-  implicit class BinOp(self: KinematicState) {
-    /**
-     * Scales the kinematic state by a scalar value.
-     * Each component (position, velocity, acceleration) is multiplied by the scalar.
-     *
-     * @param scalar The scaling factor.
-     * @return A new [[KinematicState]] with scaled components.
-     */
-    def *(scalar: Double): KinematicState =
-      new KinematicState(
-        self.position * scalar,
-        self.velocity * scalar,
-        self.acceleration * scalar
-      )
-
-    /**
-     * Subtracts another kinematic state from this one.
-     * Performs component-wise subtraction: position - position, velocity - velocity, acceleration - acceleration.
-     *
-     * @param second The kinematic state to subtract.
-     * @return A new [[KinematicState]] representing the difference.
-     */
-    def -(second: KinematicState): KinematicState =
-      new KinematicState(
-        self.position - second.position,
-        self.velocity - second.velocity,
-        self.acceleration - second.acceleration
-      )
-
-    /**
-     * Computes the cross product of two kinematic states.
-     * The cross product is applied component-wise, with velocity and acceleration terms derived to maintain consistency:
-     * - Position: P₁ × P₂
-     * - Velocity: (V₁ × P₂) + (P₁ × V₂)
-     * - Acceleration: (A₁ × P₂) + (P₁ × A₂) + 2(V₁ × V₂)
-     *
-     * where P₁, V₁, A₁ are the position, velocity, and acceleration of the first state,
-     * and P₂, V₂, A₂ are those of the second state.
-     *
-     * @param second The kinematic state to compute the cross product with.
-     * @return A new [[KinematicState]] representing the cross product.
-     */
-    def X(second: KinematicState): KinematicState = {
-      // Correct velocity term: (V₁ × P₂) + (P₁ × V₂)
-      val vel = (self.velocity X second.position) + (self.position X second.velocity)
-
-      // Correct acceleration term: (A₁ × P₂) + (P₁ × A₂) + 2(V₁ × V₂)
-      val acc = (self.acceleration X second.position) +
-        (self.position X second.acceleration) +
-        ((self.velocity X second.velocity) * 2.0)
-
-      new KinematicState(
-        self.position X second.position,
-        vel,
-        acc
-      )
-    }
-  }
 }

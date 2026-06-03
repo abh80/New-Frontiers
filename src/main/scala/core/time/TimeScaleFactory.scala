@@ -8,14 +8,14 @@ package core.time
  * scale is created at most once in a thread-safe way.
  */
 object TimeScaleFactory {
-  private lazy val ttScale: TTScale = TTScale()
-  private lazy val tdbScale: TDBScale = TDBScale(getTT, EpochFactory.J2000_0)
-  private lazy val taiScale: TAIScale = TAIScale()
-  private lazy val utcScale: UTCScale = UTCScale(getTAI)
-  private lazy val tdtScale: TDTScale = TDTScale()
-  private lazy val glonassScale: GLONASSScale = GLONASSScale(getUTC)
-  private lazy val irnssScale: IRNSSScale = IRNSSScale()
-  private lazy val gpsScale: GPSScale = GPSScale()
+  private lazy val ttScale: TTScale = new TTScale()
+  private lazy val tdbScale: TDBScale = new TDBScale(getTT, EpochFactory.J2000_0)
+  private lazy val taiScale: TAIScale = new TAIScale()
+  private lazy val utcScale: UTCScale = new UTCScale(getTAI)
+  private lazy val tdtScale: TDTScale = new TDTScale()
+  private lazy val glonassScale: GLONASSScale = new GLONASSScale(getUTC)
+  private lazy val irnssScale: IRNSSScale = new IRNSSScale()
+  private lazy val gpsScale: GPSScale = new GPSScale()
 
   /**
    * Returns a singleton instance of the Terrestrial Time (TT) scale.

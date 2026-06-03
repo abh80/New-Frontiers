@@ -5,8 +5,7 @@ import org.abh80.nf.core.Constants
 
 import scala.annotation.switch
 
-private val NANOS_IN_SECONDS = 1_000_000_000
-private val SECONDS_IN_DAY = Constants.SECONDS_IN_A_JULIAN_DAY
+import UTCScale.{NANOS_IN_SECONDS, SECONDS_IN_DAY}
 
 // credits: https://hpiers.obspm.fr/eoppc/bul/bulc/UTC-TAI.history
 
@@ -137,12 +136,12 @@ class UTCScale(tai: TimeScale, leapOffsets: Array[UTCScale.LeapSecondOffset] = A
         // Determine the correct leap second offset to apply based on timing conditions
         val offset: ComputedLeapSecondOffset = {
           // Check if the time falls before the offset's validity start
-          if time.compareTo(computedLeapOffsets(i).validityStart) < 0 then
+          if (time.compareTo(computedLeapOffsets(i).validityStart) < 0)
             computedLeapOffsets(i) // Use current offset
 
           // Check if there's a next offset and if we're within 60 seconds of its start time
-          else if i + 1 < computedLeapOffsets.length &&
-            computedLeapOffsets(i + 1).startTime.durationFrom(time).toDouble <= 60.0 then
+          else if (i + 1 < computedLeapOffsets.length &&
+            computedLeapOffsets(i + 1).startTime.durationFrom(time).toDouble <= 60.0)
             computedLeapOffsets(i) // Still use current offset (we're in the transition period)
 
           // Time falls outside leap second adjustment periods
@@ -155,9 +154,9 @@ class UTCScale(tai: TimeScale, leapOffsets: Array[UTCScale.LeapSecondOffset] = A
     }
 
   /** @inheritdoc */
-  override def timeToTAI(date: Date, time: Time): TimeFormat =
+  override def timeToTAI(date: Date, time: Time): TimeFormat = {
     val min = time.getHour * 60 + time.getMinute - time.getUtcOffset
-    val c = if min > 60 then (min - 1439) / 1440 else min / 1440
+    val c = if (min > 60) (min - 1439) / 1440 else min / 1440
 
     val mjd = date.getMJD + c
 
@@ -165,6 +164,7 @@ class UTCScale(tai: TimeScale, leapOffsets: Array[UTCScale.LeapSecondOffset] = A
       case Some(offset) => offset.offsetFrom(date, time)
       case None => TimeFormat.Zero
     }
+  }
 
   /** @inheritdoc */
   override def getLeap(time: AbsoluteTime): TimeFormat =
@@ -193,12 +193,12 @@ object UTCScale {
 
     def getComputedOffset(previousOffset: ComputedLeapSecondOffset): ComputedLeapSecondOffset = {
       val fixedOffsetTime = TimeFormat.fromDouble(fixedOffset)
-      val prev = if previousOffset == null then TimeFormat.Zero else previousOffset.offsetFrom(startDate, Time(0, 0, TimeFormat.Zero))
+      val prev = if (previousOffset == null) TimeFormat.Zero else previousOffset.offsetFrom(startDate, Time(0, 0, TimeFormat.Zero))
       val r = getRateInNanosPerSec(rate)
 
       val dt = (startDate.getMJD - mjdBase) * SECONDS_IN_DAY
       val drift = secondsToTimeFormat(BigDecimal(abs(dt)) * BigDecimal.decimal(rate) / BigDecimal(SECONDS_IN_DAY))
-      val startOffset = if dt < 0 then fixedOffsetTime - drift else fixedOffsetTime + drift
+      val startOffset = if (dt < 0) fixedOffsetTime - drift else fixedOffsetTime + drift
 
       val leapStart = new AbsoluteTime(startDate, tai) ++ prev
       val leapEnd = new AbsoluteTime(startDate, tai) ++ startOffset
@@ -232,17 +232,18 @@ object UTCScale {
   case class ComputedLeapSecondOffset(startTime: AbsoluteTime, mjdDate: Int, mjdBaseTime: AbsoluteTime, mjdBase: Int, fixedOffset: TimeFormat, rate: BigDecimal, leap: TimeFormat) {
     val validityStart: AbsoluteTime = startTime ++ leap
 
-    def offsetFrom(time: AbsoluteTime): TimeFormat =
-      if rate == 0 then return fixedOffset
+    def offsetFrom(time: AbsoluteTime): TimeFormat = {
+      if (rate == 0) return fixedOffset
 
       val dt = time.durationFrom(mjdBaseTime)
 
       val drift = scale(dt, rate / (rate + BigDecimal(NANOS_IN_SECONDS)))
 
       fixedOffset + drift
+    }
 
     def offsetFrom(date: Date, time: Time): TimeFormat = {
-      if rate == 0 then return fixedOffset
+      if (rate == 0) return fixedOffset
 
       val dt = TimeFormat((date.getMJD - mjdBase) * SECONDS_IN_DAY + time.getHour * 3600 + time.getMinute * 60 + time.getSecondsAsTimeFormat.getSeconds, time.getSecondsAsTimeFormat.getAttoSeconds)
 
@@ -261,16 +262,21 @@ object UTCScale {
   private def getRateInNanosPerSec(rate: Double): BigDecimal =
     (BigDecimal.decimal(rate) * BigDecimal(NANOS_IN_SECONDS)) / BigDecimal(SECONDS_IN_DAY)
 
-  private def scale(time: TimeFormat, factor: BigDecimal): TimeFormat =
+  private def scale(time: TimeFormat, factor: BigDecimal): TimeFormat = {
     val totalAttoseconds = (BigDecimal(time.getSeconds) * AttosecondsPerSecondBig + BigDecimal(time.getAttoSeconds)) * factor
     fromRoundedAttoseconds(totalAttoseconds)
+  }
 
   private def secondsToTimeFormat(seconds: BigDecimal): TimeFormat =
     fromRoundedAttoseconds(seconds * AttosecondsPerSecondBig)
 
-  private def fromRoundedAttoseconds(attoseconds: BigDecimal): TimeFormat =
+  private def fromRoundedAttoseconds(attoseconds: BigDecimal): TimeFormat = {
     val rounded = attoseconds.setScale(0, RoundingMode.HALF_UP)
     val seconds = (rounded / AttosecondsPerSecondBig).setScale(0, RoundingMode.FLOOR).toLongExact
     val atto = (rounded - BigDecimal(seconds) * AttosecondsPerSecondBig).toLongExact
     TimeFormat(seconds, atto)
+  }
+
+  private[time] val NANOS_IN_SECONDS = 1_000_000_000
+  private[time] val SECONDS_IN_DAY = Constants.SECONDS_IN_A_JULIAN_DAY
 }

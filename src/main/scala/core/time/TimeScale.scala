@@ -39,7 +39,7 @@ trait TimeScale {
    * @param time The time component in this time scale
    * @return The offset to add to the input time to get TAI
    */
-  def timeToTAI(date: Date, time: Time): TimeFormat =
+  def timeToTAI(date: Date, time: Time): TimeFormat = {
     val ref = new AbsoluteTime(date, time, TimeScaleFactory.getTAI)
     var offset = TimeFormat.Zero
 
@@ -48,8 +48,9 @@ trait TimeScale {
       offset = timePastTAI(ref ++ offset).negate()
 
     }
-    
+
     offset
+  }
 
   /**
    * Returns the most recent leap second adjustment applied to this time scale.

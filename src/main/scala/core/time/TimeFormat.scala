@@ -6,11 +6,6 @@ import scala.math.BigDecimal.RoundingMode
 import scala.math.Ordered.orderingToOrdered
 import scala.util.hashing.MurmurHash3
 
-private val ATTOSECONDS_PER_SECOND: Long = 1_000_000_000_000_000_000L // 10^18
-private val MILLIS_PER_SECOND: Long = 1_000
-private val MICROS_PER_SECOND: Long = 1_000_000
-private val ATTOSECOND_SPLIT = 1_000_000_000L
-
 /**
  * Represents a time format with second and attosecond precision.
  *
@@ -36,8 +31,9 @@ private val ATTOSECOND_SPLIT = 1_000_000_000L
  *   println(s"Difference: $difference")
  * }}}
  */
-@throws[IllegalArgumentException]
 class TimeFormat(private var seconds: Long, private var attoseconds: Long) extends Comparable[TimeFormat] with Serializable {
+
+  import TimeFormat.ATTOSECONDS_PER_SECOND
 
   // init() canonicalizes any attoseconds value into [0, ATTOSECONDS_PER_SECOND); no range
   // precondition is needed (a prior require against Long bounds was always-true / dead).
@@ -51,7 +47,7 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
    *         - Zero if they are equal
    *         - Positive if this instance is greater than the other
    */
-  override def compareTo(o: TimeFormat): Int = if seconds != o.seconds then seconds.compare(o.seconds) else attoseconds.compare(o.attoseconds)
+  override def compareTo(o: TimeFormat): Int = if (seconds != o.seconds) seconds.compare(o.seconds) else attoseconds.compare(o.attoseconds)
 
   /**
    * Converts current time format to double, "seconds[.]attoseconds"
@@ -125,14 +121,72 @@ class TimeFormat(private var seconds: Long, private var attoseconds: Long) exten
    */
   def getAttoSeconds: Long = attoseconds
 
-  private def init(): Unit =
+  /** Sum of this and another TimeFormat. */
+  def +(second: TimeFormat): TimeFormat =
+    new TimeFormat(Math.addExact(seconds, second.seconds), Math.addExact(attoseconds, second.attoseconds))
+
+  /** Difference `this - second`. */
+  def -(second: TimeFormat): TimeFormat =
+    new TimeFormat(Math.subtractExact(seconds, second.seconds), Math.subtractExact(attoseconds, second.attoseconds))
+
+  /** Multiplies by a non-negative scalar.
+   * @throws IllegalArgumentException if `scalar` is negative.
+   */
+  def *(scalar: Long): TimeFormat = {
+    require(scalar >= 0, "Multiplication by scalar cannot be negative")
+
+    if (scalar == 0) return new TimeFormat(0L, 0L)
+    if (scalar == 1) return this
+
+    val (s, a, scalarBig, attosecondsPerSecondBig) = toBigInts(scalar)
+    val resultBig = s.multiply(attosecondsPerSecondBig).add(a).multiply(scalarBig)
+    calculateResult(resultBig, attosecondsPerSecondBig)
+  }
+
+  /** Divides by a positive scalar.
+   * @throws IllegalArgumentException if `scalar` is not strictly positive.
+   */
+  def /(scalar: Long): TimeFormat = {
+    require(scalar > 0, "Division by scalar which must be strictly positive")
+
+    if (scalar == 1) return this
+
+    val (s, a, scalarBig, attosecondsPerSecondBig) = toBigInts(scalar)
+    val resultBig = s.multiply(attosecondsPerSecondBig).add(a).divide(scalarBig)
+    calculateResult(resultBig, attosecondsPerSecondBig)
+  }
+
+  @throws[IllegalArgumentException]
+  @throws[ArithmeticException]
+  private def toBigInts(scalar: Long) = {
+    import java.math.BigInteger
+    val s = BigInteger.valueOf(seconds)
+    val a = BigInteger.valueOf(attoseconds)
+    val scalarBig = BigInteger.valueOf(scalar)
+    val attosecondsPerSecondBig = BigInteger.valueOf(ATTOSECONDS_PER_SECOND)
+    (s, a, scalarBig, attosecondsPerSecondBig)
+  }
+
+  private def calculateResult(resultBig: java.math.BigInteger, attosecondsPerSecondBig: java.math.BigInteger) = {
+    val resSeconds = resultBig.divide(attosecondsPerSecondBig)
+    val resAttoseconds = resultBig.remainder(attosecondsPerSecondBig)
+    new TimeFormat(resSeconds.longValueExact(), resAttoseconds.longValueExact())
+  }
+
+  private def init(): Unit = {
     val qAtto = Math.floorDiv(attoseconds, ATTOSECONDS_PER_SECOND)
     val rAtto = Math.floorMod(attoseconds, ATTOSECONDS_PER_SECOND)
     this.seconds = Math.addExact(seconds, qAtto)
     this.attoseconds = rAtto
+  }
 }
 
 object TimeFormat {
+
+  private[time] val ATTOSECONDS_PER_SECOND: Long = 1_000_000_000_000_000_000L // 10^18
+  private[time] val MILLIS_PER_SECOND: Long = 1_000
+  private[time] val MICROS_PER_SECOND: Long = 1_000_000
+  private[time] val ATTOSECOND_SPLIT = 1_000_000_000L
 
   val Zero = new TimeFormat(0L, 0L)
   val ATTOSECOND = new TimeFormat(0L, 1L)
@@ -146,74 +200,10 @@ object TimeFormat {
   val HOUR = new TimeFormat(3_600L, 0L)
   val DAY = new TimeFormat(86_400L, 0L)
 
+  /** Cross-Scala-2/3 factory: lets call sites write `TimeFormat(seconds, attoseconds)`
+   * without `new`. */
+  def apply(seconds: Long, attoseconds: Long): TimeFormat = new TimeFormat(seconds, attoseconds)
 
-  implicit class BinOp(self: TimeFormat) {
-    /** Adds two TimeFormat instances.
-     *
-     * @param second The TimeFormat instance to add
-     * @return A new TimeFormat instance representing the sum
-     */
-    def +(second: TimeFormat): TimeFormat =
-      new TimeFormat(Math.addExact(self.seconds, second.seconds), Math.addExact(self.attoseconds, second.attoseconds))
-
-    /** Subtracts one TimeFormat instance from another.
-     *
-     * @param second The TimeFormat instance to subtract
-     * @return A new TimeFormat instance representing the difference
-     */
-    def -(second: TimeFormat): TimeFormat =
-      new TimeFormat(Math.subtractExact(self.seconds, second.seconds), Math.subtractExact(self.attoseconds, second.attoseconds))
-
-    /** Multiplies the time value by a scalar.
-     *
-     * @param scalar The non-negative scalar value to multiply by
-     * @return A new TimeFormat instance representing the product
-     * @throws IllegalArgumentException if scalar is negative
-     */
-    def *(scalar: Long): TimeFormat = {
-      require(scalar >= 0, "Multiplication by scalar cannot be negative")
-
-      if scalar == 0 then return new TimeFormat(0L, 0L)
-      if scalar == 1 then return self
-
-      val (seconds, atto, scalarBig, attosecondsPerSecondBig) = toBigInts(scalar)
-      val resultBig = seconds.multiply(attosecondsPerSecondBig).add(atto).multiply(scalarBig)
-      calculateResult(resultBig, attosecondsPerSecondBig)
-    }
-
-    @throws[IllegalArgumentException]
-    @throws[ArithmeticException]
-    private def toBigInts(scalar: Long) = {
-      import java.math.BigInteger
-      val seconds = BigInteger.valueOf(self.seconds)
-      val atto = BigInteger.valueOf(self.attoseconds)
-      val scalarBig = BigInteger.valueOf(scalar)
-      val attosecondsPerSecondBig = BigInteger.valueOf(ATTOSECONDS_PER_SECOND)
-      (seconds, atto, scalarBig, attosecondsPerSecondBig)
-    }
-
-    private def calculateResult(resultBig: java.math.BigInteger, attosecondsPerSecondBig: java.math.BigInteger) = {
-      val resSeconds = resultBig.divide(attosecondsPerSecondBig)
-      val resAttoseconds = resultBig.remainder(attosecondsPerSecondBig)
-      new TimeFormat(resSeconds.longValueExact(), resAttoseconds.longValueExact())
-    }
-
-    /** Divides the time value by a scalar.
-     *
-     * @param scalar The positive scalar value to divide by
-     * @return A new TimeFormat instance representing the quotient
-     * @throws IllegalArgumentException if scalar is not positive
-     */
-    def /(scalar: Long): TimeFormat = {
-      require(scalar > 0, "Division by scalar which must be strictly positive")
-
-      if scalar == 1 then return self
-
-      val (seconds, atto, scalarBig, attosecondsPerSecondBig) = toBigInts(scalar)
-      val resultBig = seconds.multiply(attosecondsPerSecondBig).add(atto).divide(scalarBig)
-      calculateResult(resultBig, attosecondsPerSecondBig)
-    }
-  }
 
   /** Converts a time value from a specific TimeUnit to TimeFormat.
    *
@@ -243,7 +233,7 @@ object TimeFormat {
     val roundSeconds = rint(seconds)
     val frac = seconds - roundSeconds
 
-    if frac < 0 then
+    if (frac < 0)
       TimeFormat(roundSeconds.toLong - 1L, round(frac * ATTOSECONDS_PER_SECOND) + ATTOSECONDS_PER_SECOND)
     else TimeFormat(roundSeconds.toLong, round(frac * ATTOSECONDS_PER_SECOND))
   }

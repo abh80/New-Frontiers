@@ -1,17 +1,15 @@
 package org.abh80.nf
 package core.time
 
-import util.DateUtil.{ISO8601, Month, StringDateFormat}
+import util.{Month, StringDateFormat}
+import util.DateUtil.ISO8601
 
 import org.abh80.nf.core.Constants
 
 import java.time.Instant
 import scala.util.hashing.MurmurHash3
 
-private val JULIAN_DAY_AT_J2000 = 2451545
-private val JULIAN_YEAR_START_J2000 = -730122
-private val J2000_TO_MJD_FACTOR = 51544
-
+import Date.{JULIAN_DAY_AT_J2000, JULIAN_YEAR_START_J2000, J2000_TO_MJD_FACTOR}
 
 /** A robust date implementation that handles dates in different calendar systems.
  *
@@ -50,18 +48,20 @@ class Date private extends Comparable[Date] with Serializable {
    *
    * @return Week number (1-53)
    */
-  def getWeek: Int =
+  def getWeek: Int = {
     val week1Monday = getWeek1MondayOfYear(year)
     var daysSinceWeek1Monday = getJ2000Day - week1Monday
 
-    if daysSinceWeek1Monday < 0 then {
+    if (daysSinceWeek1Monday < 0) {
       daysSinceWeek1Monday += week1Monday - getWeek1MondayOfYear(year - 1)
-    } else if daysSinceWeek1Monday > 363 then
+    } else if (daysSinceWeek1Monday > 363) {
       val weekLengthOfYear = getWeek1MondayOfYear(year + 1) - week1Monday
 
-      if daysSinceWeek1Monday >= weekLengthOfYear then daysSinceWeek1Monday -= weekLengthOfYear
+      if (daysSinceWeek1Monday >= weekLengthOfYear) daysSinceWeek1Monday -= weekLengthOfYear
+    }
 
     1 + daysSinceWeek1Monday / 7
+  }
 
   /** Constructs a Date from year, month, and day components.
    *
@@ -79,7 +79,7 @@ class Date private extends Comparable[Date] with Serializable {
     this.year = year
 
     val check = Date(getJ2000Day)
-    if check.year != year || check.month != month || check.day != day then throw new IllegalArgumentException(s"The provided $year/$month/$day sequence does not exist")
+    if (check.year != year || check.month != month || check.day != day) throw new IllegalArgumentException(s"The provided $year/$month/$day sequence does not exist")
   }
 
 
@@ -102,9 +102,10 @@ class Date private extends Comparable[Date] with Serializable {
 
   private def getYearFactory(j2000DayOffset: Int): YearFactory = {
     var yf: YearFactory = GeorgianYear
-    if j2000DayOffset < -152384 then
-      if j2000DayOffset > JULIAN_YEAR_START_J2000 then yf = JulianYear
+    if (j2000DayOffset < -152384) {
+      if (j2000DayOffset > JULIAN_YEAR_START_J2000) yf = JulianYear
       else yf = ProlepticJulianYear
+    }
     yf
   }
 
@@ -152,9 +153,10 @@ class Date private extends Comparable[Date] with Serializable {
    *
    * @return Day of week (1-7)
    */
-  def getDayOfWeek: Int =
+  def getDayOfWeek: Int = {
     val abs = (getJ2000Day + 6) % 7
-    if abs < 1 then abs + 7 else abs // abs will be 0 when it's Sunday, but Sunday is considered the 7th day of a week
+    if (abs < 1) abs + 7 else abs // abs will be 0 when it's Sunday, but Sunday is considered the 7th day of a week
+  }
 
   /** Returns the day of year (1-366).
    *
@@ -172,16 +174,18 @@ class Date private extends Comparable[Date] with Serializable {
    *
    * @return J2000 day number
    */
-  def getJ2000Day: Int =
+  def getJ2000Day: Int = {
     var yf: YearFactory = GeorgianYear
-    if year <= 1582 then
-      if year < 1 then yf = ProlepticJulianYear
-      else if year < 1582 || month < 10 || month <= 10 && day <= 4 then yf = JulianYear
+    if (year <= 1582) {
+      if (year < 1) yf = ProlepticJulianYear
+      else if (year < 1582 || month < 10 || month <= 10 && day <= 4) yf = JulianYear
+    }
 
     val mf = getMonthFactory(yf, year)
     yf.getLastJ2000DayOfYear(year - 1) + mf.getDay(day, month)
+  }
 
-  private def getMonthFactory(yearFactory: YearFactory, year: Int): MonthFactory = if yearFactory.isLeap(year) then LeapYearFactory else NonLeapYearFactory
+  private def getMonthFactory(yearFactory: YearFactory, year: Int): MonthFactory = if (yearFactory.isLeap(year)) LeapYearFactory else NonLeapYearFactory
 
   /** Returns the year component.
    *
@@ -217,12 +221,12 @@ class Date private extends Comparable[Date] with Serializable {
   /** 4th of January always lie on the first week of any year
    * Source: https://en.wikipedia.org/wiki/ISO_week_date
    */
-  private def getWeek1MondayOfYear(year: Int): Int =
-
+  private def getWeek1MondayOfYear(year: Int): Int = {
     val jan4 = new Date(year, 1, 4)
     val jan4DayOfWeek = jan4.getDayOfWeek
 
     jan4.getJ2000Day - jan4DayOfWeek + 1
+  }
 
   private sealed trait YearFactory {
     def getYear(j2000Day: Int): Int
@@ -243,13 +247,14 @@ class Date private extends Comparable[Date] with Serializable {
   }
 
   private object JulianYear extends YearFactory {
-    override def getYear(j2000Day: Int): Int =
+    override def getYear(j2000Day: Int): Int = {
       var year = 2000 + math.floor(j2000Day / 365.25).toInt
 
-      while j2000Day <= getLastJ2000DayOfYear(year - 1) do year -= 1
-      while j2000Day > getLastJ2000DayOfYear(year) do year += 1
+      while (j2000Day <= getLastJ2000DayOfYear(year - 1)) year -= 1
+      while (j2000Day > getLastJ2000DayOfYear(year)) year += 1
 
       year
+    }
 
     override def getLastJ2000DayOfYear(year: Int): Int = {
       365 * year + year / 4 + JULIAN_YEAR_START_J2000
@@ -261,7 +266,7 @@ class Date private extends Comparable[Date] with Serializable {
   }
 
   private object ProlepticJulianYear extends YearFactory {
-    override def getYear(j2000Day: Int): Int =
+    override def getYear(j2000Day: Int): Int = {
       // credits: https://gist.github.com/PM2Ring/f078d8d60b7203e423b229fc4afa3a04
       val jdn = j2000Day + 2451545
 
@@ -273,12 +278,14 @@ class Date private extends Comparable[Date] with Serializable {
 
       val year = B - 4800 + ((D + 2) / 12)
       year
+    }
 
     // credits: Meeus's Astronomical Algorithms
-    override def getLastJ2000DayOfYear(year: Int): Int =
+    override def getLastJ2000DayOfYear(year: Int): Int = {
       val dayOfYear = if (isLeap(year)) 366 else 365
       val jdn = 1721423 + 365 * (year - 1) + (year - 1) / 4 + dayOfYear - 1
       jdn - JULIAN_DAY_AT_J2000
+    }
 
     override def isLeap(year: Int): Boolean =
       year % 4 == 0
@@ -313,7 +320,7 @@ class Date private extends Comparable[Date] with Serializable {
     }
 
 
-    override def getLastJ2000DayOfYear(year: Int): Int =
+    override def getLastJ2000DayOfYear(year: Int): Int = {
       var y = year
       var m = 12
       val d = 31
@@ -332,6 +339,7 @@ class Date private extends Comparable[Date] with Serializable {
 
       val j2000Day = jd - JULIAN_DAY_AT_J2000
       j2000Day
+    }
 
     override def isLeap(year: Int): Boolean = (year % 4 == 0) && (year % 400 == 0 || year % 100 != 0)
   }
@@ -360,6 +368,10 @@ class Date private extends Comparable[Date] with Serializable {
  * or year/day-of-year combinations.
  */
 object Date {
+
+  private[time] val JULIAN_DAY_AT_J2000 = 2451545
+  private[time] val JULIAN_YEAR_START_J2000 = -730122
+  private[time] val J2000_TO_MJD_FACTOR = 51544
 
   /** The J2000.0 epoch, which is the fundamental epoch for the ICRF reference frame.
    * Defined as January 1, 2000, at 12:00 TT (Terrestrial Time).

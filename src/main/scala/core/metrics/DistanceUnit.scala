@@ -19,6 +19,22 @@ sealed trait DistanceUnit {
   // Symbol for display (e.g., "m", "km").
   def symbol: String
 
+  /** Sum of two distances, returned in this distance's unit. */
+  def +(second: DistanceUnit): DistanceUnit = fromMeter(toMeter + second.toMeter)
+
+  /** Difference `this - second`, returned in this distance's unit. */
+  def -(second: DistanceUnit): DistanceUnit = fromMeter(toMeter - second.toMeter)
+
+  /** Approximate equality in meters within `epsilon`. */
+  def ~(second: DistanceUnit, epsilon: Double = 1e-10): Boolean =
+    Math.abs(toMeter - second.toMeter) < epsilon
+
+  /** Scaling by a dimensionless factor, returned in this distance's unit. */
+  def *(scalar: Double): DistanceUnit = fromMeter(toMeter * scalar)
+
+  /** Dimensionless ratio between this distance and another. */
+  def ratio(second: DistanceUnit): Double = toMeter / second.toMeter
+
   override def toString: String = s"$value $symbol"
 }
 
@@ -78,29 +94,6 @@ object DistanceUnit {
     def apply(value: Double): Kilometer = new Kilometer(value)
   }
 
-
-  /** Provides binary operations for DistanceUnit
-   *
-   * @param self the DistanceUnit instance on which operations are performed */
-  implicit class BinOp(self: DistanceUnit) {
-    def +(second: DistanceUnit): DistanceUnit =
-      self.fromMeter(self.toMeter + second.toMeter)
-
-    def -(second: DistanceUnit): DistanceUnit =
-      self.fromMeter(self.toMeter - second.toMeter)
-
-    def ~(second: DistanceUnit, epsilon: Double = 1e-10): Boolean =
-      Math.abs(self.toMeter - second.toMeter) < epsilon
-
-    /** Scales this distance by a dimensionless scalar. */
-    def *(scalar: Double): DistanceUnit =
-      self.fromMeter(self.toMeter * scalar)
-
-    /** Returns the dimensionless ratio of this distance to another.
-     * Dividing two distances yields a pure number, not a distance. */
-    def ratio(second: DistanceUnit): Double =
-      self.toMeter / second.toMeter
-  }
 
   object AstronomicalUnit extends DistanceUnitCompanion[AstronomicalUnit] {
     def fromMeter(meters: Double): AstronomicalUnit = AstronomicalUnit(meters / AU_TO_METERS)

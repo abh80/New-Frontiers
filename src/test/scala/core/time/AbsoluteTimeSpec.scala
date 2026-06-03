@@ -18,7 +18,7 @@ class AbsoluteTimeSpec extends AnyFunSuite with Matchers {
     assertResult("2008-12-31T23:59:60.250Z")(t.toString)
 
     t = t ++ 0.750
-    assertResult("2009-01-01T00:00:00.000Z")
+    assertResult("2009-01-01T00:00:00.000Z")(t.toString)
   }
 
   test("scales offset") {

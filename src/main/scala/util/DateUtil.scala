@@ -10,48 +10,23 @@ package util
  * If you want Asian style (YYYY.MM.DD), use ASIAN.
  * If you want European style (DD/MM/YYYY), use EN28601.
  * RFC822 is for email headers and similar.
+ *
+ * The [[StringDateFormat]], [[DateName]], [[Weekday]], and [[Month]] types live as
+ * top-level definitions in this package and are split between the Scala 2.13 and Scala 3
+ * source directories.
  */
 object DateUtil {
   /** Type alias for a date separator string. */
   type DateSeparator = String
 
   /** Formats year as a 4-digit string. */
-  private def formattedYear(year: Int) = String.format("%04d", year)
+  private[util] def formattedYear(year: Int) = String.format("%04d", year)
 
   /** Formats month as a 2-digit string. */
-  private def formattedMonth(month: Int) = String.format("%02d", month)
+  private[util] def formattedMonth(month: Int) = String.format("%02d", month)
 
   /** Formats day as a 2-digit string. */
-  private def formattedDay(day: Int) = String.format("%02d", day)
-
-  /**
-   * Base trait for date formats represented as strings.
-   *
-   * Each format implements [[render]] which defines the complete string representation.
-   * Use [[toString]] to retrieve the formatted date string.
-   *
-   * @param dd   Day
-   * @param mm   Month
-   * @param yyyy Year
-   */
-  sealed trait StringDateFormat(dd: Int, mm: Int, yyyy: Int) {
-    protected val f_day: String   = formattedDay(dd)
-    protected val f_month: String = formattedMonth(mm)
-    protected val f_year: String  = formattedYear(yyyy)
-
-    /** Returns the formatted date string for this format. */
-    def render: String
-
-    override def toString: String = render
-  }
-
-  /**
-   * Trait for date names (months, weekdays).
-   */
-  sealed trait DateName {
-    /** Returns the name with first letter capitalized. */
-    def toCapitalizedString: String = this.toString.toLowerCase.capitalize
-  }
+  private[util] def formattedDay(day: Int) = String.format("%02d", day)
 
   /**
    * ISO 8601 format (YYYY-MM-DD).
@@ -95,42 +70,6 @@ object DateUtil {
   }
 
   /**
-   * Enumeration for weekdays.
-   * Use WeekUtil for conversions and checks.
-   */
-  enum Weekday(asInt: Int) extends DateName {
-    case MONDAY    extends Weekday(1)
-    case TUESDAY   extends Weekday(2)
-    case WEDNESDAY extends Weekday(3)
-    case THURSDAY  extends Weekday(4)
-    case FRIDAY    extends Weekday(5)
-    case SATURDAY  extends Weekday(6)
-    case SUNDAY    extends Weekday(7)
-  }
-
-  /**
-   * Enumeration for months.
-   * Use Month.getMonth to convert from integer.
-   */
-  enum Month(val asInt: Int) extends DateName {
-    case JANUARY   extends Month(1)
-    case FEBRUARY  extends Month(2)
-    case MARCH     extends Month(3)
-    case APRIL     extends Month(4)
-    case MAY       extends Month(5)
-    case JUNE      extends Month(6)
-    case JULY      extends Month(7)
-    case AUGUST    extends Month(8)
-    case SEPTEMBER extends Month(9)
-    case OCTOBER   extends Month(10)
-    case NOVEMBER  extends Month(11)
-    case DECEMBER  extends Month(12)
-
-    /** Returns the integer value of the month (1-12). */
-    def getIntegerValue: Int = asInt
-  }
-
-  /**
    * Common date separators.
    */
   object DateSeparator {
@@ -161,21 +100,7 @@ object DateUtil {
      */
     @throws[IllegalArgumentException]
     def fromInt(asInt: Int): Weekday =
-      if asInt >= 1 && asInt <= 7 then Weekday.fromOrdinal(asInt - 1)
+      if (asInt >= 1 && asInt <= 7) Weekday.fromOrdinal(asInt - 1)
       else throw new IllegalArgumentException(s"integer value $asInt is not a qualified weekday")
-  }
-
-  /**
-   * Utilities for working with months.
-   */
-  object Month {
-    /**
-     * Converts integer (1-12) to Month enum.
-     * @throws IllegalArgumentException if out of range.
-     */
-    @throws[IllegalArgumentException]
-    def getMonth(asInt: Int): Month =
-      if asInt >= 1 && asInt <= 12 then Month.fromOrdinal(asInt - 1)
-      else throw new IllegalArgumentException(s"integer value $asInt is not a qualified month")
   }
 }

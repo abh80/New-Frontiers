@@ -2,7 +2,7 @@ package org.abh80.nf
 package core.time
 
 import core.time.EpochFactory.J2000_0
-import util.DateUtil.Month
+import util.Month
 
 import org.abh80.nf.core.Constants
 import org.abh80.nf.util.TimeShiftable
@@ -33,7 +33,17 @@ final class AbsoluteTime private (val offset: TimeFormat)
     with Serializable
     with TimeShiftable[AbsoluteTime] {
 
-  export offset.{getSeconds, getAttoSeconds, toDouble, isZero}
+  /** Seconds component of the underlying [[TimeFormat]] offset. */
+  def getSeconds: Long = offset.getSeconds
+
+  /** Attoseconds component of the underlying [[TimeFormat]] offset. */
+  def getAttoSeconds: Long = offset.getAttoSeconds
+
+  /** Total seconds + attoseconds as a `Double` (lossy). */
+  def toDouble: Double = offset.toDouble
+
+  /** True when both seconds and attoseconds of the underlying offset are zero. */
+  def isZero: Boolean = offset.isZero
 
   /**
    * Default constructor.
@@ -122,7 +132,7 @@ final class AbsoluteTime private (val offset: TimeFormat)
    * hour, minute, seconds (as `TimeFormat`), and a `TimeScale`.
    *
    * ==Math Note==
-   * - Uses [[org.abh80.nf.util.DateUtil.Month.getIntegerValue]] to map enum → integer month.
+   * - Uses [[org.abh80.nf.util.Month.getIntegerValue]] to map enum → integer month.
    */
   @throws[IllegalArgumentException]
   def this(
@@ -205,9 +215,10 @@ final class AbsoluteTime private (val offset: TimeFormat)
    * ==Math Note==
    * - Format: `YYYY-MM-DDTHH:MM:SS[.fraction]`
    */
-  def toString(scale: TimeScale): String =
+  def toString(scale: TimeScale): String = {
     val (d, t) = getDateTime(scale)
     d.toString ++ "T" ++ t.toISO8601StringTrimmed()
+  }
 
   /**
    * Converts this absolute time into a `(Date, Time)` pair in the given timescale.
@@ -226,7 +237,7 @@ final class AbsoluteTime private (val offset: TimeFormat)
    * @param scale the timescale to use
    * @return a tuple of (Date, Time)
    */
-  def getDateTime(scale: TimeScale): (Date, Time) =
+  def getDateTime(scale: TimeScale): (Date, Time) = {
     val timeOffset = offset + scale.timePastTAI(this)
     val j2000_shifted = Math.addExact(timeOffset.getSeconds, 43200L)
 
@@ -235,7 +246,7 @@ final class AbsoluteTime private (val offset: TimeFormat)
     val date = Math.toIntExact(Math.floorDiv(j2000_shifted, Constants.SECONDS_IN_A_JULIAN_DAY))
 
     val leap =
-      if scale.isInsideLeapSecond(this) then scale.getLeap(this)
+      if (scale.isInsideLeapSecond(this)) scale.getLeap(this)
       else TimeFormat.Zero
 
     (
@@ -246,6 +257,7 @@ final class AbsoluteTime private (val offset: TimeFormat)
         scale.minuteDuration(this)
       )
     )
+  }
 
   /**
    * Computes the offset between two time scales at this absolute time.
@@ -315,4 +327,30 @@ object AbsoluteTime {
    * - Conversion: epoch_seconds → J2000 offset.
    */
   def now(): AbsoluteTime = new AbsoluteTime(Instant.now())
+
+  def apply(): AbsoluteTime = new AbsoluteTime()
+
+  def apply(date: Date, time: Time, scale: TimeScale): AbsoluteTime =
+    new AbsoluteTime(date, time, scale)
+
+  def apply(year: Int, month: Int, day: Int, hour: Int, minute: Int, seconds: TimeFormat, scale: TimeScale): AbsoluteTime =
+    new AbsoluteTime(year, month, day, hour, minute, seconds, scale)
+
+  def apply(year: Int, month: Int, day: Int, hour: Int, minute: Int, seconds: Double, scale: TimeScale): AbsoluteTime =
+    new AbsoluteTime(year, month, day, hour, minute, seconds, scale)
+
+  def apply(year: Int, month: Month, day: Int, hour: Int, minute: Int, seconds: TimeFormat, scale: TimeScale): AbsoluteTime =
+    new AbsoluteTime(year, month, day, hour, minute, seconds, scale)
+
+  def apply(year: Int, month: Month, day: Int, hour: Int, minute: Int, seconds: Double, scale: TimeScale): AbsoluteTime =
+    new AbsoluteTime(year, month, day, hour, minute, seconds, scale)
+
+  def apply(date: Date, scale: TimeScale): AbsoluteTime = new AbsoluteTime(date, scale)
+
+  def apply(year: Int, month: Int, day: Int, scale: TimeScale): AbsoluteTime =
+    new AbsoluteTime(year, month, day, scale)
+
+  def apply(instant: Instant, scale: TimeScale): AbsoluteTime = new AbsoluteTime(instant, scale)
+
+  def apply(instant: Instant): AbsoluteTime = new AbsoluteTime(instant)
 }

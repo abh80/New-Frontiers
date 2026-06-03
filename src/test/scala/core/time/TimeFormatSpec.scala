@@ -64,7 +64,7 @@ class TimeFormatSpec extends AnyFunSuite with Matchers {
   }
 
   test("time format random division") {
-    val rand = Random()
+    val rand = new Random()
 
     for (i <- 0 until 1_000_000) {
       val t = TimeFormat(rand.nextLong(1000 * 365 * 24 * 60 * 60L), rand.nextLong(1000000000000000000L))
@@ -87,14 +87,14 @@ class TimeFormatSpec extends AnyFunSuite with Matchers {
     val offsets = Array(TimeFormat(200L, 300L), TimeFormat(70L, 1L), TimeFormat(0L, 0L), TimeFormat(-25L, 1L), TimeFormat.DAY, TimeFormat.HOUR, TimeFormat.MICROSECOND)
     for (i <- offsets.indices) {
       for (j <- offsets.indices) {
-        if i == j then assert(offsets(i) === offsets(j))
+        if (i == j) assert(offsets(i) === offsets(j))
         else assert(offsets(i) != offsets(j))
       }
     }
   }
 
   test("time format check multiples") {
-    for (i <- 1 to 100) do
+    for (i <- 1 to 100)
       checkMultiple(i, TimeFormat.Zero, TimeFormat.Zero)
 
     checkMultiple(1, TimeFormat.DAY, TimeFormat.DAY)
@@ -119,7 +119,7 @@ class TimeFormatSpec extends AnyFunSuite with Matchers {
 
   test("time format from time unit") {
     import TimeFormat.fromTimeUnit
-    import TimeUnit.*
+    import TimeUnit._
 
     checkResult(fromTimeUnit(10, DAYS), 864_000L, 0L)
     checkResult(fromTimeUnit(100, HOURS), 360_000L, 0L)
@@ -159,18 +159,19 @@ class TimeFormatSpec extends AnyFunSuite with Matchers {
   }
 
   private def expandRoundedExpected(precision: Int, expected: TimeFormat): TimeFormat = {
-    if precision == 18 || expected.getAttoSeconds == 0L then expected
+    if (precision == 18 || expected.getAttoSeconds == 0L) expected
     else {
-      val magnitude = if expected.compareTo(TimeFormat.Zero) < 0 then expected.negate() else expected
+      val magnitude = if (expected.compareTo(TimeFormat.Zero) < 0) expected.negate() else expected
       val expanded = TimeFormat(magnitude.getSeconds, magnitude.getAttoSeconds * pow10(18 - precision))
-      if expected.compareTo(TimeFormat.Zero) < 0 then expanded.negate() else expanded
+      if (expected.compareTo(TimeFormat.Zero) < 0) expanded.negate() else expanded
     }
   }
 
-  private def pow10(exponent: Int): Long =
+  private def pow10(exponent: Int): Long = {
     var result = 1L
     for (_ <- 0 until exponent) result *= 10L
     result
+  }
 
   test("time format rounded format positive") {
     checkRoundingResult(0, TimeFormat(70L, 123456789012345678L), TimeFormat(70L, 0L))

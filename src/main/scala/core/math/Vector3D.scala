@@ -22,7 +22,7 @@ final case class Vector3D(x: Double, y: Double, z: Double) {
    * @tparam T The type of DistanceUnit.
    * @return The distance as a DistanceUnit.
    */
-  def distanceTo[T <: DistanceUnit](second: Vector3D)(factory: Double => T = DistanceUnit.Meter.apply): T = {
+  def distanceTo[T <: DistanceUnit](second: Vector3D)(factory: Double => T = (d: Double) => DistanceUnit.Meter(d)): T = {
     val dx = second.x - x
     val dy = second.y - y
     val dz = second.z - z
@@ -54,7 +54,7 @@ final case class Vector3D(x: Double, y: Double, z: Double) {
    * @tparam T The type of AngleUnit.
    * @return The angle as an AngleUnit.
    */
-  def angleTo[T <: AngleUnit](second: Vector3D)(factory: Double => T = AngleUnit.Radian.apply): T = {
+  def angleTo[T <: AngleUnit](second: Vector3D)(factory: Double => T = (d: Double) => AngleUnit.Radian(d)): T = {
     val magnitudes = this.magnitude * second.magnitude
     require(magnitudes != 0.0, "angleTo is undefined for a zero-length vector")
     // Clamp to [-1, 1] so rounding on (anti)parallel vectors can't push acos out of its domain (NaN).
@@ -118,6 +118,34 @@ final case class Vector3D(x: Double, y: Double, z: Double) {
    * @return The negated vector.
    */
   def negate: Vector3D = Vector3D(-x, -y, -z)
+
+  /** Adds two vectors. */
+  def +(other: Vector3D): Vector3D = Vector3D(x + other.x, y + other.y, z + other.z)
+
+  /** Subtracts another vector from this vector. */
+  def -(other: Vector3D): Vector3D = Vector3D(x - other.x, y - other.y, z - other.z)
+
+  /** Multiplies the vector by a scalar. */
+  def *(scalar: Double): Vector3D = Vector3D(x * scalar, y * scalar, z * scalar)
+
+  /** Divides the vector by a scalar. */
+  def /(scalar: Double): Vector3D = Vector3D(x / scalar, y / scalar, z / scalar)
+
+  /** Component-wise approximate equality within `epsilon`. */
+  def ~(other: Vector3D, epsilon: Double = 1e-10): Boolean =
+    Math.abs(x - other.x) < epsilon &&
+      Math.abs(y - other.y) < epsilon &&
+      Math.abs(z - other.z) < epsilon
+
+  /** Dot product. */
+  def dot(other: Vector3D): Double = x * other.x + y * other.y + z * other.z
+
+  /** Cross product `this × other`. */
+  def X(other: Vector3D): Vector3D = Vector3D(
+    y * other.z - z * other.y,
+    z * other.x - x * other.z,
+    x * other.y - y * other.x
+  )
 }
 
 /**
@@ -167,7 +195,7 @@ object Vector3D {
    * @return The corresponding Vector3D.
    */
   def fromArray[T <: DistanceUnit](arr: Array[T]): Vector3D = {
-    if arr.length != 3 then throw new IllegalArgumentException(s"Vector array expected to have 3 elements (x,y,z) distances but found ${arr.length} elements.")
+    if (arr.length != 3) throw new IllegalArgumentException(s"Vector array expected to have 3 elements (x,y,z) distances but found ${arr.length} elements.")
     Vector3D(arr(0), arr(1), arr(2))
   }
 
@@ -180,66 +208,4 @@ object Vector3D {
    */
   def apply(x: DistanceUnit, y: DistanceUnit, z: DistanceUnit): Vector3D = Vector3D(x.toMeter, y.toMeter, z.toMeter)
 
-  /**
-   * Provides arithmetic and geometric operations for Vector3D.
-   * @param self The vector instance.
-   */
-  implicit class BinOp(self: Vector3D) {
-    /**
-     * Adds two vectors.
-     * @param other The other vector.
-     * @return The sum vector.
-     */
-    def +(other: Vector3D): Vector3D = Vector3D(self.x + other.x, self.y + other.y, self.z + other.z)
-
-    /**
-     * Subtracts another vector from this vector.
-     * @param other The other vector.
-     * @return The difference vector.
-     */
-    def -(other: Vector3D): Vector3D = Vector3D(self.x - other.x, self.y - other.y, self.z - other.z)
-
-    /**
-     * Multiplies the vector by a scalar.
-     * @param scalar The scalar value.
-     * @return The scaled vector.
-     */
-    def *(scalar: Double): Vector3D = Vector3D(self.x * scalar, self.y * scalar, self.z * scalar)
-
-    /**
-     * Checks if two vectors are approximately equal within a given epsilon.
-     * @param other The other vector.
-     * @param epsilon The tolerance.
-     * @return True if all components are within epsilon, false otherwise.
-     */
-    def ~(other: Vector3D, epsilon: Double = 1e-10): Boolean =
-      Math.abs(self.x - other.x) < epsilon &&
-        Math.abs(self.y - other.y) < epsilon &&
-        Math.abs(self.z - other.z) < epsilon
-
-    /**
-     * Computes the dot product of two vectors.
-     * @param other The other vector.
-     * @return The dot product.
-     */
-    def dot(other: Vector3D): Double = self.x * other.x + self.y * other.y + self.z * other.z
-
-    /**
-     * Computes the cross product of two vectors.
-     * @param other The other vector.
-     * @return The cross product vector.
-     */
-    def X(other: Vector3D): Vector3D = Vector3D(
-      self.y * other.z - self.z * other.y,
-      self.z * other.x - self.x * other.z,
-      self.x * other.y - self.y * other.x
-    )
-
-    /**
-     * Divides the vector by a scalar.
-     * @param scalar The scalar value.
-     * @return The scaled vector.
-     */
-    def /(scalar: Double): Vector3D = Vector3D(self.x / scalar, self.y / scalar, self.z / scalar)
-  }
 }

@@ -27,37 +27,21 @@ jobs:
       - name: Setup sbt launcher
         uses: sbt/setup-sbt@v1
 
-      # -----------------------------------------------------------------
-      # 1. Compile & test the code (your original "+test" instruction)
-      # -----------------------------------------------------------------
       - name: Build and Test
         run: sbt +test
 
-      # -----------------------------------------------------------------
-      # 2. Produce Scaladoc
-      #    A plain 'doc' task is enough; no extra plugins required.
-      # -----------------------------------------------------------------
-      - name: Generate Scaladoc
-        run: sbt doc
 
-      # -----------------------------------------------------------------
-      # 3. Stash the HTML in a predictable folder so the next step can
-      #    publish it.  We copy instead of moving because we still want
-      #    the original build folders intact in case you need them later.
-      # -----------------------------------------------------------------
+      - name: Generate Scaladoc (Scala 3)
+        run: sbt "++ 3.3.6 root/doc"
+
       - name: Collect generated site
         shell: bash
         run: |
-          DOC_DIR=$(echo target/scala-*/api)   # expands to the one folder
+          DOC_DIR=$(echo target/scala-3.*/api)   # Scala 3 doc folder
           mkdir -p site
           cp -R "$DOC_DIR"/. site
           echo "Documentation copied from $DOC_DIR to ./site"
 
-      # -----------------------------------------------------------------
-      # 4. Push everything under ./site to the orphan branch gh-pages.
-      #    GitHub Pages must already be enabled for that branch in the
-      #    repo settings:  Settings ▸ Pages ▸ Branch = gh-pages / root
-      # -----------------------------------------------------------------
       - name: Publish to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:

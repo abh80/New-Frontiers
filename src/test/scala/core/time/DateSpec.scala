@@ -1,7 +1,7 @@
 package org.abh80.nf
 package core.time
 
-import util.DateUtil.Month
+import util.Month
 
 import org.scalatest.funsuite.AnyFunSuite
 

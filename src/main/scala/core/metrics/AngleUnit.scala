@@ -28,6 +28,22 @@ sealed trait AngleUnit {
    */
   def symbol: String
 
+  /** Sum of two angles, returned in this angle's unit. */
+  def +(second: AngleUnit): AngleUnit = fromRadians(toRadians + second.toRadians)
+
+  /** Difference `this - second`, returned in this angle's unit. */
+  def -(second: AngleUnit): AngleUnit = fromRadians(toRadians - second.toRadians)
+
+  /** Approximate equality in radians within `epsilon`. */
+  def ~(second: AngleUnit, epsilon: Double = 1e-10): Boolean =
+    Math.abs(toRadians - second.toRadians) < epsilon
+
+  /** Scaling by a dimensionless factor, returned in this angle's unit. */
+  def *(scalar: Double): AngleUnit = fromRadians(toRadians * scalar)
+
+  /** Dimensionless ratio between this angle and another. */
+  def ratio(second: AngleUnit): Double = toRadians / second.toRadians
+
   override def toString: String = s"$value $symbol"
 }
 
@@ -145,51 +161,4 @@ object AngleUnit {
     override def fromRadians(rad: Double): HourAngle = HourAngle(rad * 12.0 / Math.PI)
   }
 
-  /**
-   * Provides arithmetic and comparison operations for AngleUnit instances.
-   * @param self the AngleUnit instance
-   */
-  implicit class BinOp(self: AngleUnit) {
-    /**
-     * Adds two angle units.
-     * @param second the other angle unit
-     * @return the sum as an AngleUnit
-     */
-    def +(second: AngleUnit): AngleUnit =
-      self.fromRadians(self.toRadians + second.toRadians)
-
-    /**
-     * Subtracts one angle unit from another.
-     * @param second the other angle unit
-     * @return the difference as an AngleUnit
-     */
-    def -(second: AngleUnit): AngleUnit =
-      self.fromRadians(self.toRadians - second.toRadians)
-
-    /**
-     * Compares two angle units for approximate equality.
-     * @param second the other angle unit
-     * @param epsilon the tolerance for comparison
-     * @return true if the difference is less than epsilon, false otherwise
-     */
-    def ~(second: AngleUnit, epsilon: Double = 1e-10): Boolean =
-      Math.abs(self.toRadians - second.toRadians) < epsilon
-
-    /**
-     * Scales this angle by a dimensionless scalar.
-     * @param scalar the scaling factor
-     * @return the scaled angle in the same unit
-     */
-    def *(scalar: Double): AngleUnit =
-      self.fromRadians(self.toRadians * scalar)
-
-    /**
-     * Returns the dimensionless ratio of this angle to another.
-     * Dividing two angles yields a pure number, not an angle.
-     * @param second the divisor angle
-     * @return the ratio (this / second), dimensionless
-     */
-    def ratio(second: AngleUnit): Double =
-      self.toRadians / second.toRadians
-  }
 }

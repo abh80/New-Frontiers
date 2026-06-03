@@ -141,7 +141,7 @@ class UTCScaleSpec extends AnyFunSuite with Matchers {
   test("custom UTC drift keeps sub-nanosecond per second rate") {
     implicit val tai: TimeScale = TimeScaleFactory.getTAI
     val rateSecondsPerDay = 0.0013392 // 15.5 ns/s
-    val driftingUTC = UTCScale(
+    val driftingUTC = new UTCScale(
       tai,
       Array(UTCScale.LeapSecondOffset(Date(2020, 1, 1), Date(2020, 1, 1).getMJD, 38.0, rateSecondsPerDay))
     )
@@ -151,7 +151,8 @@ class UTCScaleSpec extends AnyFunSuite with Matchers {
     driftingUTC.timePastTAI(time).toDouble shouldBe -(38.0 + rateSecondsPerDay) +- 1.0e-12
   }
 
-  private def checkOffset(year: Int, month: Int, day: Int, offset: Double): Unit =
+  private def checkOffset(year: Int, month: Int, day: Int, offset: Double): Unit = {
     val time = new AbsoluteTime(year, month, day, UTC)
     offset should be(almostEquals(UTC.timePastTAI(time).toDouble))
+  }
 }

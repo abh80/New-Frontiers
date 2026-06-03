@@ -7,7 +7,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 
 class Vector3DSpec extends AnyFunSuite with Matchers {
-  import Vector3D.*
+  import Vector3D._
 
   test("Vector3D magnitude") {
     val v = Vector3D(3, 4, 12)

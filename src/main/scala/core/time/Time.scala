@@ -6,8 +6,7 @@ import scala.math.abs
 import java.time.{Instant, ZoneOffset, ZonedDateTime}
 import scala.util.hashing.MurmurHash3
 
-private val SECONDS_IN_HOUR = 3600
-private val SECONDS_IN_MINUTE = 60
+import Time.{SECONDS_IN_HOUR, SECONDS_IN_MINUTE}
 
 /**
  * A robust time implementation with Hour, Minutes, Seconds of a day. Seconds are in precision up to attoseconds.
@@ -120,7 +119,7 @@ class Time private extends Comparable[Time] with Serializable {
   def this(seconds: TimeFormat) = {
     this()
     require(seconds.compareTo(TimeFormat.Zero) >= 0, "Seconds cannot be negative")
-    if seconds.compareTo(TimeFormat.DAY) >= 0 then {
+    if (seconds.compareTo(TimeFormat.DAY) >= 0) {
       require(seconds.compareTo(TimeFormat(86401L, 0L)) < 0, "Invalid leap second")
       hour = 23
       minute = 59
@@ -161,7 +160,7 @@ class Time private extends Comparable[Time] with Serializable {
 
     require(secondsInMinute.compareTo(TimeFormat.Zero) >= 0)
 
-    if secondsInMinute.getSeconds < minuteDuration then this.seconds = secondsInMinute
+    if (secondsInMinute.getSeconds < minuteDuration) this.seconds = secondsInMinute
     else this.seconds = TimeFormat(minuteDuration - 1, 999_999_999_999_999_999L)
   }
 
@@ -230,21 +229,47 @@ class Time private extends Comparable[Time] with Serializable {
   }
 
   /** Keeps precision of zeros till milliseconds if the remaining portion is 0 */
-  private def trimTrailingZerosFromISOString(str: String): String =
+  private def trimTrailingZerosFromISOString(str: String): String = {
     var last = str.length - 1
 
     while (last > 11 && str.charAt(last) == '0') last = last - 1
 
     str.substring(0, last + 1)
+  }
 }
 
 object Time {
+
+  private[time] val SECONDS_IN_HOUR = 3600
+  private[time] val SECONDS_IN_MINUTE = 60
+
   /** Get the current instant as a `Time` object */
   def now: Time = new Time(Instant.now())
-  
+
+  def apply(hour: Int, minute: Int, seconds: TimeFormat, utcOffset: Int): Time =
+    new Time(hour, minute, seconds, utcOffset)
+
+  def apply(hour: Int, minute: Int, seconds: Double, utcOffset: Int): Time =
+    new Time(hour, minute, seconds, utcOffset)
+
+  def apply(hour: Int, minute: Int, seconds: TimeFormat): Time =
+    new Time(hour, minute, seconds)
+
+  def apply(hour: Int, minute: Int, seconds: Double): Time =
+    new Time(hour, minute, seconds)
+
+  def apply(instant: Instant): Time = new Time(instant)
+
+  def apply(seconds: TimeFormat): Time = new Time(seconds)
+
+  def apply(seconds: Double): Time = new Time(seconds)
+
+  def apply(seconds: TimeFormat, leap: TimeFormat, minuteDuration: Int): Time =
+    new Time(seconds, leap, minuteDuration)
+
   /** 00:00:00 as Time */
-  val MIDNIGHT = Time(0 , 0 , TimeFormat.Zero)
-  
+  val MIDNIGHT: Time = Time(0, 0, TimeFormat.Zero)
+
   /** 12:00:00 as Time */
-  val AFTERNOON = Time(12, 0, TimeFormat.Zero)
+  val AFTERNOON: Time = Time(12, 0, TimeFormat.Zero)
 }

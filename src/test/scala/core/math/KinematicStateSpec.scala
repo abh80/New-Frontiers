@@ -101,7 +101,7 @@ class KinematicStateSpec extends AnyFlatSpec with Matchers {
     val velTol = 3.0e-13
     val accTol = 6.0e-10
 
-    val differentiator = FiniteDifferencesDifferentiator(5, h)
+    val differentiator = new FiniteDifferencesDifferentiator(5, h)
 
     for (_ <- 0 until 200) {
       val state = KinematicState(randomVector3D(1e6), randomVector3D(1e3), randomVector3D(1.0))
@@ -141,7 +141,7 @@ class KinematicStateSpec extends AnyFlatSpec with Matchers {
     val velTol = 9.0e-10
     val accTol = 3.0e-9
 
-    val differentiator = FiniteDifferencesDifferentiator(5, h)
+    val differentiator = new FiniteDifferencesDifferentiator(5, h)
 
     for (_ <- 0 until 200) {
       val state1 = KinematicState(randomVector3D(1.0), randomVector3D(1.0), randomVector3D(1.0))
